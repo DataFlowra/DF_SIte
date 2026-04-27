@@ -1,16 +1,64 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  Mail, 
   MapPin, 
-  Phone, 
   Send, 
-  Globe, 
-  MessageSquare 
+  Loader2,
+  CheckCircle2
 } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { api } from "@/lib/api-client";
 
 export default function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA not ready. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const recaptchaToken = await executeRecaptcha("contact");
+      
+      const result = await api.post("/api/mail/contact", {
+        ...formData,
+        recaptcha_token: recaptchaToken
+      });
+
+      if (result.status === "success") {
+        setSuccess(true);
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setError(result.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   return (
     <section id="contact" className="relative py-32 overflow-hidden bg-[var(--background)]">
       {/* Dynamic Background Atmosphere */}
@@ -47,40 +95,84 @@ export default function ContactSection() {
               </p>
             </div>
 
-            <form className="space-y-8 glass p-10 rounded-[2.5rem] border-white/10 shadow-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="group space-y-3">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="Full Name"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-[var(--text-primary)] placeholder:text-white/20"
-                  />
-                </div>
-                <div className="group space-y-3">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Email Address</label>
-                  <input 
-                    type="email" 
-                    placeholder="email@domain.com"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-[var(--text-primary)] placeholder:text-white/20"
-                  />
-                </div>
-              </div>
-              <div className="group space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Your Message</label>
-                <textarea 
-                  rows={4}
-                  placeholder="How can we help you?"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all resize-none text-[var(--text-primary)] placeholder:text-white/20"
-                />
-              </div>
-              <button 
-                className="w-full py-5 rounded-full gradient-flow text-white font-bold text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-insight-teal/20 group"
+            {success ? (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="glass p-12 rounded-[2.5rem] border-insight-teal/20 text-center space-y-6"
               >
-                <span>Send Message</span>
-                <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </form>
+                <CheckCircle2 className="w-16 h-16 text-insight-teal mx-auto" />
+                <h3 className="text-2xl font-bold">Message Transmitted</h3>
+                <p className="text-[var(--text-muted)]">Thank you for reaching out. An architect will be in touch shortly via secure channel.</p>
+                <button 
+                  onClick={() => setSuccess(false)}
+                  className="text-xs font-bold uppercase tracking-widest text-insight-teal hover:underline"
+                >
+                  Send another message
+                </button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-8 glass p-10 rounded-[2.5rem] border-white/10 shadow-2xl">
+                {error && (
+                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-widest text-center">
+                    {error}
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="group space-y-3">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Name</label>
+                    <input 
+                      required
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      type="text" 
+                      placeholder="Full Name"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-[var(--text-primary)] placeholder:text-white/20"
+                    />
+                  </div>
+                  <div className="group space-y-3">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Email Address</label>
+                    <input 
+                      required
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      type="email" 
+                      placeholder="email@domain.com"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-[var(--text-primary)] placeholder:text-white/20"
+                    />
+                  </div>
+                </div>
+                <div className="group space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">Your Message</label>
+                  <textarea 
+                    required
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="How can we help you?"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all resize-none text-[var(--text-primary)] placeholder:text-white/20"
+                  />
+                </div>
+                <button 
+                  disabled={isLoading}
+                  type="submit"
+                  className="w-full py-5 rounded-full gradient-flow text-white font-bold text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-insight-teal/20 group disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </motion.div>
 
           {/* Right Side: The Grid Map */}

@@ -162,14 +162,14 @@ export default function HeroSection() {
           variants={fadeUp}
           className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
-          <a
-            href="#cta"
+          <Link
+            href="/register"
             className="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl shadow-insight-teal/20"
           >
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-insight-teal to-aura-violet opacity-0 group-hover:opacity-10 transition-opacity" />
             Get Started
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </a>
+          </Link>
           
           <Link
             href="/showcase"

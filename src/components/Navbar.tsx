@@ -87,14 +87,14 @@ export default function Navbar() {
 
         {/* CTA Button */}
         <div className="hidden md:block">
-          <a
-            href="#cta"
+          <Link
+            href="/register"
             data-hoverable
             className="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden group"
           >
             <div className="absolute inset-0 gradient-flow transition-all duration-300 group-hover:opacity-90" />
             <span className="relative">Get Started</span>
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -141,13 +141,13 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <a
-                href="#cta"
+              <Link
+                href="/register"
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-full gradient-flow mt-2"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}

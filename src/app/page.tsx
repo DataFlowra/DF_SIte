@@ -9,6 +9,8 @@ import HowItWorks from "@/components/workflow/HowItWorks";
 import FAQAccordion from "@/components/faq/FAQAccordion";
 import ContactSection from "@/components/contact/ContactSection";
 import Footer from "@/components/footer/Footer";
+import PricingSection from "@/components/pricing/PricingSection";
+import CTASection from "@/components/cta/CTASection";
 
 export default function HomePage() {
   return (
@@ -20,8 +22,10 @@ export default function HomePage() {
         <DashboardShowcase />
         <FeaturesBento />
         <HowItWorks />
+        <PricingSection />
 
         <FAQAccordion />
+        <CTASection />
         <ContactSection />
       </main>
 

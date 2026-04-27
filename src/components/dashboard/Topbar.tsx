@@ -2,12 +2,15 @@
 
 import { Search, Bell, User, Menu } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 interface TopbarProps {
   onMenuClick?: () => void;
 }
 
 export default function Topbar({ onMenuClick }: TopbarProps) {
+  const { user } = useAuth();
+
   return (
     <header className="w-full flex items-center justify-between gap-6">
       {/* Mobile Menu Toggle (only visible on small screens) */}
@@ -52,13 +55,21 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
           
           <div className="h-8 w-px bg-white/5 mx-1" />
 
-          <button className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl glass border border-white/10 hover:border-white/20 transition-all">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-insight-teal/20 to-aura-violet/20 flex items-center justify-center text-insight-teal">
-              <User size={18} />
+          <button className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl glass border border-white/10 hover:border-white/20 transition-all text-left">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-insight-teal/20 to-aura-violet/20 flex items-center justify-center text-insight-teal overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+              ) : (
+                <User size={18} />
+              )}
             </div>
-            <div className="hidden lg:block text-left">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-insight-teal leading-none mb-1">Elite Plan</div>
-              <div className="text-xs font-bold leading-none">Chathura.ai</div>
+            <div className="hidden lg:block">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-insight-teal leading-none mb-1">
+                {user?.current_plan || "Free"} Plan
+              </div>
+              <div className="text-xs font-bold leading-none">
+                {user?.first_name} {user?.last_name}
+              </div>
             </div>
           </button>
         </div>

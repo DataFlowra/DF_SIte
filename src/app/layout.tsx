@@ -1,37 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { AuthProvider } from "@/context/AuthContext";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 export const metadata: Metadata = {
-  title: "Dataflowra — Watch Your Data Wake Up",
-  description:
-    "Transform raw data streams into organized intelligence. Dataflowra is the intelligent data infrastructure platform that makes your data move, breathe, and deliver.",
-  keywords: [
-    "data infrastructure",
-    "real-time analytics",
-    "data pipeline",
-    "ETL",
-    "data streaming",
-    "business intelligence",
-  ],
-  openGraph: {
-    title: "Dataflowra — Watch Your Data Wake Up",
-    description:
-      "Transform raw data streams into organized intelligence with Dataflowra.",
-    type: "website",
-  },
+  title: "Dataflowra | Future of Data Infrastructure",
+  description: "Transform raw streams into organized intelligence. Dataflowra makes your data move, breathe, and deliver at scale.",
 };
 
 export default function RootLayout({
@@ -39,18 +13,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+
   return (
-    <html
-      lang="en"
-      data-theme="dark"
-      className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      suppressHydrationWarning
-    >
+    <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="color-scheme" content="dark light" />
+        <link rel="icon" href="/Favicon.png" />
       </head>
-      <body className="min-h-screen font-sans">{children}</body>
+      <body>
+        <GoogleReCaptchaProvider
+          reCaptchaKey={recaptchaKey}
+          scriptProps={{
+            async: false,
+            defer: false,
+            appendTo: "head",
+            nonce: undefined,
+          }}
+        >
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </GoogleReCaptchaProvider>
+      </body>
     </html>
   );
 }

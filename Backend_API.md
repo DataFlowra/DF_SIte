@@ -1,1311 +1,2242 @@
-# Backend API — Endpoints & Configuration
+# Backend API Endpoints Documentation
 
-This document describes the API routes added, required request parameters, example responses, and environment variables to configure for Google OAuth, email, Gorq AI, and Google Maps integration.
-
----
-
-## Quick setup / migrations
-
-- Add required environment variables in `.env` (see `.env.example`).
-- Run database migrations:
-
-```powershell
-php artisan migrate
-```
-
-### Database tables
-
-The following tables are created by the migrations:
-
-| Table                       | Description                                                                                                                                                                                 |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `users`                     | User accounts with fields: id, username, first_name, last_name, email, email_verified_at, password, provider_name, provider_id, avatar, current_plan, remember_token, timestamps            |
-| `password_reset_tokens`     | Password reset tokens (email, token, created_at)                                                                                                                                            |
-| `sessions`                  | Session storage for web authentication                                                                                                                                                      |
-| `personal_access_tokens`    | Sanctum API tokens (id, tokenable_type, tokenable_id, name, token, abilities, last_used_at, expires_at, timestamps)                                                                         |
-| `email_verification_tokens` | Email verification tokens (email, token, created_at)                                                                                                                                        |
-| `ai_requests`               | AI generation request logs (id, user_id, model, prompt, status, result, error, tokens_used, meta, timestamps)                                                                               |
-| `newsletter_subscribers`    | Newsletter subscriptions (id, name, email, verification_token, verified_at, unsubscribe_token, timestamps)                                                                                  |
-| `subscription_plans`        | Available plans (id, name, slug, description, price, currency, interval, trial_days, features, is_active, timestamps)                                                                       |
-| `payments`                  | Payment records (id, user_id, transaction_id, gateway, amount, currency, status, type, card_last_four, card_brand, description, plan_name, gateway_response, metadata, paid_at, timestamps) |
-| `cache`                     | Laravel cache storage                                                                                                                                                                       |
-| `cache_locks`               | Laravel cache locks                                                                                                                                                                         |
-| `jobs`                      | Laravel queue jobs                                                                                                                                                                          |
-| `job_batches`               | Laravel queue job batches                                                                                                                                                                   |
-| `failed_jobs`               | Failed queue jobs                                                                                                                                                                           |
-
-Installed and recommended packages:
-
-- Laravel Sanctum — installed and configured for personal access tokens (token-based API auth)
-- Laravel Socialite — recommended to implement Google OAuth flows
+**Version**: 1.0  
+**Base URL**: `(http://api.dataflowra.com/api)` (or your domain)  
+**API Response Format**: All responses are JSON
 
 ---
 
-## Environment variables (added/required)
+## Table of Contents
 
-These variables were added to `.env.example` and must be configured in your `.env` when you connect services:
-
-- GOOGLE_CLIENT_ID — Google OAuth client ID (Socialite)
-- GOOGLE_CLIENT_SECRET — Google OAuth secret
-- GOOGLE_REDIRECT — OAuth callback (default: `${APP_URL}/auth/google/callback`)
-- GITHUB_CLIENT_ID -
-- GITHUB_CLIENT_SECRET -
-- GITHUB_REDIRECT -
-- GORQ_API_KEY — API key for Gorq (or your AI provider)
-- GORQ_BASE_URL — Base URL for Gorq API (default `https://api.gorq.ai`)
-- GORQ_DEFAULT_MODEL — Optional default model to use
-- FRONTEND_URL — Frontend SPA address for CORS/callbacks
-- SANCTUM_STATEFUL_DOMAINS — If using Sanctum for SPA auth
-
-The repo already contains mail config examples (MAIL\_\* in `.env.example`) for sending messages.
+1. [Authentication](#authentication)
+2. [User Profile](#user-profile)
+3. [Payments & Subscriptions](#payments--subscriptions)
+4. [AI Generation](#ai-generation)
+5. [Email & Messaging](#email--messaging)
+6. [Maps](#maps)
+7. [CAPTCHA](#captcha)
+8. [Response Format](#response-format)
 
 ---
 
-## Routes summary
+## Authentication
 
-All API endpoints are exposed from `routes/api.php`.
+### 1. Register User
 
-- Default (development/testing): If `API_DOMAIN` is not set, routes are served with the `/api` prefix (e.g., `/api/auth/login`).
-- Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain — e.g., `https://api.example.com/auth/login` (no `/api` prefix).
+**Endpoint**: `POST /api/auth/register`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
 
-Note: For local development you can avoid configuring DNS or host entries by enabling the optional `API_PREFIX_FALLBACK` environment variable; this registers the `/api` prefix **in addition** to the domain routes when `API_DOMAIN` is set — this is handy when you set `API_DOMAIN` but still want to call the API at `/api` during development or when `api.example.com` is not resolvable locally.
+**Request Body**:
 
-### All endpoints at a glance
-
-| Method             | URI                              | Description                               | Auth |
-| ------------------ | -------------------------------- | ----------------------------------------- | ---- |
-| GET                | `/api/ping`                      | Health check                              | No   |
-| **Authentication** |                                  |                                           |      |
-| POST               | `/api/auth/register`             | Register new user                         | No   |
-| POST               | `/api/auth/login`                | Login with email/password                 | No   |
-| POST               | `/api/auth/logout`               | Logout (revoke token)                     | Yes  |
-| GET                | `/api/auth/google/redirect`      | Redirect to Google OAuth                  | No   |
-| GET                | `/api/auth/google/callback`      | Google OAuth callback                     | No   |
-| POST               | `/api/auth/google/token`         | Exchange Google code/credential for token | No   |
-| GET                | `/api/auth/github/redirect`      | Redirect to GitHub OAuth                  | No   |
-| GET                | `/api/auth/github/callback`      | GitHub OAuth callback                     | No   |
-| POST               | `/api/auth/github/token`         | Exchange GitHub code/token for API token  | No   |
-| POST               | `/api/auth/password/forgot`      | Request password reset email              | No   |
-| POST               | `/api/auth/password/reset`       | Reset password with token                 | No   |
-| POST               | `/api/auth/password/change`      | Change password (authenticated)           | Yes  |
-| POST               | `/api/auth/verify/send`          | Send/resend verification email            | No   |
-| GET                | `/api/auth/verify/{token}`       | Verify email with token                   | No   |
-| GET                | `/api/auth/link/google/redirect` | Link Google account                       | Yes  |
-| GET                | `/api/auth/link/google/callback` | Google link callback                      | Yes  |
-| GET                | `/api/auth/link/github/redirect` | Link GitHub account                       | Yes  |
-| GET                | `/api/auth/link/github/callback` | GitHub link callback                      | Yes  |
-| POST               | `/api/auth/unlink`               | Unlink OAuth provider                     | Yes  |
-| **User Profile**   |                                  |                                           |      |
-
-> Note: The browser redirect/callback OAuth routes require the server session so Socialite can maintain the OAuth state parameter. These routes are registered with the `web` (session) middleware in the API, which makes browser-based OAuth redirects work correctly. Because your frontend is on the root domain and the API is on a subdomain, set session cookie options in `.env` so cookies are shared across subdomains.
-
-Example settings for pavitinfotech.com + api.pavitinfotech.com
-
-```
-SESSION_DRIVER=file
-SESSION_DOMAIN=.pavitinfotech.com
-SESSION_SECURE_COOKIE=true    # only in production with HTTPS
-SESSION_SAME_SITE=lax         # allows top-level navigation redirects to set cookie
-```
-
-> If your frontend is on an entirely different top-level domain (e.g., frontend.com and api.example.com) you can't share cookies — use the token-exchange endpoints (`POST /api/auth/google/token`, `POST /api/auth/github/token`) for stateless API-only flows or `Socialite::stateless()` with your own CSRF/state protection.
-
-> If your frontend is on a different top-level domain and cannot share cookies, prefer using the token-exchange endpoints (`POST /api/auth/google/token`, `POST /api/auth/github/token`) for API-only flows or use `Socialite::stateless()` after adding custom CSRF/state protection.
-> | GET | `/api/user` | Get current user profile | Yes |
-> | PUT | `/api/user` | Update user profile | Yes |
-> | DELETE | `/api/user` | Delete user account | Yes |
-> | POST | `/api/user/avatar` | Upload avatar image | Yes |
-> | GET | `/api/users/{id}/public` | Get public profile | No |
-> | **Mail** | | | |
-> | POST | `/api/mail/contact` | Send contact message | No |
-> | POST | `/api/mail/newsletter` | Subscribe to newsletter | No |
-> | GET | `/api/mail/newsletter/verify/{token}` | Verify newsletter subscription | No |
-> | GET | `/api/mail/newsletter/unsubscribe/{token}` | Unsubscribe from newsletter | No |
-> | POST | `/api/mail/password-reset` | Send password reset email | No |
-> | **AI / Gorq** | | | |
-> | POST | `/api/ai/generate` | Generate AI response | No |
-> | GET | `/api/ai/jobs/{id}/status` | Get async AI job status | No |
-> | **Maps** | | | |
-> | POST | `/api/maps/pin` | Generate Google Maps embed URL | No |
-> | **Plans** | | | |
-> | GET | `/api/subscription-plans` | List all plans | No |
-> | GET | `/api/subscription-plans/{slug}` | Get plan by slug | No |
-> | **Payments** | | | |
-> | POST | `/api/subscriptions` | Pay for a plan (purchase) | Yes |
-> | POST | `/api/payments/process` | Process one-time payment | Yes |
-> | GET | `/api/payments` | List payment history | Yes |
-> | GET | `/api/payments/last-plan` | Get last purchased plan | Yes |
-> | GET | `/api/payments/{transactionId}` | Verify/get payment details | Yes |
-> | POST | `/api/payments/refund/{transactionId}` | Request refund | Yes |
-> | POST | `/api/payments/revert-plan` | Revert/clear current plan | Yes |
-> | POST | `/api/payments/webhook` | Payment webhook handler | No |
-> | **Admin/Dev Tools** | | | |
-> | POST | `/api/admin/migrate` | Run migrations via HTTP | Token |
-
-## Developer tools
-
-If you do not have terminal access on the server, there is a safe, token-protected HTTP endpoint for running migrations using Artisan. It is disabled by default and should be enabled and used with caution in production environments.
-
-Endpoint:
-
-- POST /admin/migrate
-
-Payload / headers:
-
-- Header `X-RUN-MIG-TOKEN` or body param `token` — the value must match `RUN_MIG_TOKEN` in `.env`.
-- Optional `seed` boolean body param to run `db:seed` after migrations.
-- Optional `path` string body param to pass `--path` to `migrate`.
-
-Requirements & safety:
-
-- `ALLOW_RUN_MIG=true` must be set in `.env` to allow this endpoint to run.
-- `RUN_MIG_TOKEN` should be a long random secret and stored in server environment. Do not keep it in VCS.
-- The route is throttled (`throttle:10,1`) by default.
-
-Example usage (curl):
-
-```
-curl -X POST https://api.pavitinfotech.com/admin/migrate \
-    -H "X-RUN-MIG-TOKEN: $RUN_MIG_TOKEN"
-```
-
-Response:
-
-- Returns a JSON result with the Artisan output under `data.output`. If operations fail, a 500 result with details will be returned and logged.
-
-Security note: After running migrations via HTTP, disable ALLOW_RUN_MIG or rotate the token. This endpoint provides a convenient but sensitive capability and should be restricted to trusted usage only.
-
-For a full guide on configuring Google Cloud credentials, Socialite server usage, and SPA redirect handling (secure token flows and examples), see `docs/socialite-google-spa.md`.
-
-### Authentication
-
-#### Flow overview
-
-- **Credential (email + password hash)** — `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
-- **Logout** — `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
-- **OAuth browser redirects** — `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
-- **OAuth API/token exchange** — `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
-- **Email verification** — `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
-- **Password reset** — `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
-- **Social linking** — Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
-- **Profile & session hygiene** — Protected endpoints (e.g., `/user`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
-
-> **⚠️ IMPORTANT: Password Hashing Requirement**
->
-> For security, the frontend **must hash passwords client-side** before sending them to the API. All password fields expect a **SHA-256 hash** (64 hexadecimal characters) instead of plain text passwords. This ensures passwords are never transmitted in plain text over the network.
->
-> Example (JavaScript):
->
-> ```javascript
-> const passwordHash = await crypto.subtle
->   .digest("SHA-256", new TextEncoder().encode(password))
->   .then((buf) =>
->     Array.from(new Uint8Array(buf))
->       .map((b) => b.toString(16).padStart(2, "0"))
->       .join(""),
->   );
-> ```
-
-#### Credential-based register & login
-
-- POST /api/auth/register (or POST /auth/register if `API_DOMAIN` is set)
-  - Request body (application/json):
-    - username (string, required, unique)
-    - first_name (string, required)
-    - last_name (string, optional)
-    - email (string, required)
-    - password_hash (string, required, 64-char SHA-256 hex hash)
-    - password_hash_confirmation (string, required, must match password_hash)
-  - Behavior: Creates the user, issues a Sanctum token, and **automatically sends a verification email**. The user should verify their email by clicking the link in the email.
-  - Success (201):
-    - { status: 'success', message: 'Registered. Please check your email to verify your account.', data: { user: {...}, token: '...'} }
-
-  Example request (register):
-
-  ```json
-  POST /api/auth/register
-  Content-Type: application/json
-
-  {
-      "username": "johndoe",
-      "first_name": "John",
-      "last_name": "Doe",
-      "email": "john@example.com",
-      "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e",
-      "password_hash_confirmation": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
-  }
-  ```
-
-  Example response (201):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Registered",
-    "data": {
-      "user": {
-        "id": 123,
-        "username": "johndoe",
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "john@example.com",
-        "avatar": null,
-        "email_verified_at": null,
-        "created_at": "2025-11-28T12:34:56Z"
-      },
-      "token": "plain-text-sanctum-token"
-    },
-    "code": 201,
-    "timestamp": "2025-11-28T12:34:56Z"
-  }
-  ```
-
-  - Note: This endpoint now issues a Laravel Sanctum personal access token (plain text). Save this token client-side and send it on protected requests with the Authorization header:
-
-```
-Authorization: Bearer <your-plain-text-token-here>
-```
-
-- POST /api/auth/login (or POST /auth/login if `API_DOMAIN` is set)
-  Example request (login):
-
-  ```json
-  POST /api/auth/login
-  Content-Type: application/json
-
-  {
-      "email": "john@example.com",
-      "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
-  }
-  ```
-
-  Example response (200):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Logged in",
-    "data": {
-      "user": {
-        "id": 123,
-        "username": "johndoe",
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "john@example.com",
-        "avatar": null
-      },
-      "token": "plain-text-sanctum-token"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:35:00Z"
-  }
-  ```
-
-  - Request body: { email, password_hash }
-  - Success (200): { status: 'success', message: 'Logged in', data: { user, token } }
-
-#### Logout (token & cookie aware)
-
-- POST /api/auth/logout (or POST /auth/logout if `API_DOMAIN` is set)
-  - Behavior: API clients get JSON + token revocation; browser requests (Accept HTML) revoke tokens, clear the `api_token` cookie, and 302 redirect to `${FRONTEND_URL}/auth/logout`.
-
-#### Google OAuth (browser redirect flow)
-
-    Both Google and GIthub logns require frontend completion pages after the OAuth flow is completed on the backend.
-
-- GET /api/auth/google/redirect (or GET /auth/google/redirect if `API_DOMAIN` is set)
-  - Redirects to Google OAuth consent page using Laravel Socialite. This endpoint issues an HTTP redirect (302) that should be followed by the browser or frontend app. If your frontend needs the direct URL instead, call this endpoint and read the Location header of the response.
-
-- GET /api/auth/google/callback (or GET /auth/google/callback if `API_DOMAIN` is set)
-  - OAuth callback — handled with Laravel Socialite.
-  - Behavior:
-    - Socialite reads Google user info (id, name, email, avatar). The backend will map provider `name` into `first_name` and `last_name` where possible and generate a `username` using the preferred username or email localpart.
-    - If a user exists with the same `provider_name` + `provider_id`, that user is returned.
-    - Otherwise the backend attempts to find a user by email and attach Google provider data.
-    - If no matching user exists, a new user is created and provider fields (`provider_name`, `provider_id`, `avatar`) are saved.
-    - A Laravel Sanctum personal access token is created.
-    - Behavior detail:
-      - **By default (browser flow):** The server redirects (302) to `${FRONTEND_URL}/auth/complete?token=<sanctum-token>`. The token is passed as a query parameter for the frontend to extract and store.
-      - **JSON response:** Only returned when the request is an explicit AJAX call (`X-Requested-With: XMLHttpRequest`), the `Accept` header specifically prefers `application/json` without `text/html` or `*/*`, or the query param `?format=json` is present.
-  - Browser flow response (Redirect — default for all browser requests):
-    - 302 redirect to `${FRONTEND_URL}/auth/complete?token=<plain-text-token>`
-    - The frontend should extract the token from the URL, store it, and replace the URL in browser history to remove the token.
-  - API flow response (JSON — only when explicitly requested):
-    - { status: 'success', message: 'Authenticated via Google', data: { user: {...}, token: '<plain-text-token>' } }
-    - To get JSON, use one of: `?format=json` query param, `X-Requested-With: XMLHttpRequest` header, or `Accept: application/json` (without `text/html` or `*/*`).
-
-- POST /api/auth/google/token (API-only token exchange)
-  - Body (JSON):
-    - `code` (string) — authorization code received from Google OAuth (required if `credential` missing)
-    - `credential` (string) — ID token from Google One Tap / Credential API (required if `code` missing)
-    - `redirect_uri` (string, optional) — override redirect URI used during code exchange
-  - Behavior:
-    - If `code` is provided, the backend exchanges it against Google's token endpoint using the configured `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, obtains an access token, resolves the user profile via Socialite, and creates/logs in the user.
-    - If `credential` (ID token) is provided, the backend verifies it using Google's `tokeninfo` endpoint and uses the resulting profile to authenticate the user.
-    - Always returns JSON (no redirects) with the Sanctum token.
-  - Success response (200): `{ "status": "success", "message": "Authenticated via Google", "data": { "user": {...}, "token": "plain-text-sanctum-token" } }`
-  - Errors:
-    - 400 — Invalid/expired code or credential, or Google API error
-    - 422 — Missing `code`/`credential` payload
-  - Use this endpoint for native apps or SPAs that already captured the Google credential and simply need to exchange it server-side without browser redirects.
-
-#### Password reset
-
-- POST /api/auth/password/forgot (or POST /auth/password/forgot if `API_DOMAIN` is set)
-  - Body: { email }
-  - Behavior: server will create a password reset token stored in `password_reset_tokens` (valid for ~2 hours) and email the frontend password-reset link to the user if the account exists. The response does not reveal whether the account exists.
-  - Success (200): { status: 'success', message: 'Password reset link sent if account exists' }
-
-- POST /api/auth/password/reset (or POST /auth/password/reset if `API_DOMAIN` is set)
-  - Body: { email, token, password_hash, password_hash_confirmation }
-  - Note: password_hash must be a 64-character SHA-256 hex hash of the new password
-  - Behavior: verifies the reset token, ensures it is not expired (2 hours), updates the user's password hash, deletes the token, and returns a new API token so the user is authenticated immediately.
-  - Success (200): { status: 'success', message: 'Password reset successfully', data: { user: {...}, token: '<plain-text-token>' } }
-
-#### Email verification
-
-- POST /api/auth/verify/send (or POST /auth/verify/send if `API_DOMAIN` is set)
-  - Body: { email } or (authenticated) send to current user
-  - Behavior: **Resend verification email** for users who missed or lost the original email sent during registration. Creates/updates an email verification token stored in `email_verification_tokens` and sends a verification email. For security, the response does not reveal whether the email exists if unregistered.
-  - Success (200): { status: 'success', message: 'Verification email sent' } or 'Email already verified' if already verified
-
-- GET /api/auth/verify/{token} (or GET /auth/verify/{token} if `API_DOMAIN` is set)
-  - Behavior: verifies the token, sets `email_verified_at` for the user, deletes the token, and either returns JSON (API clients) or redirects the browser to `${FRONTEND_URL}/auth/verified`.
-  - Success (200 or 302): JSON { status: 'success', message: 'Email verified', data: { user } } or 302 redirect to frontend verified page.
-
-### GitHub OAuth (browser redirect flow)
-
-    -   GET /api/auth/github/redirect — Redirects the browser to GitHub's OAuth consent page (via Socialite). If your SPA needs the URL to redirect itself, call this endpoint and read the Location header.
-    -   GET /api/auth/github/callback — OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or redirects to `${FRONTEND_URL}/auth/complete?token=<token>` for browser flows.
-
-#### GitHub OAuth behavior
-
-    Behavior is identical to Google OAuth flow but uses the `github` Socialite driver:
-
-    -   Creates the user if not present and saves `provider_name` = 'github' and `provider_id`.
-    -   If a user already exists with the same email, the code attaches `provider` fields to that existing user rather than creating a new one.
-    -   Returns JSON with `user` and `token` in API flows, and redirects with token in query param on browser flows.
-
-- POST /api/auth/github/token (API-only token exchange)
-  - Body (JSON):
-    - `code` (string) — authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
-    - `access_token` (string) — GitHub access token obtained on the client (required if `code` missing)
-    - `redirect_uri` (string, optional) — custom redirect URI used when generating the code
-  - Behavior:
-    - When a `code` is provided, the backend calls `https://github.com/login/oauth/access_token` with your app's client ID/secret to exchange it for an access token, then fetches the user profile using Socialite and logs the user in.
-    - When `access_token` is provided directly, it is used immediately to fetch the GitHub profile.
-    - Always responds with JSON, returning `{ user, token }` on success or a structured 400 error on failure.
-  - Errors:
-    - 400 — Code exchange failed or provided access token invalid/expired
-    - 422 — Neither `code` nor `access_token` provided
-  - Ideal for native apps or SPAs that already have the code/token and need a pure API flow with no redirects.
-
-### Social account linking / unlinking
-
-- GET `/auth/link/{provider}/redirect` + `/auth/link/{provider}/callback` (authenticated) allow existing users to attach Google/GitHub accounts to their profile.
-- POST `/auth/unlink` removes the provider association.
-- These routes require Bearer tokens (they live in the authenticated group) and return JSON.
-
-### User profile (protected)
-
-    -   Returns current authenticated user's profile.
-
-    -   Body (optional fields):
-        -   `username` (string, optional, max 255, unique)
-        -   `first_name` (string, optional, max 255)
-        -   `last_name` (string, optional, max 255)
-        -   `email` (string, optional, valid email address, unique among users)
-        -   `avatar` (string, optional, url to avatar image)
-            -   NOTE: When returned in API responses, `avatar` is always normalized to an absolute URL so frontends can safely display it. The API accepts multiple formats stored in the DB (absolute URLs, `/storage/...`, `avatars/...`, or relative paths) and converts them to a fully-qualified URL.
-    -   Validation rules:
-        -   `username` => sometimes|string|max:255|unique:users,username,{user_id}
-        -   `first_name` => sometimes|string|max:255
-        -   `last_name` => sometimes|string|max:255
-        -   `email` => sometimes|email|unique:users,email,{user_id}
-        -   `avatar` => sometimes|url
-    -   Success (200): returns updated user { status: 'success', message: 'Profile updated', data: { user will be returned }}
-    -   Errors:
-        -   401 Unauthenticated — missing or invalid token
-        -   422 Validation failed — invalid_name/email or email already taken
-        -   500 Server error — database or other internal error
-    -   Body (optional any): { username, first_name, last_name, email, avatar }
-
-    Example request (GET /user):
-
-    ```http
-    GET /api/user
-    Authorization: Bearer <token>
-    Accept: application/json
-    ```
-
-    Example response (200):
-
-    ```json
-    {
-        "status": "success",
-        "message": "User profile",
-        "data": {
-            "id": 123,
-            "username": "johndoe",
-            "first_name": "John",
-            "last_name": "Doe",
-            "email": "john@example.com",
-            "avatar": "https://cdn.example.com/avatars/123.png",
-            "created_at": "2025-11-28T12:34:56Z"
-        },
-        "code": 200,
-        "timestamp": "2025-11-28T12:35:10Z"
-    }
-    ```
-
-    -   POST /api/auth/password/change (or POST /auth/password/change if `API_DOMAIN` is set)
-
-        -   Body: { current_password_hash, password_hash, password_hash_confirmation }
-        -   Note: All password fields must be 64-character SHA-256 hex hashes
-        -   Behavior: Authenticated endpoint. Validates the user's current password hash, and if valid, updates the password to the new hash. This does *not* revoke active API tokens by default (frontend should re-login to refresh tokens if desired).
-        -   Success (200): { status: 'success', message: 'Password changed successfully' }
-        -   Errors:
-            - 401 Unauthenticated — missing or invalid token
-            - 422 Validation failed — wrong current password hash or invalid new password hash/confirmation
-
-    -   DELETE /api/user (or DELETE /user if `API_DOMAIN` is set)
-
-        -   Behavior: Authenticated endpoint. Deletes the authenticated user's account, associated avatar file stored on the server (if found), and revokes stored API tokens.
-        -   Success (200): { status: 'success', message: 'Account deleted' }
-        -   Errors:
-            - 401 Unauthenticated — missing or invalid token
-
-- POST /api/user/avatar (or POST /user/avatar if `API_DOMAIN` is set)
-  - Multipart/form-data: file field `avatar` (image, max 5MB)
-  - Behavior: authenticated endpoint. Validates and stores the uploaded image under `storage/app/public/avatars/{user_id}/` and returns the public URL. If a previous avatar was stored on the server it will be deleted.
-  - Success (200): { status: 'success', message: 'Avatar uploaded', data: { avatar_url: '<url>' } }
-
-  Example response for avatar upload (200):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Avatar uploaded",
-    "data": {
-      "avatar_url": "https://your-cdn-or-domain/storage/avatars/123/abcdef_1600000000.png"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:40:00Z"
-  }
-  ```
-
-- GET /api/users/{id}/public (or GET /users/{id}/public if `API_DOMAIN` is set)
-  - Returns a limited public profile object suitable for other users or public pages: { id, username, first_name, last_name, avatar, created_at }
-
-  Example response (public profile):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Public profile",
-    "data": {
-      "id": 123,
-      "username": "johndoe",
-      "first_name": "John",
-      "last_name": "Doe",
-      "avatar": "https://cdn.example.com/avatars/123.png",
-      "created_at": "2025-11-28T12:34:56Z"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:41:00Z"
-  }
-  ```
-
-  - Note: `avatar` in the public profile is normalized to an absolute URL (see above).
-
-Notes: run `php artisan storage:link` in deployment to make `storage/app/public` available at `/storage` so avatar URLs are reachable by the browser.
-
-### Mail endpoints
-
-- POST /api/mail/contact (or POST /mail/contact if `API_DOMAIN` is set)
-  - Body: { name, email, message }
-  - Action: Sends a contact message to the configured `MAIL_FROM_ADDRESS`.
-
-- POST /api/mail/newsletter (or POST /mail/newsletter if `API_DOMAIN` is set)
-  - Body: { email, name? }
-  - Validation: `email` => required|email, `name` => sometimes|string|max:255
-  - Action: Creates a newsletter subscriber with a verification token and sends a verification email. A notification is also sent to the admin inbox. Duplicate subscription attempts are idempotent.
-  - Response (200): { status: 'success', message: 'Newsletter signup processed. Please check your email to verify.', data: { subscriber_id } }
-
-- GET /api/mail/newsletter/verify/{token} (or GET /mail/newsletter/verify/{token} if `API_DOMAIN` is set)
-  - Action: Verifies the newsletter subscription via the token sent in the verification email. Once verified, sends a personalized welcome email to the subscriber. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/verified`.
-  - Response (200): { status: 'success', message: 'Subscription verified successfully' }
-  - Response (404): Invalid or expired token
-
-- GET /api/mail/newsletter/unsubscribe/{token} (or GET /mail/newsletter/unsubscribe/{token} if `API_DOMAIN` is set)
-  - Action: Unsubscribes the user from the newsletter by deleting their record. The token is unique per subscriber and included in all newsletter emails. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/unsubscribed`.
-  - Response (200): { status: 'success', message: 'Successfully unsubscribed from newsletter', data: { email } }
-  - Response (404): Invalid or expired token
-
-- POST /api/mail/password-reset (or POST /mail/password-reset if `API_DOMAIN` is set)
-  - Body: { email }
-  - Action: Creates a password reset token and sends the `PasswordResetMail` to the user. Response does not reveal whether the email exists (security best practice).
-  - Response (200): { status: 'success', message: 'If this email is registered, a password reset link has been sent' }
-
-### AI / Gorq
-
-- POST /api/ai/generate (or POST /ai/generate if `API_DOMAIN` is set) — Public endpoint
-- POST /api/ai/generate
-  - Body: { prompt?: string (required without messages), messages?: array (required without prompt), model?: string, max_tokens?: integer, async?: boolean }
-  - Validation rules:
-    - `prompt` => required_without:messages|string|max:5000
-    - `messages` => required_without:prompt|array
-    - `messages.*.role` => sometimes|string|in:system,user,assistant,tool
-    - `messages.*.content` => sometimes|string|array
-    - `model` => sometimes|string|max:255
-    - `max_tokens` => sometimes|integer|min:1|max:2048
-    - `async` => sometimes|boolean
-  - Action: Validates and sanitizes `prompt` or `messages` input, logs the request (`ai_requests` table) and either:
-    - Synchronous (default): builds a chat-style payload and forwards the request to the configured Gorq service (via `GORQ_API_KEY`) and returns the provider result. The `ai_requests` record is updated with status and result. If only `prompt` was provided, it is converted to a single-message conversation where the role is `user`.
-    - Async (async=true): creates an `ai_requests` record (status `pending`) and dispatches a queued job to process the request. Responds 202 Accepted with `job_id` and `status_url` to poll.
-  - Rate limiting: protected by `throttle:ai` rate limiter (per IP). Configure with `AI_RATE_LIMIT_PER_MINUTE` (default 60/min).
-  - Example successful sync response: { status: 'success', data: { ... } }
-  - Example async accepted response (202 Accepted):
-
-```
-HTTP/1.1 202 Accepted
-Content-Type: application/json
-
+```json
 {
-    "status": "accepted",
-    "message": "Request accepted, processing",
-    "data": { "job_id": 123, "status_url": "/api/ai/jobs/123/status" }
+  "username": "john_doe",
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john@example.com",
+  "password_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "password_hash_confirmation": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+  "turnstile_token": "optional_if_captcha_enabled",
+  "recaptcha_token": "optional_if_captcha_enabled"
 }
 ```
 
-    -   Errors & failure modes:
-        - 401 Unauthenticated — (not used) endpoint is public; some UI may prefer authenticated usage for billing/audit
-        - 422 Validation failed — missing prompt or invalid params
-        - 429 Too Many Requests — rate limiter triggered (AI rate limiter `throttle:ai`)
-                - 500 Server Error — AI provider failure or internal error. Response will include `errors` which may contain `payload` (the request payload sent to the provider) and `gorq_response` (raw response details captured from Gorq including status, body, and parsed JSON when appropriate) for debugging. This extra detail can be disabled in production if you prefer not to reveal provider responses.
-
-        -   Example request (Chat Completions style):
-
-```
-POST /api/ai/generate
-Content-Type: application/json
-
-{
-    "messages": [
-        { "role": "system", "content": "You are a helpful assistant." },
-        { "role": "user", "content": "Give me a brief introduction to IoT monitoring." }
-    ],
-    "model": "gpt-test",
-    "max_tokens": 256
-}
-```
-
-        -   Example error response when Gorq fails (500):
-
-```
-HTTP/1.1 500 Internal Server Error
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "AI provider error",
-    "errors": {
-        "payload": {
-            "messages": [ { "role": "user", "content": "..." } ],
-            "model": "gpt-test",
-            "max_tokens": 256
-        },
-        "gorq_response": {
-            "status": 502,
-            "body": "Bad Gateway",
-            "json": null
-        }
-    }
-}
-```
-
-    -   GET /api/ai/jobs/{id}/status (or GET /ai/jobs/{id}/status if `API_DOMAIN` is set) — Public
-    -   Returns the job status and result (or error) for async requests:
-    -   Response (200): { status: 'success', data: { id, status, result?, error?, meta?, created_at, updated_at } }
-
-### Google Maps Embed
-
-- POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
-  - Public: does not require authentication (no Bearer token needed)
-  - No API key required — uses Google Maps embed URL format
-
-  - Body: { address: string (required), zoom?: integer, width?: integer, height?: integer }
-  - Validation rules:
-    - `address` => required|string|max:500
-    - `zoom` => sometimes|integer|min:1|max:21 (default: 15)
-    - `width` => sometimes|integer|min:1|max:2048 (default: 600, for iframe)
-    - `height` => sometimes|integer|min:1|max:2048 (default: 450, for iframe)
-  - Action: Returns Google Maps URLs for embedding and linking. No API key required.
-  - Response structure:
-    ```json
-    {
-      "status": "success",
-      "message": "Map URLs generated",
-      "data": {
-        "embed_url": "https://maps.google.com/maps?q=...&z=15&output=embed",
-        "maps_link": "https://www.google.com/maps/search/?api=1&query=...",
-        "iframe": "<iframe width=\"600\" height=\"450\" src=\"...\"></iframe>",
-        "address": "1600 Amphitheatre Parkway, Mountain View, CA",
-        "zoom": 15
-      },
-      "code": 200,
-      "timestamp": "2025-11-29T12:00:00Z"
-    }
-    ```
-  - Response fields:
-    - `embed_url` — URL for use in an iframe `src` attribute (no API key needed)
-    - `maps_link` — Direct link to Google Maps (opens in browser/app)
-    - `iframe` — Ready-to-use HTML iframe element
-    - `address` — The original address provided
-    - `zoom` — The zoom level used
-  - Errors & failure modes:
-    - 422 Validation failed — missing or invalid address/fields
-
-### Ping / health check
-
-- GET /api/ping — returns a simple JSON response with `{ "status": "ok" }`. If `API_DOMAIN` is set you can use `GET /ping` on your API subdomain (e.g. `https://api.example.com/ping`) to check it is reachable.
-
-### Error response format
-
-When requests fail, the API returns a consistent JSON error structure with an appropriate HTTP status code. The standard fields are:
-
-- `status` — always `error` for failed responses.
-- `message` — a short human readable message such as `Unauthenticated`, `Validation failed`, or `Resource not found`.
-- `errors` — (nullable) an object keyed by field names for validation or structured errors; otherwise `null`.
-- `code` — the HTTP status code returned (e.g., `401`, `422`, `404`, `500`).
-- `timestamp` — ISO 8601 timestamp when the response was generated.
-
-**Authentication errors (401):** Protected routes (e.g., `GET /user`) require a valid Bearer token. If you access these routes without a token or with an expired/invalid token, the API returns a 401 JSON response — it will **never** redirect to a login page. Your frontend should handle 401 responses by prompting the user to log in.
-
-Example 401 (Unauthenticated):
-
-```
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "Unauthenticated.",
-    "errors": null,
-    "code": 401,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Example 422 (Validation error):
-
-```
-HTTP/1.1 422 Unprocessable Entity
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "The given data was invalid.",
-    "errors": {
-        "email": ["The email field is required."],
-        "password": ["The password must be at least 8 characters."]
-    },
-    "code": 422,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Example 403 (Forbidden):
-
-```
-HTTP/1.1 403 Forbidden
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "Forbidden.",
-    "errors": null,
-    "code": 403,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Example 404 (Not found):
-
-```
-HTTP/1.1 404 Not Found
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "Resource not found.",
-    "errors": null,
-    "code": 404,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Example 405 (Method not allowed):
-
-```
-HTTP/1.1 405 Method Not Allowed
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "Method not allowed.",
-    "errors": null,
-    "code": 405,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Example 500 (Server error):
-
-```
-HTTP/1.1 500 Internal Server Error
-Content-Type: application/json
-
-{
-    "status": "error",
-    "message": "Server Error",
-    "errors": null,
-    "code": 500,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-Notes:
-
-- Internally thrown exceptions return the same standard format. When `APP_DEBUG=true`, additional debug details may be included in the response (`exception`, `trace`) to help troubleshooting; avoid enabling debug in production.
-- The API **never redirects** to a login page. All errors are returned as JSON with appropriate HTTP status codes. Your SPA/mobile client should handle these codes accordingly (e.g., redirect to login on 401, show validation errors on 422).
-
-### Success response format
-
-Standard success responses follow a consistent JSON response shape used throughout the API:
-
-- `status` — always `success` for successful responses.
-- `message` — brief human readable description (e.g., `OK`, `Registered`, `Logged in`).
-- `data` — JSON object or array containing the payload for the successful operation.
-- `code` — HTTP status code (e.g., `200` for OK, `201` for created).
-- `timestamp` — ISO 8601 timestamp at the time of response.
-
-Example success response (GET /api/ping):
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "status": "success",
-    "message": "OK",
-    "data": {"status": "ok"},
-    "code": 200,
-    "timestamp": "2025-11-28T12:34:56Z"
-}
-```
-
-    -   Body: { lat: number, lng: number, label?: string, zoom?: integer, width?: integer, height?: integer }
-    -   Action: Returns a URL to a Google Static Maps image with the requested pin.
-    -   Response structure: { status: 'success', data: { map_url: 'https://maps.googleapis.com/...' } }
-
----
-
-## Payments & Plans (Sandbox)
-
-The API includes a **sandbox payment gateway** for plan-based payments and one-time payments. This sandbox validates payment request structure (card format, expiry, CVV) but always succeeds without charging real cards. It's designed for frontend integration testing and development.
-
-### Environment variables
-
-No additional environment variables are required for the sandbox gateway. In production, you would configure real payment provider credentials.
-
-### Database tables
-
-Relevant tables:
-
-- `subscription_plans` — table storing available plans (name, price, interval, features)
-- `payments` — payment records (transaction_id, amount, status, gateway_response, plan_name)
-- `users` — now contains `current_plan` (nullable) which stores the last plan slug the user paid for
-
-Run migrations to create these tables:
-
-```powershell
-php artisan migrate
-```
-
-Seed sample plans:
-
-```powershell
-php artisan db:seed --class=SubscriptionPlanSeeder
-```
-
-### Test card numbers
-
-The sandbox gateway accepts these test cards:
-
-**Success cards:**
-
-- `4242424242424242` — Visa (always succeeds)
-- `5555555555554444` — Mastercard (always succeeds)
-- `378282246310005` — Amex (always succeeds)
-
-**Failure cards:**
-
-- `4000000000000002` — Generic decline
-- `4000000000000069` — Card expired
-- `4000000000000127` — Incorrect CVV
-- `4000000000000119` — Processing error
-
-### Plans (public)
-
-#### GET /api/subscription-plans
-
-List all active plans.
-
-**Response (200):**
+**Notes**:
+
+- `password_hash` must be SHA-256 hash (64 hex characters) - hash on frontend before sending
+- `password_hash_confirmation` must match `password_hash` exactly
+- If CAPTCHA is enabled (either Turnstile or reCAPTCHA), provide at least one of `turnstile_token` or `recaptcha_token`
+- `turnstile_token` must be generated with action "register" when calling Turnstile's execute() method
+- `recaptcha_token` is obtained from reCAPTCHA widget
+- Automatically sends email verification link to user
+- User must verify email before checking email_verified_at
+
+**Response** (201 Created):
 
 ```json
 {
   "status": "success",
-  "message": "Plans retrieved",
+  "message": "Registered. Please check your email to verify your account.",
+  "data": {
+    "user": {
+      "id": 1,
+      "username": "john_doe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john@example.com",
+      "avatar": null,
+      "current_plan": null,
+      "provider_name": null,
+      "provider_id": null,
+      "created_at": "2026-02-24T12:00:00Z",
+      "updated_at": "2026-02-24T12:00:00Z"
+    },
+    "token": "1|abcdefghijklmnopqrstuvwxyz"
+  },
+  "code": 201,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Username/email already exists or invalid format
+- `422 Validation Error`: CAPTCHA failed (if enabled)
+
+**Database Flow**:
+
+- Check if username/email unique in `users` table
+- Create new record in `users` table with hashed password
+- Create API token in `personal_access_tokens` table via Sanctum
+- Send verification email via mail queue
+
+---
+
+### 2. Login User
+
+**Endpoint**: `POST /api/auth/login`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "email": "john@example.com",
+  "password_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+}
+```
+
+**Notes**:
+
+- `password_hash` must be SHA-256 hash of user's password
+- Uses secure hash comparison to prevent timing attacks
+- Returns new API token each login
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Logged in",
+  "data": {
+    "user": {
+      "id": 1,
+      "username": "john_doe",
+      "email": "john@example.com",
+      "email_verified_at": "2026-02-24T11:50:00Z",
+      "avatar": "https://example.com/avatars/user1/avatar.jpg",
+      "current_plan": "pro",
+      "created_at": "2026-02-24T12:00:00Z",
+      "updated_at": "2026-02-24T12:00:00Z"
+    },
+    "token": "1|abcdefghijklmnopqrstuvwxyz"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `401 Unauthorized`: Email not found or password incorrect
+
+---
+
+### 3. Logout User
+
+**Endpoint**: `POST /api/auth/logout`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Headers**:
+
+```
+Authorization: Bearer <token>
+```
+
+**Request Body**: Empty
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Logged out",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Database Flow**:
+
+- Revoke current API token from `personal_access_tokens` table
+- Clear any API token cookies
+
+---
+
+### 4. Send Email Verification
+
+**Endpoint**: `POST /api/auth/verify/send`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Throttled
+
+**Request Body**: Empty
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Verification email sent",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Database Flow**:
+
+- Generate unique verification token
+- Send verification link via email
+
+---
+
+### 5. Verify Email
+
+**Endpoint**: `GET /api/auth/verify/{token}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `token`: Unique token sent in verification email
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Email verified",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `404 Not Found`: Invalid or expired token
+- `422 Validation Error`: Email already verified
+
+**Database Flow**:
+
+- Find token in password_reset_tokens or similar table
+- Update `email_verified_at` field for user
+- Delete used token
+
+---
+
+### 6. Send Password Reset Email
+
+**Endpoint**: `POST /api/auth/password/forgot`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Throttled
+
+**Request Body**:
+
+```json
+{
+  "email": "john@example.com",
+  "turnstile_token": "optional_if_captcha_enabled",
+  "recaptcha_token": "optional_if_captcha_enabled"
+}
+```
+
+**Notes**:
+
+- If CAPTCHA is enabled (either Turnstile or reCAPTCHA), provide at least one of `turnstile_token` or `recaptcha_token`
+- `turnstile_token` must be generated with action "password_reset" when calling Turnstile's execute() method
+- `recaptcha_token` is obtained from reCAPTCHA widget
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Password reset link sent to email",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Database Flow**:
+
+- Find user by email
+- Generate unique reset token
+- Store token in `password_reset_tokens` table
+- Send email with reset link
+
+---
+
+### 7. Reset Password
+
+**Endpoint**: `POST /api/auth/password/reset`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Throttled
+
+**Request Body**:
+
+```json
+{
+  "token": "reset_token_from_email",
+  "email": "john@example.com",
+  "password_hash": "new_sha256_hash_here"
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Password reset successfully",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Invalid token or email mismatch
+
+**Database Flow**:
+
+- Verify token in `password_reset_tokens` table
+- Update user password in `users` table
+- Delete used token
+- Revoke all existing API tokens for security
+
+---
+
+### 8. Change Password (Authenticated)
+
+**Endpoint**: `POST /api/auth/password/change`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Headers**:
+
+```
+Authorization: Bearer <token>
+```
+
+**Request Body**:
+
+```json
+{
+  "current_password_hash": "sha256_of_current_password",
+  "password_hash": "sha256_of_new_password"
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Password changed",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `401 Unauthorized`: Current password incorrect
+- `422 Validation Error`: Validation failed
+
+---
+
+### 9. Google OAuth Login
+
+**Endpoint**: `POST /api/auth/google/token`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "access_token": "google_access_token_from_frontend"
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Logged in with Google",
+  "data": {
+    "user": {...},
+    "token": "1|abcdefghijklmnopqrstuvwxyz"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Notes**:
+
+- Requires Google OAuth credentials in settings
+- Creates user if doesn't exist (OAuth signup)
+- Links existing user if email matches
+
+**Database Flow**:
+
+- Exchange Google token for user info
+- Check if user exists by email or provider_id
+- Create user if not exists with provider info
+- Update/create API token
+
+---
+
+### 10. GitHub OAuth Login
+
+**Endpoint**: `POST /api/auth/github/token`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "access_token": "github_access_token_from_frontend"
+}
+```
+
+**Response**: Same as Google OAuth (200 OK)
+
+**Notes**:
+
+- Requires GitHub OAuth credentials in settings
+- Creates user if doesn't exist
+- Links existing user by email
+
+---
+
+### 11. Link Google Account (Authenticated)
+
+**Endpoint**: `GET /api/auth/link/google/redirect`  
+**Auth Required**: ✅ Yes (Bearer Token + Session)  
+**Rate Limit**: Standard
+
+**Query Parameters**:
+
+- `redirect_uri`: (optional) Where to redirect after linking
+
+**Response**: Redirects to Google OAuth consent screen
+
+**Database Flow**:
+
+- User authorizes account linking
+- Callback updates user's `provider_name` and `provider_id`
+
+---
+
+### 12. Unlink OAuth Provider
+
+**Endpoint**: `POST /api/auth/unlink`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "provider": "google"
+}
+```
+
+---
+
+### 13. OAuth Callback Redirect (External)
+
+**Endpoint**: `GET /api/auth/{provider}/redirect`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Response**: Redirects to OAuth provider (Google/GitHub).
+
+**Post-Authentication Redirect**:  
+Upon successful login/registration via the OAuth provider, the backend system redirects the user back to the frontend application with an authenticated system `token`.
+
+**Target URL**: `https://frontend.com/auth/complete?token={api_token}`
+
+**Query Parameters**:
+
+- `token`: The internal API token generated for the authenticated user.
+
+---
+
+"provider": "google"
+}
+
+````
+
+**Response** (200 OK):
+```json
+{
+  "status": "success",
+  "message": "Provider unlinked",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+````
+
+**Database Flow**:
+
+- Clear provider_name and provider_id for user
+
+---
+
+## User Profile
+
+### 1. Get Current User Profile
+
+**Endpoint**: `GET /api/user`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Headers**:
+
+```
+Authorization: Bearer <token>
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "User profile",
+  "data": {
+    "id": 1,
+    "username": "john_doe",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john@example.com",
+    "avatar": "https://example.com/avatars/user1/avatar.jpg",
+    "current_plan": "pro",
+    "email_verified_at": "2026-02-24T11:50:00Z",
+    "created_at": "2026-02-24T12:00:00Z",
+    "updated_at": "2026-02-24T12:00:00Z"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `401 Unauthorized`: Invalid or expired token
+
+---
+
+### 2. Update User Profile
+
+**Endpoint**: `PUT /api/user`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "username": "john_doe_updated",
+  "first_name": "Johnny",
+  "last_name": "Smith",
+  "email": "newemail@example.com",
+  "avatar": "https://example.com/new-avatar.jpg"
+}
+```
+
+**Notes**:
+
+- All fields are optional
+- Username/email must remain unique
+- Avatar can be URL to external image
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Profile updated",
+  "data": {
+    "id": 1,
+    "username": "john_doe_updated",
+    "first_name": "Johnny",
+    ...
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Username/email already exists
+
+**Database Flow**:
+
+- Update user record in `users` table
+- Validate unique constraints before save
+
+---
+
+### 3. Upload Avatar
+
+**Endpoint**: `POST /api/user/avatar`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard  
+**Content-Type**: multipart/form-data
+
+**Form Data**:
+
+```
+avatar: <image_file>
+```
+
+**Accepted Formats**: JPG, JPEG, PNG, GIF, WebP  
+**Max Size**: 5MB
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Avatar uploaded",
+  "data": {
+    "avatar": "https://example.com/storage/avatars/user1/random_12chars_timestamp.jpg",
+    "id": 1,
+    ...
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: File too large or invalid format
+- `400 Bad Request`: No file uploaded
+
+**Database Flow**:
+
+- Store file in `storage/app/public/avatars/{user_id}/`
+- Update user `avatar` field with accessible URL
+- Delete old avatar file if exists
+- Return accessible public URL
+
+---
+
+### 4. Get Public User Profile
+
+**Endpoint**: `GET /api/users/{id}/public`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `id`: User ID
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "User profile",
+  "data": {
+    "id": 1,
+    "username": "john_doe",
+    "first_name": "John",
+    "avatar": "https://example.com/avatars/user1/avatar.jpg"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Notes**:
+
+- Only returns public fields (no email, created_at)
+- Does not require authentication
+
+---
+
+### 5. Delete User Account
+
+**Endpoint**: `DELETE /api/user`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Request Body**: Empty
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "User deleted",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Database Flow**:
+
+- Delete user record from `users` table
+- Delete associated personal access tokens
+- Delete user's payments (cascade)
+- Delete user's avatar files
+
+---
+
+## Payments & Subscriptions
+
+### 1. List Subscription Plans
+
+**Endpoint**: `GET /api/subscription-plans`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Subscription plans retrieved",
   "data": [
     {
       "id": 1,
-      "name": "Free",
-      "slug": "free",
-      "description": "Basic access with limited features",
-      "price": "0.00",
+      "name": "Starter",
+      "slug": "starter",
+      "description": "For small teams getting started with data convergence.",
+      "price": 49.0,
+      "monthly_price": 49.0,
+      "yearly_price": 39.0,
       "currency": "USD",
       "interval": "monthly",
       "trial_days": 0,
-      "features": ["Basic AI queries (10/day)", "Standard support"],
-      "is_active": true
+      "features": [
+        "Up to 5 data sources",
+        "10K records/month",
+        "Core analytics",
+        "Email support",
+        "1 user seat"
+      ],
+      "is_active": true,
+      "popular": false,
+      "created_at": "2026-02-24T10:00:00Z",
+      "updated_at": "2026-02-24T10:00:00Z"
     },
     {
       "id": 2,
-      "name": "Pro",
-      "slug": "pro",
-      "description": "Full access for professionals",
-      "price": "19.99",
+      "name": "Professional",
+      "slug": "professional",
+      "description": "For growing businesses with complex data needs.",
+      "price": 149.0,
+      "monthly_price": 149.0,
+      "yearly_price": 119.0,
       "currency": "USD",
       "interval": "monthly",
-      "trial_days": 14,
-      "features": ["Unlimited AI queries", "Priority support", "API access"],
-      "is_active": true
+      "trial_days": 0,
+      "features": [
+        "Unlimited data sources",
+        "1M records/month",
+        "Advanced analytics & ML",
+        "Priority support",
+        "10 user seats",
+        "Custom dashboards"
+      ],
+      "is_active": true,
+      "popular": true,
+      "created_at": "2026-02-24T10:00:00Z",
+      "updated_at": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Enterprise",
+      "slug": "enterprise",
+      "description": "For large organizations requiring full control.",
+      "price": null,
+      "monthly_price": null,
+      "yearly_price": null,
+      "currency": "USD",
+      "interval": "monthly",
+      "trial_days": 0,
+      "features": [
+        "Unlimited everything",
+        "Dedicated infrastructure",
+        "SSO & SAML",
+        "24/7 phone support",
+        "Unlimited seats",
+        "Custom SLAs",
+        "On-premises option"
+      ],
+      "is_active": true,
+      "popular": false,
+      "created_at": "2026-02-24T10:00:00Z",
+      "updated_at": "2026-02-24T10:00:00Z"
     }
   ],
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-#### GET /api/subscription-plans/{slug}
+**Database Flow**:
 
-Get a single plan by slug.
+- Query active plans from `subscription_plans` table
+- Order by price ascending
 
-**Response (200):**
+---
+
+### 2. Get Single Plan
+
+**Endpoint**: `GET /api/subscription-plans/{slug}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `slug`: Plan slug (e.g., "pro", "basic")
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "OK",
+  "message": "Plan retrieved",
   "data": {
     "id": 2,
-    "name": "Pro",
-    "slug": "pro",
-    "description": "Full access for professionals",
-    "price": "19.99",
+    "name": "Professional",
+    "slug": "professional",
+    "description": "For growing businesses with complex data needs.",
+    "price": 149.0,
+    "monthly_price": 149.0,
+    "yearly_price": 119.0,
     "currency": "USD",
     "interval": "monthly",
-    "trial_days": 14,
-    "features": ["Unlimited AI queries", "Priority support"],
-    "is_active": true
+    "trial_days": 0,
+    "features": [
+      "Unlimited data sources",
+      "1M records/month",
+      "Advanced analytics & ML",
+      "Priority support"
+    ],
+    "is_active": true,
+    "popular": true
   },
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Errors:**
+**Error Responses**:
 
-- 404 — Plan not found
+- `404 Not Found`: Plan doesn't exist
 
-### Subscribe / pay for a plan (authenticated)
+---
 
-The API treats a plan payment as a payment that records the plan name and sets the user's `current_plan`. A successful plan payment updates the user's account to reflect the chosen plan (by slug); there is no separate subscription resource or lifecycle managed by the API.
+### 3. Subscribe to Plan
 
-All plan-payment endpoints require `Authorization: Bearer <token>` header.
+**Endpoint**: `POST /api/subscriptions`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
 
-#### POST /api/subscriptions
-
-Pay for a plan (purchase). This endpoint charges (sandbox) the card, creates a payment record, and updates `users.current_plan` to the plan slug.
-
-**Request body:**
+**Request Body**:
 
 ```json
 {
   "plan_slug": "pro",
   "payment_method": {
-    "card_number": "4242424242424242",
+    "card_number": "4111111111111111",
     "expiry_month": "12",
-    "expiry_year": "28",
+    "expiry_year": "25",
     "cvv": "123",
     "card_holder": "John Doe"
   },
   "billing_address": {
-    "line1": "123 Main St",
-    "city": "San Francisco",
-    "state": "CA",
-    "postal_code": "94102",
-    "country": "US"
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10001",
+    "country": "USA"
   }
 }
 ```
 
-**Validation:**
+**Notes**:
 
-- `plan_slug` — required string. The API accepts any plan slug the client provides; if the slug does not exist, the server will create a minimal placeholder record in `subscription_plans` and treat the purchase against that slug (price will default to 0.00 when created). This allows clients to submit a plan identifier without requiring a prior admin-created plan.
-- `payment_method.card_number` — required, 13-19 digits
-- `payment_method.expiry_month` — required, 2 digits (01-12)
-- `payment_method.expiry_year` — required, 2 digits (YY format)
-- `payment_method.cvv` — required, 3-4 digits
-- `payment_method.card_holder` — required, max 255 chars
-- `billing_address` — optional object
+- For testing, card numbers starting with "4111" are treated as valid
+- Card data validation: length 13-19 digits, expiry 2 digits, CVV 3-4 digits
+- Creates plan if doesn't exist (for custom plans)
+- Processes payment via sandbox gateway if price > 0
 
-**Response (201):**
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "Payment processed successfully",
+  "message": "Subscription processed",
   "data": {
     "payment": {
       "id": 1,
-      "transaction_id": "TXN_A1B2C3D4E5F6G7H8I9J0K1L2",
-      "plan_name": "pro",
-      "amount": "19.99",
+      "user_id": 1,
+      "plan_slug": "pro",
+      "transaction_id": "txn_2026024_00001",
+      "amount": 29.99,
       "currency": "USD",
-      "status": "completed",
-      "card_last_four": "4242",
-      "card_brand": "visa"
+      "status": "successful",
+      "created_at": "2026-02-24T12:00:00Z"
     },
-    "message": "Plan payment processed — plan set on user account"
+    "user": {
+      "id": 1,
+      "current_plan": "pro",
+      ...
+    }
   },
-  "code": 201,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Errors:**
+**Error Responses**:
 
-- 400 — Payment declined
-- 401 — Unauthenticated
-- 422 — Validation failed
+- `422 Validation Error`: Invalid card data
+- `422 Validation Error`: Payment processing failed
 
-// plan resources no longer exist — use payments endpoints and check user.current_plan for the active plan
+**Database Flow**:
 
-### Payments (authenticated)
+- Create plan if doesn't exist
+- Process payment via SandboxPaymentGateway
+- Create record in `payments` table
+- Update user's `current_plan` field
+- Email receipt to user
 
-#### POST /api/payments/process
+---
 
-Process a one-time payment (not a plan purchase).
+### 4. Process Payment
 
-**Request body:**
+**Endpoint**: `POST /api/payments/process`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Request Body**:
 
 ```json
 {
   "amount": 50.0,
   "currency": "USD",
-  "description": "Premium feature unlock",
   "payment_method": {
-    "card_number": "4242424242424242",
+    "card_number": "4111111111111111",
     "expiry_month": "12",
-    "expiry_year": "28",
+    "expiry_year": "25",
     "cvv": "123",
     "card_holder": "John Doe"
   },
-  "metadata": {
-    "feature_id": "premium_export",
-    "order_id": "ORD-12345"
-  }
+  "reference": "custom_payment_ref"
 }
 ```
 
-**Validation:**
-
-- `amount` — required, numeric, min 0.50, max 999999.99
-- `currency` — optional, 3-char ISO code (default: USD)
-- `description` — optional, max 500 chars
-- `payment_method` — same as plan purchase
-- `metadata` — optional object for custom data
-
-**Response (201):**
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "Payment processed successfully",
+  "message": "Payment processed",
   "data": {
-    "id": 5,
-    "transaction_id": "TXN_X1Y2Z3A4B5C6D7E8F9G0H1I2",
-    "amount": "50.00",
+    "transaction_id": "txn_2026024_00002",
+    "amount": 50.0,
     "currency": "USD",
-    "status": "completed",
-    "type": "one-time",
-    "card_last_four": "4242",
-    "card_brand": "visa",
-    "description": "Premium feature unlock",
-    "paid_at": "2025-12-02T12:00:00Z"
-  },
-  "code": 201,
-  "timestamp": "2025-12-02T12:00:00Z"
-}
-```
-
-#### GET /api/payments
-
-List payment history for the authenticated user (paginated).
-
-**Response (200):**
-
-```json
-{
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "data": [
-      {
-        "id": 1,
-        "transaction_id": "TXN_ABC123",
-        "amount": "19.99",
-        "currency": "USD",
-        "status": "completed",
-        "type": "subscription",
-        "paid_at": "2025-12-02T12:00:00Z"
-      }
-    ],
-    "current_page": 1,
-    "last_page": 1,
-    "per_page": 20,
-    "total": 1
+    "status": "successful",
+    "created_at": "2026-02-24T12:00:00Z"
   },
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-#### GET /api/payments/{transactionId}
+**Database Flow**:
 
-Verify/retrieve a payment by transaction ID.
+- Process payment via gateway
+- Record in `payments` table
+- Email confirmation
 
-**Response (200):**
+---
+
+### 5. List User Payments
+
+**Endpoint**: `GET /api/payments`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Query Parameters**:
+
+- `status`: Filter by status (successful, failed, pending)
+- `limit`: Pagination limit (default 20)
+- `offset`: Pagination offset (default 0)
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "OK",
-  "data": {
-    "payment": {
+  "message": "Payments retrieved",
+  "data": [
+    {
       "id": 1,
-      "transaction_id": "TXN_ABC123",
-      "amount": "19.99",
-      "status": "completed"
-    },
-    "verified": true,
-    "gateway_status": {
-      "valid": true,
-      "status": "completed",
-      "sandbox": true
-    }
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
-}
-```
-
-**Errors:**
-
-- 404 — Payment not found
-
-#### GET /api/payments/last-plan
-
-Get the last plan the authenticated user paid for, along with the payment record.
-
-**Response (200):**
-
-```json
-{
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "plan": {
-      "id": 2,
-      "name": "Pro",
-      "slug": "pro",
-      "description": "Full access for professionals",
-      "price": "19.99",
+      "user_id": 1,
+      "transaction_id": "txn_2026024_00001",
+      "plan_slug": "pro",
+      "amount": 29.99,
       "currency": "USD",
-      "interval": "monthly",
-      "trial_days": 14,
-      "features": ["Unlimited AI queries", "Priority support"],
-      "is_active": true
-    },
-    "payment": {
-      "id": 1,
-      "transaction_id": "TXN_ABC123",
-      "plan_name": "pro",
-      "amount": "19.99",
-      "currency": "USD",
-      "status": "completed",
-      "type": "subscription",
-      "paid_at": "2025-12-02T12:00:00Z"
+      "status": "successful",
+      "created_at": "2026-02-24T12:00:00Z"
     }
-  },
+  ],
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Response when no plan purchase found (200):**
+**Database Flow**:
+
+- Query user's payments from `payments` table
+- Filter by status if provided
+- Order by created_at DESC
+- Apply pagination
+
+---
+
+### 6. Get Last/Current Plan
+
+**Endpoint**: `GET /api/payments/last-plan`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "No plan purchase found",
+  "message": "Last plan retrieved",
   "data": {
-    "plan": null,
-    "payment": null
+    "id": 2,
+    "name": "Pro",
+    "slug": "pro",
+    "price": 29.99,
+    "interval": "monthly",
+    "features": [...]
   },
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-#### POST /api/payments/refund/{transactionId}
+**Notes**:
 
-Request a refund for a completed payment.
+- Returns the subscription plan user is currently on or last paid for
 
-**Request body (optional):**
+---
 
-```json
-{
-  "reason": "Customer requested refund"
-}
-```
+### 7. Verify Payment
 
-**Response (200):**
+**Endpoint**: `GET /api/payments/{transactionId}`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `transactionId`: Transaction ID (e.g., "txn_2026024_00001")
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
-  "message": "Refund processed successfully",
+  "message": "Payment verified",
   "data": {
     "id": 1,
-    "transaction_id": "TXN_ABC123",
-    "status": "refunded",
-    "metadata": {
-      "refund_reason": "Customer requested refund",
-      "refund_transaction_id": "REF_XYZ789",
-      "refunded_at": "2025-12-02T12:00:00Z"
-    }
+    "transaction_id": "txn_2026024_00001",
+    "status": "successful",
+    "amount": 29.99,
+    "verified_at": "2026-02-24T12:00:00Z"
   },
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Errors:**
+**Error Responses**:
 
-- 400 — Already refunded or not completed
-- 404 — Payment not found
+- `404 Not Found`: Transaction doesn't exist
+- `403 Forbidden`: User can't view this payment
 
-#### POST /api/payments/revert-plan
+---
 
-Change or clear the user's current plan without charging. This creates an audit payment record with type `revert` so plan changes are recorded in history.
+### 8. Refund Payment
 
-**Request body:**
+**Endpoint**: `POST /api/payments/refund/{transactionId}`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Throttled
+
+**URL Parameters**:
+
+- `transactionId`: Transaction ID to refund
+
+**Request Body**:
 
 ```json
 {
-  "to_plan": "free", // optional plan slug to switch to; omit or null to clear current_plan
-  "reason": "Downgrading to free plan"
+  "reason": "Requested refund"
 }
 ```
 
-**Validation:**
+**Response** (200 OK):
 
-- `to_plan` — optional, must be a valid plan slug if present
-- `reason` — optional, max 500 chars
+```json
+{
+  "status": "success",
+  "message": "Refund processed",
+  "data": {
+    "original_transaction_id": "txn_2026024_00001",
+    "refund_transaction_id": "refund_2026024_00001",
+    "amount": 29.99,
+    "status": "successful",
+    "created_at": "2026-02-24T12:00:00Z"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
 
-**Response (200):**
+**Notes**:
+
+- Requires original payment to be in successful status
+- Creates refund record in payments table
+- Only original payment owner can refund
+
+---
+
+### 9. Revert Plan
+
+**Endpoint**: `POST /api/payments/revert-plan`  
+**Auth Required**: ✅ Yes (Bearer Token)  
+**Rate Limit**: Standard
+
+**Request Body**: Empty or
+
+```json
+{
+  "plan_slug": "basic"
+}
+```
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
   "message": "Plan reverted",
   "data": {
-    "payment": {
-      "id": 12,
-      "type": "revert",
-      "plan_name": "free",
-      "amount": "0.00"
-    },
-    "user": { "id": 1, "current_plan": "free" }
+    "current_plan": "basic",
+    "user": {...}
   },
-  "code": 200
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Errors:**
+**Database Flow**:
 
-- 401 — Unauthenticated
-- 422 — Validation failed
+- Downgrade or change user's current_plan
 
-### Payment Webhook (public)
+---
 
-#### POST /api/payments/webhook
+### 10. Create Subscription Plan
 
-Handle payment gateway webhooks (sandbox simulation).
+**Endpoint**: `POST /api/subscription-plans`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
 
-**Request body:**
+**Request Body**:
 
 ```json
 {
-  "event_type": "payment.completed",
-  "transaction_id": "TXN_ABC123",
-  "payload": {}
+  "name": "Enterprise",
+  "slug": "enterprise",
+  "description": "For large organizations requiring full control.",
+  "monthly_price": null,
+  "yearly_price": null,
+  "currency": "USD",
+  "trial_days": 0,
+  "features": [
+    "Unlimited everything",
+    "Dedicated infrastructure",
+    "SSO & SAML",
+    "24/7 phone support"
+  ],
+  "is_active": true,
+  "popular": false
 }
 ```
 
-**Supported event types:**
+**Notes**:
 
-- `payment.completed` — marks a payment as completed
-- `payment.failed` — marks a payment as failed
+- Public endpoint - anyone can create plans
+- Slug must be unique
+- Supports new pricing structure: `monthly_price` and `yearly_price` (both optional, can be null)
+- Also accepts legacy format with `price` and `interval` for backward compatibility
+- `popular` flag indicates if this is a featured/highlighted plan
+- If only `price` provided (legacy), it will be auto-mapped to appropriate field based on `interval`
 
-Note: lifecycle events for a separate subscription model are not used in this API — plan state is represented by `users.current_plan` and recorded payments. Only payment events are handled in the webhook handler for the sandbox gateway.
+**Response** (201 Created):
 
-**Headers (optional):**
+```json
+{
+  "status": "success",
+  "message": "Plan created",
+  "data": {
+    "id": 3,
+    "name": "Enterprise",
+    "slug": "enterprise",
+    ...
+  },
+  "code": 201,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
 
-- `X-Webhook-Signature` — HMAC signature (sandbox accepts any value)
+---
 
-**Response (200):**
+### 11. Update Subscription Plan
+
+**Endpoint**: `PUT /api/subscription-plans/{id}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**: Same as create (partial update possible)
+
+**Example Partial Update**:
+
+```json
+{
+  "monthly_price": 99.99,
+  "yearly_price": 79.99,
+  "popular": true
+}
+```
+
+**Notes**:
+
+- Any field can be updated individually
+- Supports both new pricing fields (`monthly_price`, `yearly_price`) and legacy field (`price`)
+- If legacy format used, automatically converts to new structure
+
+**Response** (200 OK)
+
+---
+
+### 12. Delete Subscription Plan
+
+**Endpoint**: `DELETE /api/subscription-plans/{id}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Plan deleted",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+---
+
+### 13. Payment Webhook
+
+**Endpoint**: `POST /api/payments/webhook`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Headers** (optional):
+
+```
+X-Webhook-Signature: signature_token
+```
+
+**Request Body**:
+
+```json
+{
+  "event": "payment.completed",
+  "transaction_id": "txn_external_123",
+  "status": "successful",
+  "amount": 50.0,
+  "user_email": "john@example.com",
+  "metadata": {}
+}
+```
+
+**Response** (200 OK):
 
 ```json
 {
   "status": "success",
   "message": "Webhook processed",
-  "data": {
-    "received": true,
-    "event_type": "payment.completed"
-  },
+  "data": null,
   "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+  "timestamp": "2026-02-24T12:00:00Z"
 }
 ```
 
-**Errors:**
+**Notes**:
 
-- 401 — Invalid webhook signature (in production)
-- 422 — Missing event_type or transaction_id
+- Called by external payment processors (Stripe, PayPal, etc.)
+- Uses webhook signature verification if configured
+- Processes payment updates asynchronously
 
 ---
+
+## Admin & Settings Endpoints
+
+### 1. Update Subscription Plans Schema (Database Migration)
+
+**Endpoint**: `POST /settings/subscription-plans/update-schema`  
+**Auth Required**: ✅ Yes (Admin Auth)  
+**Rate Limit**: Standard
+
+**Notes**:
+
+- Allows existing customers to upgrade their database schema
+- Runs new migration for pricing structure (`monthly_price`, `yearly_price`, `popular` columns)
+- Automatically populates new pricing columns from existing data
+- Existing plans are preserved and converted to new format
+- No request body required
+
+**Response** (302 Redirect - with flash message):
+
+```
+Location: /settings/subscription-plans
+Flash Success: "Database schema updated successfully!"
+```
+
+---
+
+### 2. Bulk Import Subscription Plans
+
+**Endpoint**: `POST /settings/subscription-plans/bulk-import`  
+**Auth Required**: ✅ Yes (Admin Auth)  
+**Rate Limit**: Standard
+
+**Request Body** (Form Data):
+
+```
+json_data: [
+  {
+    name: "Starter",
+    monthlyPrice: 49,
+    yearlyPrice: 39,
+    description: "For small teams",
+    features: ["Feature 1", "Feature 2"],
+    popular: false
+  }
+]
+```
+
+**Supported Formats**:
+
+- JavaScript object notation (unquoted keys) - `{ name: "value" }`
+- Strict JSON (quoted keys) - `{ "name": "value" }`
+- Legacy format - `{ price: 29.99, interval: "monthly" }`
+- Trailing commas - `{ name: "value", }`
+
+**Notes**:
+
+- Required fields: `name`
+- Optional fields: `slug` (auto-generated from name if not provided), `monthlyPrice`, `yearlyPrice`, `price`, `description`, `features`, `currency`, `interval`, `trial_days`, `is_active`, `popular`
+- Unquoted property names are automatically converted to valid JSON
+- Trailing commas are supported (JavaScript-style)
+- Skips plans with duplicate slugs
+- Reports import success, duplicates, and any errors
+
+**Response** (302 Redirect):
+
+```
+Flash Success: "Successfully imported X plan(s)."
+Location: /settings/subscription-plans
+```
+
+---
+
+## AI Generation
+
+### 1. Generate AI Response
+
+**Endpoint**: `POST /api/ai/generate`  
+**Auth Required**: ❌ No (but can be authenticated for tracking)  
+**Rate Limit**: `throttle:ai` (configurable, default 60 per minute)
+
+**Request Body** (with prompt):
+
+```json
+{
+  "prompt": "Write a short poem about artificial intelligence",
+  "model": "gpt-4o-mini",
+  "max_tokens": 256,
+  "async": false
+}
+```
+
+**Or** (with messages):
+
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant"
+    },
+    {
+      "role": "user",
+      "content": "What is the capital of France?"
+    }
+  ],
+  "model": "gpt-4o-mini",
+  "max_tokens": 256,
+  "async": false
+}
+```
+
+**Notes**:
+
+- Either `prompt` or `messages` required (not both)
+- Default model from `GORQ_DEFAULT_MODEL` env var
+- `async: true` returns job ID for polling status
+- `async: false` (default) waits for response
+- Uses Gorq AI service for generation
+
+**Response (Synchronous)** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "AI generation result",
+  "data": {
+    "id": "chatcmpl-1b5cc4d6-33f1-41ad-8995-e333b1a06f66",
+    "object": "chat.completion",
+    "created": 1774003192,
+    "model": "llama-3.1-8b-instant",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "It seems like you're looking for general information about hell..."
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "queue_time": 0.0725,
+      "prompt_tokens": 36,
+      "completion_tokens": 185,
+      "total_tokens": 221
+    },
+    "system_fingerprint": "fp_d317489708",
+    "timestamp": "2026-03-20T10:39:52+00:00"
+  },
+  "code": 200,
+  "timestamp": "2026-03-20T10:39:52+00:00"
+}
+```
+
+**Response (Asynchronous)** (202 Accepted):
+
+```json
+{
+  "status": "success",
+  "message": "Generation queued",
+  "data": {
+    "job_id": "uuid-here",
+    "status": "pending",
+    "created_at": "2026-02-24T12:00:00Z"
+  },
+  "code": 202,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Missing prompt/messages
+- `429 Too Many Requests`: Rate limit exceeded
+- `500 Internal Server Error`: Gorq API error
+
+**Database Flow**:
+
+- Create record in `ai_requests` table
+- Store user_id (if authenticated), model, prompt, status
+- If async=false: call Gorq API, get response, update status
+- If async=true: dispatch ProcessAiRequest job, return job_id
+- Store generated response in database
+
+---
+
+### 2. Get AI Job Status
+
+**Endpoint**: `GET /api/ai/jobs/{id}/status`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `id`: Job/Request ID (returned from async generation)
+
+**Response (Pending)** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Job status",
+  "data": {
+    "id": "uuid-here",
+    "status": "pending",
+    "progress": 0
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Response (Completed)** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Job status",
+  "data": {
+    "id": "uuid-here",
+    "status": "completed",
+    "response": "Full generated response here...",
+    "tokens_used": 150,
+    "completed_at": "2026-02-24T12:00:30Z"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Response (Failed)** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Job status",
+  "data": {
+    "id": "uuid-here",
+    "status": "failed",
+    "error": "API rate limit exceeded"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `404 Not Found`: Job doesn't exist or has expired
+
+**Database Flow**:
+
+- Query `ai_requests` table by ID
+- Return status, progress, or response depending on status
+
+---
+
+## Email & Messaging
+
+### 1. Contact Form Submission
+
+**Endpoint**: `POST /api/mail/contact`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "message": "I have a question about your service",
+  "turnstile_token": "optional_if_captcha_enabled",
+  "recaptcha_token": "optional_if_captcha_enabled"
+}
+```
+
+**Notes**:
+
+- If CAPTCHA is enabled (either Turnstile or reCAPTCHA), provide at least one of `turnstile_token` or `recaptcha_token`
+- `turnstile_token` must be generated with action "contact" when calling Turnstile's execute() method
+- `recaptcha_token` is obtained from reCAPTCHA widget
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Contact message queued/sent",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Missing required fields
+- `422 Validation Error`: CAPTCHA failed (if enabled)
+
+**Database Flow**:
+
+- Queue email to admin inbox (from config MAIL_TO_ADDRESS)
+- Email sent via configured mail driver (SMTP, Mailgun, etc.)
+- Log submission in application logs
+
+---
+
+### 2. Newsletter Signup
+
+**Endpoint**: `POST /api/mail/newsletter`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Throttled
+
+**Request Body**:
+
+```json
+{
+  "email": "subscriber@example.com",
+  "name": "Jane Smith",
+  "turnstile_token": "optional_if_captcha_enabled",
+  "recaptcha_token": "optional_if_captcha_enabled"
+}
+```
+
+**Notes**:
+
+- If CAPTCHA is enabled (either Turnstile or reCAPTCHA), provide at least one of `turnstile_token` or `recaptcha_token`
+- `turnstile_token` must be generated with action "newsletter" when calling Turnstile's execute() method
+- `recaptcha_token` is obtained from reCAPTCHA widget
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Newsletter subscription received. Please verify by clicking the link in the email sent to you.",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Notes**:
+
+- Creates or updates entry in `newsletter_subscribers` table
+- Sends verification email with unique token
+- Subscriber must verify before being active
+
+**Error Responses**:
+
+- `422 Validation Error`: Invalid email format
+
+**Database Flow**:
+
+- Check if email already in `newsletter_subscribers`
+- Create new record with status=pending_verification
+- Generate unique verification token
+- Send verification email with link
+
+---
+
+### 3. Verify Newsletter Subscription
+
+**Endpoint**: `GET /api/mail/newsletter/verify/{token}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `token`: Unique token from verification email
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Email verified and subscribed",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `404 Not Found`: Token invalid or expired
+- `422 Validation Error`: Email already verified
+
+**Database Flow**:
+
+- Find token in newsletter_subscribers
+- Update verified_at timestamp
+- Mark as active/verified
+- Delete token
+
+---
+
+### 4. Unsubscribe from Newsletter
+
+**Endpoint**: `GET /api/mail/newsletter/unsubscribe/{token}`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**URL Parameters**:
+
+- `token`: Unique unsubscribe token sent in newsletter emails
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Unsubscribed successfully",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Database Flow**:
+
+- Find token in newsletter_subscribers
+- Mark as unsubscribed
+- Delete verification/unsubscribe tokens
+
+---
+
+### 5. Send Password Reset Email
+
+**Endpoint**: `POST /api/mail/password-reset`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Throttled
+
+**Request Body**:
+
+```json
+{
+  "email": "john@example.com"
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Password reset link sent",
+  "data": null,
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Notes**:
+
+- Same as `/api/auth/password/forgot`
+- Sends reset link to user's email
+
+---
+
+## Maps
+
+### 1. Create Map Pin (Get Embed URLs)
+
+**Endpoint**: `POST /api/maps/pin`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body**:
+
+```json
+{
+  "address": "123 Main Street, New York, NY 10001",
+  "zoom": 15,
+  "width": 600,
+  "height": 450
+}
+```
+
+**Notes**:
+
+- Address is required
+- Zoom: 1-21 (default 15)
+- Width/Height: defaults 600x450
+- Does not require stored data - generates URLs on the fly
+
+**Response** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Map pin generated",
+  "data": {
+    "address": "123 Main Street, New York, NY 10001",
+    "embed_url": "https://maps.google.com/maps?q=123+Main+Street%2C+New+York%2C+NY+10001&z=15&output=embed",
+    "maps_link": "https://www.google.com/maps/search/?api=1&query=123+Main+Street%2C+New+York%2C+NY+10001",
+    "iframe": "<iframe width=\"600\" height=\"450\" ... src=\"https://maps.google.com/maps...\"></iframe>",
+    "zoom": 15,
+    "width": 600,
+    "height": 450
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Error Responses**:
+
+- `422 Validation Error`: Invalid address or parameters
+
+**Database Flow**:
+
+- No database operation
+- Directly generates and returns Google Maps URLs
+
+---
+
+## CAPTCHA
+
+### 1. Verify CAPTCHA Token
+
+**Endpoint**: `POST /api/captcha/verify`  
+**Auth Required**: ❌ No  
+**Rate Limit**: Standard
+
+**Request Body** (Turnstile):
+
+```json
+{
+  "provider": "turnstile",
+  "token": "captured_turnstile_token",
+  "action": "contact_form"
+}
+```
+
+**Or** (reCAPTCHA):
+
+```json
+{
+  "provider": "recaptcha",
+  "token": "captured_recaptcha_token"
+}
+```
+
+**Response (Success)** (200 OK):
+
+```json
+{
+  "status": "success",
+  "message": "Captcha verified",
+  "data": {
+    "success": true,
+    "score": 0.9,
+    "challenge_ts": "2026-02-24T12:00:00Z",
+    "hostname": "example.com"
+  },
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Response (Failure)** (422 Unprocessable Entity):
+
+```json
+{
+  "status": "error",
+  "message": "Captcha verification failed",
+  "errors": {
+    "error": ["Captcha token invalid or expired"]
+  },
+  "code": 422,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+**Notes**:
+
+- Turnstile: Cloudflare CAPTCHA
+- reCAPTCHA: Google reCAPTCHA v2/v3
+- Provider auto-detects if not specified
+- For Turnstile, the `action` parameter must match the action used when generating the token (e.g., "register", "contact", "newsletter", "password_reset")
+- Score (reCAPTCHA only): 0.0-1.0 (higher = more human-like)
+- Either Turnstile or reCAPTCHA can be used, but at least one CAPTCHA system must be enabled in settings
+
+**Database Flow**:
+
+- Call external API (Turnstile/reCAPTCHA verification endpoint)
+- Validate response signature
+- Return verification result
+
+---
+
+## Response Format
+
+### Success Response
+
+All successful API responses follow this format:
+
+```json
+{
+  "status": "success",
+  "message": "Human-readable message",
+  "data": {},
+  "code": 200,
+  "timestamp": "2026-02-24T12:00:00.000Z"
+}
+```
+
+**Fields**:
+
+- `status`: Always "success" for successful responses
+- `message`: Human-readable description of the response
+- `data`: Response payload (object, array, or null)
+- `code`: HTTP status code
+- `timestamp`: ISO-8601 timestamp in UTC
+
+### Error Response
+
+```json
+{
+  "status": "error",
+  "message": "Error description",
+  "errors": {
+    "field_name": ["Error message for field"]
+  },
+  "code": 422,
+  "timestamp": "2026-02-24T12:00:00.000Z"
+}
+```
+
+**Fields**:
+
+- `status`: Always "error" for error responses
+- `message`: General error message
+- `errors`: Object containing field-specific error messages (for validation errors)
+- `code`: HTTP status code
+- `timestamp`: ISO-8601 timestamp
+
+### HTTP Status Codes
+
+| Code | Meaning               | Usage                           |
+| ---- | --------------------- | ------------------------------- |
+| 200  | OK                    | Successful request              |
+| 201  | Created               | Resource created successfully   |
+| 202  | Accepted              | Async request accepted (queued) |
+| 400  | Bad Request           | Malformed request               |
+| 401  | Unauthorized          | Missing/invalid authentication  |
+| 403  | Forbidden             | Authenticated but not allowed   |
+| 404  | Not Found             | Resource doesn't exist          |
+| 422  | Unprocessable Entity  | Validation error                |
+| 429  | Too Many Requests     | Rate limit exceeded             |
+| 500  | Internal Server Error | Server error                    |
+
+---
+
+## Authentication
+
+### Bearer Token
+
+Include in `Authorization` header:
+
+```
+Authorization: Bearer {token}
+```
+
+### Token Format
+
+Tokens are Sanctum personal access tokens:
+
+```
+{database_id}|{random_64_char_string}
+```
+
+Example: `1|abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop`
+
+### Token Expiration
+
+- Tokens don't expire by default (can be configured)
+- Can be revoked/deleted at any time
+- One token per login (previous token invalidated)
+- Safe to store in localStorage but secure HTTPOnly cookies recommended
+
+---
+
+## Rate Limiting
+
+### Default Limits
+
+- **Standard**: 60 requests per minute per IP
+- **Throttled**: 10 requests per minute per IP (password resets, etc.)
+- **AI**: 60 requests per minute (configurable via AI_RATE_LIMIT_PER_MINUTE)
+
+### Rate Limit Headers
+
+```
+RateLimit-Limit: 60
+RateLimit-Remaining: 45
+RateLimit-Reset: 1645092000
+```
+
+### Exceeding Limits
+
+Returns `429 Too Many Requests`:
+
+```json
+{
+  "status": "error",
+  "message": "Too Many Requests",
+  "code": 429,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+---
+
+## Common Query Parameters
+
+### Pagination
+
+- `limit`: Number of results (default 20, max 100)
+- `offset`: Number of results to skip (default 0)
+- `skip`: Alternative to offset
+
+### Sorting
+
+- `sort`: Field to sort by (prepend `-` for descending)
+- Example: `?sort=-created_at` (newest first)
+
+### Filtering
+
+- `status`: Filter by status
+- `email`: Filter by email
+- Varies by endpoint
+
+---
+
+## Error Handling
+
+### Validation Errors
+
+```json
+{
+  "status": "error",
+  "message": "The given data was invalid",
+  "errors": {
+    "email": ["The email must be a valid email address"],
+    "password_hash": ["The password hash must be 64 characters"]
+  },
+  "code": 422,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+### Missing Required Fields
+
+```json
+{
+  "status": "error",
+  "message": "Missing required field",
+  "errors": {
+    "prompt": ["The prompt field is required"]
+  },
+  "code": 422,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+### Unauthorized
+
+```json
+{
+  "status": "error",
+  "message": "Unauthenticated",
+  "errors": null,
+  "code": 401,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+### Not Found
+
+```json
+{
+  "status": "error",
+  "message": "Resource not found",
+  "errors": null,
+  "code": 404,
+  "timestamp": "2026-02-24T12:00:00Z"
+}
+```
+
+---
+
+## Data Types & Formats
+
+### Password Hashing
+
+Frontend must hash passwords to SHA-256before sending:
+
+```javascript
+// JavaScript example
+const password = "userPassword123";
+const hash = await crypto.subtle.digest(
+  "SHA-256",
+  new TextEncoder().encode(password),
+);
+const hashHex = Array.from(new Uint8Array(hash))
+  .map((b) => b.toString(16).padStart(2, "0"))
+  .join("");
+```
+
+### Email Addresses
+
+- Must be valid email format
+- Case-insensitive for comparison (stored as lowercase)
+- Must be unique per user
+
+### Usernames
+
+- Alphanumeric, underscores, hyphens allowed
+- Case-sensitive
+- 3-255 characters
+- Must be unique
+
+### Avatar URLs
+
+- Can be external URL
+- Can upload file for local storage
+- Returned as absolute HTTP/HTTPS URL
+
+### Dates/Timestamps
+
+- All dates in ISO-8601 format: `YYYY-MM-DDTHH:MM:SS.sssZ`
+- Always UTC timezone
+- Example: `2026-02-24T12:00:00.000Z`
+
+### Card Data
+
+- Card numbers: 13-19 digits
+- Expiry month: 2 digits (01-12)
+- Expiry year: 2 digits (25, 26, etc.)
+- CVV: 3-4 digits
+
+### URLs
+
+- Must use HTTP/HTTPS protocol
+- Must be properly formatted
+- Example: `https://example.com/image.jpg`
+
+---
+
+## Security Best Practices
+
+### For Frontend Developers
+
+1. **Hash Passwords**: Always hash to SHA-256 before sending
+2. **Use HTTPS**: Never send credentials over HTTP
+3. **Store Tokens Securely**: Use HTTPOnly cookies or secure localStorage
+4. **CORS**: Configure CORS policy in backend (api.example.com allowed origins)
+5. **Validation**: Validate input on frontend before sending
+6. **Never Log Credentials**: Don't log passwords or tokens
+7. **Use CAPTCHA**: Enable Turnstile/reCAPTCHA for public forms
+8. **Rate Limiting**: Handle 429 responses gracefully
+
+### API Endpoint Security
+
+- Public endpoints (register, login, contact, newsletter, maps, captcha, subscription plans)
+- Protected endpoints (user profile, payments, AI) - require Bearer token
+- All inputs validated and sanitized
+- SQL injection prevented via ORM
+- XSS prevention via JSON responses
+- CSRF protection via token validation
+
+---
+
+## Example Frontend Implementations
+
+### Login Flow
+
+```
+1. User enters email and password
+2. Frontend hashes password to SHA-256
+3. POST /api/auth/login with email + hash
+4. Receive token in response
+5. Store token securely (HTTPOnly cookie or localStorage)
+6. Use token for all subsequent authenticated requests
+7. Include in Authorization: Bearer header
+```
+
+### Payment Flow
+
+```
+1. GET /api/subscription-plans (display options)
+2. User selects plan and enters card details
+3. POST /api/subscriptions with plan_slug + card_data
+4. Backend processes payment via gateway
+5. Update user's current_plan
+6. Display success/error to user
+```
+
+### AI Generation Flow (Async)
+
+```
+1. User submits prompt
+2. POST /api/ai/generate with prompt + async: true
+3. Receive job_id in 202 response
+4. Poll GET /api/ai/jobs/{job_id}/status periodically
+5. When status=completed, display response to user
+6. Show loading state while pending
+```
+
+---
+
+**API Version**: 1.0  
+**Last Updated**: February 24, 2026  
+**Status**: Production Ready

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
@@ -31,6 +32,13 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    if (confirm("Are you sure you want to sign out?")) {
+      await logout();
+    }
+  };
 
   const sidebarContent = (
     <>
@@ -102,7 +110,10 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
 
       {/* Footer / User Area */}
       <div className="p-4 mt-auto">
-        <button className="w-full flex items-center gap-4 px-4 py-4 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/5 transition-all group">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center gap-4 px-4 py-4 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/5 transition-all group"
+        >
           <LogOut className="w-5 h-5 shrink-0" />
           {(!collapsed || mobileOpen) && <span className="text-sm font-semibold">Logout</span>}
         </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -42,16 +42,36 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center mb-10 text-center"
         >
-          <div className="relative w-12 h-12 mb-6">
-            <div className="absolute inset-0 rounded-xl gradient-flow" />
-            <Zap className="relative w-12 h-12 p-2.5 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold tracking-tighter mb-3">
-            {title.split(" ").map((word, i) => (
-              <span key={i} className={i === title.split(" ").length - 1 ? "gradient-text" : ""}>
-                {word}{" "}
-              </span>
-            ))}
+          <Link href="/" className="flex items-center gap-3 mb-8 group" data-hoverable>
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 rounded-lg gradient-flow opacity-80 group-hover:opacity-100 transition-opacity" />
+              <svg
+                viewBox="0 0 32 32"
+                className="relative w-10 h-10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 8L16 4L24 8L24 16L16 24L8 16Z"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M16 12L20 14L20 18L16 20L12 18L12 14Z"
+                  fill="white"
+                  opacity="0.6"
+                />
+                <circle cx="16" cy="16" r="2" fill="white" />
+              </svg>
+            </div>
+            <span className="text-2xl font-bold tracking-tight">
+              Data<span className="gradient-text">flowra</span>
+            </span>
+          </Link>
+
+          <h1 className="text-4xl font-bold tracking-tighter mb-3 leading-tight">
+            {title}
           </h1>
           <p className="text-[var(--text-muted)] font-medium">
             {subtitle}
@@ -78,9 +98,9 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="mt-8 text-center text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] opacity-50"
+          className="mt-8 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] opacity-50"
         >
-          Secured by Dataflowra Cloud Shield
+          Secured by Dataflowra Cloud Shield • ReCAPTCHA V3 Active
         </motion.p>
       </div>
     </div>
