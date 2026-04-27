@@ -9,7 +9,7 @@ export async function sha256(message: string): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.dataflowra.com/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.dataflowra.com";
 
 export interface ApiResponse<T = any> {
   status: "success" | "error";
