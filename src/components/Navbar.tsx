@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Features", href: "/#features" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 export default function Navbar() {
@@ -33,7 +34,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 group" data-hoverable>
+        <Link href="/" className="flex items-center gap-2 group" data-hoverable>
           <div className="relative w-8 h-8">
             <div className="absolute inset-0 rounded-lg gradient-flow opacity-80 group-hover:opacity-100 transition-opacity" />
             <svg
@@ -59,10 +60,18 @@ export default function Navbar() {
           <span className="text-lg font-bold tracking-tight">
             Data<span className="gradient-text">flowra</span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
+          <Link
+            href="/showcase"
+            data-hoverable
+            className="flex items-center gap-1.5 text-sm font-bold text-insight-teal hover:text-[var(--text-primary)] transition-colors relative group px-3 py-1 rounded-full bg-insight-teal/10 border border-insight-teal/20 shadow-glow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Showcase
+          </Link>
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -114,6 +123,14 @@ export default function Navbar() {
             className="md:hidden glass mt-2 mx-4 rounded-2xl overflow-hidden"
           >
             <div className="p-6 flex flex-col gap-4">
+              <Link
+                href="/showcase"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 text-base font-bold text-insight-teal"
+              >
+                <Sparkles className="w-4 h-4" />
+                Showcase
+              </Link>
               {navLinks.map((link) => (
                 <a
                   key={link.href}

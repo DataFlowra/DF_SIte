@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { ArrowRight, Play } from "lucide-react";
 
 const ParticleBackground = dynamic(() => import("./ParticleBackground"), {
@@ -170,15 +171,15 @@ export default function HeroSection() {
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
           
-          <a
-            href="#showcase"
+          <Link
+            href="/showcase"
             className="group inline-flex items-center gap-3 px-10 py-5 glass border border-white/10 font-bold rounded-full transition-all duration-300 hover:bg-white/5 active:scale-95"
           >
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-insight-teal/10 transition-colors">
               <Play className="w-4 h-4 text-insight-teal fill-insight-teal" />
             </div>
             Watch Demo
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
 
