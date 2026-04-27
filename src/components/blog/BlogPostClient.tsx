@@ -1,35 +1,24 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
-import { blogPosts } from "@/lib/blog-data";
-import { ArrowLeft, Clock, Calendar, User, Share2, Twitter, Linkedin, Facebook } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
+import { BlogPost } from "@/lib/blog-data";
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const post = blogPosts.find((p) => p.slug === slug);
+interface BlogPostProps {
+  post: BlogPost;
+}
 
-  if (!post) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Post not found</h1>
-          <Link href="/blog" className="text-insight-teal hover:underline">Back to blog</Link>
-        </div>
-      </div>
-    );
-  }
-
+export default function BlogPostClient({ post }: BlogPostProps) {
   return (
     <div className="bg-[var(--background)] min-h-screen">
       <Navbar />
 
       <main className="pt-32 pb-24">
-        {/* Article Header */}
         <article className="px-6">
           <div className="max-w-4xl mx-auto">
             <motion.div
@@ -62,7 +51,6 @@ export default function BlogPostPage() {
                 {post.title}
               </h1>
 
-              {/* Author Info */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pb-12 border-b border-white/10 mb-12">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-insight-teal to-aura-violet flex items-center justify-center text-lg font-bold text-white shadow-xl">
@@ -82,10 +70,10 @@ export default function BlogPostPage() {
                   <div className="w-px h-6 bg-white/10" />
                   <div className="flex items-center gap-3">
                     <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
-                      <Twitter size={18} />
+                      <FaXTwitter size={18} />
                     </button>
                     <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
-                      <Linkedin size={18} />
+                      <FaLinkedin size={18} />
                     </button>
                     <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
                       <Share2 size={18} />
@@ -95,7 +83,6 @@ export default function BlogPostPage() {
               </div>
             </motion.div>
 
-            {/* Featured Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -109,7 +96,6 @@ export default function BlogPostPage() {
               />
             </motion.div>
 
-            {/* Content Area */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -125,7 +111,6 @@ export default function BlogPostPage() {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            {/* Tags / Footer */}
             <div className="mt-20 pt-12 border-t border-white/10">
               <div className="flex flex-wrap gap-3">
                 {["Cloud", "Edge Computing", "Data Science", "Security"].map((tag) => (
@@ -138,7 +123,6 @@ export default function BlogPostPage() {
           </div>
         </article>
 
-        {/* Next Post / CTA */}
         <section className="mt-32 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="glass rounded-[3rem] p-12 md:p-20 relative overflow-hidden group">

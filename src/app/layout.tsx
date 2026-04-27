@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import { ClientProviders } from "@/components/providers/ClientProviders";
 
 export const metadata: Metadata = {
   title: "Dataflowra | Future of Data Infrastructure",
@@ -13,7 +12,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
   return (
     <html lang="en">
@@ -21,19 +19,9 @@ export default function RootLayout({
         <link rel="icon" href="/Favicon.png" />
       </head>
       <body>
-        <GoogleReCaptchaProvider
-          reCaptchaKey={recaptchaKey}
-          scriptProps={{
-            async: false,
-            defer: false,
-            appendTo: "head",
-            nonce: undefined,
-          }}
-        >
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </GoogleReCaptchaProvider>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );

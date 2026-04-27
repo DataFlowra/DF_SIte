@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
@@ -18,6 +18,8 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
 
+
+
 interface Plan {
   id: number;
   name: string;
@@ -30,8 +32,8 @@ interface Plan {
 }
 
 function CheckoutContent() {
-  const { slug } = useParams();
   const searchParams = useSearchParams();
+  const slug = searchParams.get("plan") || "starter";
   const billingCycle = searchParams.get("cycle") || "monthly";
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -57,7 +59,7 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      router.push(`/login?redirect=/checkout/${slug}?cycle=${billingCycle}`);
+      router.push(`/login?redirect=${encodeURIComponent(`/checkout?plan=${slug}&cycle=${billingCycle}`)}`);
       return;
     }
 

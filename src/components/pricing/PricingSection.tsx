@@ -123,7 +123,7 @@ export default function PricingSection() {
               </ul>
 
               <Link
-                href={plan.monthly_price === null ? "/contact" : `/checkout/${plan.slug}?cycle=${billingCycle}`}
+                href={plan.monthly_price === null ? "/contact" : `/checkout?plan=${plan.slug}&cycle=${billingCycle}`}
                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${
                   plan.popular
                   ? "gradient-flow text-white shadow-xl shadow-insight-teal/20 hover:scale-[1.02]"

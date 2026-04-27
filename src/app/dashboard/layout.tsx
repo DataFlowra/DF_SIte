@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -74,6 +74,6 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
-    </motion.div>
+      </div>
   );
 }
