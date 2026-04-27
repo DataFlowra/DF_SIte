@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.dataflowra.com/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.dataflowra.com/api";
 
 export default function SocialButtons() {
   const handleOAuth = (provider: string) => {
