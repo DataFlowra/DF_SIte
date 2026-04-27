@@ -8,7 +8,7 @@ import Link from "next/link";
 const navLinks = [
   { label: "Features", href: "/#features" },
   { label: "How It Works", href: "/#how-it-works" },
-  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Blog", href: "/blog" },
   { label: "FAQ", href: "/#faq" },
 ];
 
@@ -73,7 +73,7 @@ export default function Navbar() {
             Showcase
           </Link>
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               data-hoverable
@@ -81,7 +81,7 @@ export default function Navbar() {
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-insight-teal to-aura-violet group-hover:w-full transition-all duration-300" />
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -132,14 +132,14 @@ export default function Navbar() {
                 Showcase
               </Link>
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <a
                 href="#cta"
