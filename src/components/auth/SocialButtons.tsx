@@ -7,7 +7,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.dataflowra.com"
 
 export default function SocialButtons() {
   const handleOAuth = (provider: string) => {
-    window.location.href = `${BASE_URL}/auth/${provider}/redirect`;
+    window.location.href = `${BASE_URL}/api/auth/${provider}/redirect`;
   };
 
   return (

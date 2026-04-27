@@ -1,7 +1,7 @@
 # Backend API Endpoints Documentation
 
 **Version**: 1.0  
-**Base URL**: `(https://api.dataflowra.com/api)` (or your domain)  
+**Base URL**: `(https://api.dataflowra.com)` (or your domain)  
 **API Response Format**: All responses are JSON
 
 ---

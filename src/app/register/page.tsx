@@ -32,7 +32,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     if (!executeRecaptcha) {
-      setError("reCAPTCHA not ready. Please try again.");
+      setError("reCAPTCHA service is not ready. If you are using an ad-blocker, please disable it or wait a few seconds and try again.");
       setIsLoading(false);
       return;
     }

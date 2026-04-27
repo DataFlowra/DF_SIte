@@ -29,7 +29,7 @@ export default function ContactSection() {
     setError(null);
 
     if (!executeRecaptcha) {
-      setError("reCAPTCHA not ready. Please try again.");
+      setError("reCAPTCHA service is not ready. Please wait a few seconds and try again.");
       setIsLoading(false);
       return;
     }
