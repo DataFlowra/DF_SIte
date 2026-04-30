@@ -27,9 +27,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isShowcase = pathname.includes("/showcase");
-  const ctaLink = user ? "/dashboard" : (isShowcase ? "/login" : "/showcase");
-  const ctaText = user ? "Go to Dashboard" : (isShowcase ? "Sign In" : "Get Started");
+  const isShowcasePage = pathname === "/showcase" || pathname.startsWith("/showcase/");
+  const ctaLink = user ? "/dashboard" : (isShowcasePage ? "/login" : "/showcase");
+  const ctaText = user ? "Go to Dashboard" : (isShowcasePage ? "Sign In" : "Get Started");
 
   return (
     <motion.nav

@@ -208,23 +208,23 @@ export default function ContactSection() {
                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-insight-teal">
                     <Globe className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-insight-teal">HQ Node</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-insight-teal">Headquarters</span>
                 </div>
                 <p className="text-sm font-bold text-[var(--text-primary)] leading-relaxed">
-                  415 Mission St, <br /> San Francisco, CA 94105
+                  633 W 5th St, <br /> Los Angeles, CA 90071, USA
                 </p>
               </div>
 
               <div className="glass-subtle p-6 rounded-3xl border border-white/5 group hover:border-aura-violet/20 transition-all">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-aura-violet">
-                    <ShieldCheck className="w-5 h-5" />
+                    <MessageSquare className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-aura-violet">Security</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-aura-violet">Support</span>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-[var(--text-primary)]">256-bit Encrypted</p>
-                  <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest">Dialogue Tunnel Active</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">help@dataflowra.com</p>
+                  <p className="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest">+1 (323) 555-4479</p>
                 </div>
               </div>
             </div>

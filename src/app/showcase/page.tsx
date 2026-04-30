@@ -428,7 +428,7 @@ function InteractiveExplorer() {
                 <div className="w-8 h-px bg-flow-indigo" />
                 <span className="text-[10px] font-black text-flow-indigo uppercase tracking-[0.3em]">Infrastructure</span>
               </div>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-tight text-[var(--text-primary)]">
+              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tighter leading-tight text-[var(--text-primary)]">
                 Operational <br />
                 <span className="gradient-text">Intelligence</span>
               </h2>
@@ -525,12 +525,12 @@ function TechStackGrid() {
     <section className="py-24 px-6 bg-[var(--background)] border-y border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="mb-20 max-w-2xl text-left">
-          <span className="text-[10px] font-black text-flow-indigo uppercase tracking-[0.4em] mb-4 block">Foundational SDKs</span>
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-[var(--text-primary)] mb-6">
+          <span className="text-[10px] font-black text-flow-indigo uppercase tracking-[0.4em] mb-4 block">Foundational Core</span>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-[var(--text-primary)] mb-6">
             The Intelligence <span className="gradient-text">Stack</span>
           </h2>
           <p className="text-data-slate font-medium leading-relaxed">
-            FlowR AI is powered by NVIDIA's premier AI frameworks, enabling sub-millisecond data processing and generative intelligence.
+            FlowR AI is powered by high-performance AI frameworks, enabling sub-millisecond data processing and generative intelligence.
           </p>
         </div>
 
@@ -539,21 +539,21 @@ function TechStackGrid() {
             { 
               title: "RAPIDS Engine", 
               subtitle: "The Quantitative Brain",
-              desc: "GPU-accelerated libraries (cuDF, cuML) for end-to-end data science. Handles historical data crunching and core dashboards at lightspeed.", 
+              desc: "GPU-accelerated processing (cuDF, cuML) for end-to-end data science. Handles historical data crunching at lightspeed.", 
               icon: Database,
               color: "border-flow-indigo/20"
             },
             { 
-              title: "NeMo Framework", 
+              title: "Generative Framework", 
               subtitle: "The Communicator",
-              desc: "Building specialized LLMs that understand business metrics. Translates findings into human-readable insights and clear summaries.", 
+              desc: "Specialized models that understand complex business metrics. Translates findings into human-readable insights and summaries.", 
               icon: MessageSquare,
               color: "border-aura-violet/20"
             },
             { 
               title: "Morpheus RT", 
               subtitle: "The Real-time Watchdog",
-              desc: "Building high-performance pipelines for anomaly and signal detection. Provides proactive alerts on live streaming data signals.", 
+              desc: "High-performance pipelines for anomaly and signal detection. Provides proactive alerts on live data signals.", 
               icon: Zap,
               color: "border-insight-teal/20"
             }
@@ -700,10 +700,6 @@ function OptimizedInfrastructure() {
 }
 
 export default function ShowcasePage() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <div className="bg-[var(--background)] min-h-screen text-[var(--text-primary)] selection:bg-flow-indigo/30">
       <Navbar />
