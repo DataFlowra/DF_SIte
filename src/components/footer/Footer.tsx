@@ -2,25 +2,58 @@
 
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { ArrowUp, Zap, X, Send, ShieldCheck, Heart } from "lucide-react";
+import { ArrowUp, Zap, X, Send, ShieldCheck, Heart, Loader2 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { api } from "@/lib/api-client";
+import Logo from "../Logo";
 
 export default function Footer() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-60px" });
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
+    if (!email) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA service is not ready. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const recaptchaToken = await executeRecaptcha("newsletter");
+      
+      const result = await api.post("/api/mail/newsletter", {
+        email,
+        name: "Subscriber", // Required by backend API
+        recaptcha_token: recaptchaToken
+      });
+
+      if (result.status === "success") {
+        setSubmitted(true);
         setEmail("");
-      }, 3000);
+        // Keep the success state for 5 seconds
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        setError(result.message || "Failed to subscribe. Please try again.");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,16 +95,9 @@ export default function Footer() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
-              className="flex items-center gap-3 mb-8 group cursor-default"
+              className="mb-8 group cursor-default"
             >
-              <div className="relative w-12 h-12">
-                <div className="absolute inset-0 rounded-xl gradient-flow opacity-80 group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 rounded-xl blur-md bg-insight-teal/40 group-hover:opacity-100 opacity-0 transition-opacity" />
-                <Zap className="relative w-12 h-12 p-2.5 text-white" />
-              </div>
-              <span className="text-3xl font-bold tracking-tighter text-[var(--text-primary)]">
-                Data<span className="gradient-text">flowra</span>
-              </span>
+              <Logo width={180} height={50} />
             </motion.div>
             
             <motion.h3 
@@ -104,11 +130,20 @@ export default function Footer() {
                     />
                     <button
                       type="submit"
-                      disabled={submitted}
+                      disabled={isLoading || submitted}
                       className="relative z-10 flex-shrink-0 px-8 py-4 rounded-xl gradient-flow text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-xl disabled:opacity-50"
                     >
                       <AnimatePresence mode="wait">
-                        {submitted ? (
+                        {isLoading ? (
+                          <motion.span
+                            key="loading"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                          >
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </motion.span>
+                        ) : submitted ? (
                           <motion.span
                             key="submitted"
                             initial={{ opacity: 0, y: 10 }}
@@ -133,6 +168,15 @@ export default function Footer() {
                     </button>
                   </div>
                 </div>
+                {error && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-[10px] font-bold text-red-500 mt-2 uppercase tracking-widest"
+                  >
+                    {error}
+                  </motion.p>
+                )}
               </form>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] mt-6 opacity-60 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-insight-teal animate-pulse" />

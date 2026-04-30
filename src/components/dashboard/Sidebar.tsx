@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "../Logo";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
@@ -51,19 +52,12 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       </button>
 
       {/* Brand Logo */}
-      <div className="p-8 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl gradient-flow flex items-center justify-center shrink-0">
-            <Zap className="text-white w-6 h-6" />
-          </div>
-          {(!collapsed || mobileOpen) && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xl font-bold tracking-tight"
-            >
-              Data<span className="gradient-text">flowra</span>
-            </motion.span>
+      <div className="p-8 flex items-center justify-between gap-3 overflow-hidden">
+        <div className="flex items-center">
+          {collapsed ? (
+            <Logo width={40} height={40} className="shrink-0" /> // Show small square-ish part or icon part if possible, otherwise just small logo
+          ) : (
+            <Logo width={140} height={40} className="shrink-0" />
           )}
         </div>
         {mobileOpen && (
@@ -98,7 +92,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                 )}
                 {isActive && (
                   <motion.div
-                    layoutId="active-indicator"
+                    layoutId="sidebar-active"
                     className="absolute left-0 w-1 h-6 bg-insight-teal rounded-r-full"
                   />
                 )}
@@ -108,14 +102,22 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
         })}
       </nav>
 
-      {/* Footer / User Area */}
-      <div className="p-4 mt-auto">
-        <button 
+      {/* Bottom Actions */}
+      <div className="p-4 border-t border-white/5 space-y-2">
+        <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-4 px-4 py-4 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/5 transition-all group"
+          className="w-full flex items-center gap-4 px-4 py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all duration-300 group"
         >
-          <LogOut className="w-5 h-5 shrink-0" />
-          {(!collapsed || mobileOpen) && <span className="text-sm font-semibold">Logout</span>}
+          <LogOut size={20} className="shrink-0 group-hover:translate-x-1 transition-transform" />
+          {(!collapsed || mobileOpen) && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm font-semibold"
+            >
+              Logout
+            </motion.span>
+          )}
         </button>
       </div>
     </>
@@ -124,15 +126,15 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <motion.aside
-        initial={false}
-        animate={{ width: collapsed ? 80 : 260 }}
-        className="hidden md:flex flex-col glass rounded-[2rem] border border-white/10 transition-all duration-500 relative overflow-hidden"
+      <aside
+        className={`hidden md:flex flex-col sticky top-0 h-screen bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 ${
+          collapsed ? "w-24" : "w-72"
+        }`}
       >
         {sidebarContent}
-      </motion.aside>
+      </aside>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -141,14 +143,14 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen?.(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
             />
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-[280px] bg-[var(--background)] border-r border-white/10 z-[70] md:hidden flex flex-col"
+              className="fixed inset-y-0 left-0 w-72 bg-[var(--surface)] border-r border-white/5 z-50 md:hidden flex flex-col"
             >
               {sidebarContent}
             </motion.aside>

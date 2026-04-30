@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import Link from "next/link";
+import Logo from "./Logo";
 
 const navLinks = [
   { label: "Features", href: "/#features" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Blog", href: "/blog" },
-  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -34,32 +35,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group" data-hoverable>
-          <div className="relative w-8 h-8">
-            <div className="absolute inset-0 rounded-lg gradient-flow opacity-80 group-hover:opacity-100 transition-opacity" />
-            <svg
-              viewBox="0 0 32 32"
-              className="relative w-8 h-8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8 8L16 4L24 8L24 16L16 24L8 16Z"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <path
-                d="M16 12L20 14L20 18L16 20L12 18L12 14Z"
-                fill="white"
-                opacity="0.6"
-              />
-              <circle cx="16" cy="16" r="2" fill="white" />
-            </svg>
-          </div>
-          <span className="text-lg font-bold tracking-tight">
-            Data<span className="gradient-text">flowra</span>
-          </span>
+        <Link href="/" className="flex items-center group" data-hoverable>
+          <Logo width={150} height={40} />
         </Link>
 
         {/* Desktop Links */}
@@ -91,19 +68,12 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle */}
         <button
-          id="mobile-menu-toggle"
-          className="md:hidden w-10 h-10 flex items-center justify-center"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-          data-hoverable
+          className="md:hidden p-2 text-[var(--text-primary)]"
         >
-          {mobileOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
+          {mobileOpen ? <X /> : <Menu />}
         </button>
       </div>
 

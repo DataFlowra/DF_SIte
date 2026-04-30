@@ -1,13 +1,57 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
 import BlogCard from "@/components/blog/BlogCard";
 import { blogPosts } from "@/lib/blog-data";
-import { Search } from "lucide-react";
+import { Search, Loader2, CheckCircle2, Send } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { api } from "@/lib/api-client";
 
 export default function BlogPage() {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA service is not ready. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const recaptchaToken = await executeRecaptcha("newsletter");
+      const result = await api.post("/api/mail/newsletter", {
+        email,
+        name: "Blog Subscriber",
+        recaptcha_token: recaptchaToken
+      });
+
+      if (result.status === "success") {
+        setSubmitted(true);
+        setEmail("");
+      } else {
+        setError(result.message || "Failed to subscribe.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-[var(--background)] min-h-screen">
       <Navbar />
@@ -91,21 +135,72 @@ export default function BlogPage() {
         <section className="px-6 mt-32">
           <div className="max-w-5xl mx-auto glass rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-insight-teal/5 to-aura-violet/5 -z-10" />
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Stay ahead of the curve.</h2>
-            <p className="text-[var(--text-muted)] text-lg mb-10 max-w-xl mx-auto font-medium">
-              Join 5,000+ infrastructure engineers receiving our bi-weekly deep dives.
-            </p>
             
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-6 py-4 rounded-2xl glass-subtle border border-white/10 outline-none focus:border-insight-teal/30 transition-all"
-              />
-              <button className="px-8 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 active:scale-95 transition-all">
-                Subscribe
-              </button>
-            </form>
+            <AnimatePresence mode="wait">
+              {submitted ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="space-y-6"
+                >
+                  <div className="w-20 h-20 bg-insight-teal/10 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <CheckCircle2 className="w-10 h-10 text-insight-teal" />
+                  </div>
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)]">Synchronization Complete</h2>
+                  <p className="text-[var(--text-muted)] text-lg max-w-xl mx-auto font-medium">
+                    Welcome to the network. Please verify your email to activate the data link.
+                  </p>
+                  <button 
+                    onClick={() => setSubmitted(false)}
+                    className="text-xs font-bold uppercase tracking-[0.2em] text-insight-teal hover:underline"
+                  >
+                    Subscribe another email
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-[var(--text-primary)]">Stay ahead of the curve.</h2>
+                  <p className="text-[var(--text-muted)] text-lg mb-10 max-w-xl mx-auto font-medium">
+                    Join 5,000+ infrastructure engineers receiving our bi-weekly deep dives.
+                  </p>
+                  
+                  <form onSubmit={handleSubscribe} className="max-w-md mx-auto space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="flex-1 px-6 py-4 rounded-2xl glass-subtle border border-white/10 outline-none focus:border-insight-teal/30 transition-all text-[var(--text-primary)]"
+                      />
+                      <button 
+                        disabled={isLoading}
+                        className="px-8 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <>
+                            <span>Subscribe</span>
+                            <Send className="w-4 h-4" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    {error && (
+                      <p className="text-xs font-bold text-red-500 uppercase tracking-widest">{error}</p>
+                    )}
+                  </form>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </section>
       </main>

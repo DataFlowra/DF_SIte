@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Logo from "../Logo";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -42,35 +43,11 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center mb-10 text-center"
         >
-          <Link href="/" className="flex items-center gap-3 mb-8 group" data-hoverable>
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 rounded-lg gradient-flow opacity-80 group-hover:opacity-100 transition-opacity" />
-              <svg
-                viewBox="0 0 32 32"
-                className="relative w-10 h-10"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M8 8L16 4L24 8L24 16L16 24L8 16Z"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-                <path
-                  d="M16 12L20 14L20 18L16 20L12 18L12 14Z"
-                  fill="white"
-                  opacity="0.6"
-                />
-                <circle cx="16" cy="16" r="2" fill="white" />
-              </svg>
-            </div>
-            <span className="text-2xl font-bold tracking-tight">
-              Data<span className="gradient-text">flowra</span>
-            </span>
+          <Link href="/" className="flex items-center mb-8 group" data-hoverable>
+            <Logo width={200} height={60} />
           </Link>
 
-          <h1 className="text-4xl font-bold tracking-tighter mb-3 leading-tight">
+          <h1 className="text-4xl font-bold tracking-tighter mb-3 leading-tight text-[var(--text-primary)]">
             {title}
           </h1>
           <p className="text-[var(--text-muted)] font-medium">
