@@ -388,6 +388,7 @@ function ShowcaseHero() {
         >
           <Link
             href={user ? "/dashboard" : "/login"}
+            target="_blank"
             className="px-10 py-5 bg-flow-indigo text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-2xl shadow-flow-indigo/20 hover:scale-105 transition-transform"
           >
             {user ? "Go to Dashboard" : "Try FlowR AI"}

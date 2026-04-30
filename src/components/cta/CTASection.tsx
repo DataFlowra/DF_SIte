@@ -38,6 +38,7 @@ export default function CTASection() {
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full justify-center">
               <Link
                 href="/register"
+                target="_blank"
                 className="group relative inline-flex items-center gap-3 px-12 py-6 bg-white text-black font-black rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl shadow-insight-teal/30 w-full sm:w-auto"
               >
                 Get Started for Free

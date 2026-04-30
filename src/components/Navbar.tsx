@@ -30,6 +30,9 @@ export default function Navbar() {
   const isShowcasePage = pathname === "/showcase" || pathname.startsWith("/showcase/");
   const ctaLink = user ? "/dashboard" : (isShowcasePage ? "/login" : "/showcase");
   const ctaText = user ? "Go to Dashboard" : (isShowcasePage ? "Sign In" : "Get Started");
+  
+  // Only open Dashboard or Login in a new tab
+  const ctaTarget = (ctaLink === "/dashboard" || ctaLink === "/login") ? "_blank" : "_self";
 
   return (
     <motion.nav
@@ -67,6 +70,7 @@ export default function Navbar() {
         <div className="hidden md:block">
           <Link
             href={ctaLink}
+            target={ctaTarget}
             scroll={false}
             data-hoverable
             className="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden group"
@@ -117,6 +121,7 @@ export default function Navbar() {
               ))}
               <Link
                 href={ctaLink}
+                target={ctaTarget}
                 scroll={false}
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-full gradient-flow mt-2"

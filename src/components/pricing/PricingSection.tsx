@@ -129,6 +129,7 @@ export default function PricingSection() {
 
               <Link
                 href={plan.monthly_price === null ? "/contact" : `/checkout?plan=${plan.slug}&cycle=${billingCycle}`}
+                target={(plan.monthly_price !== null) ? "_blank" : "_self"}
                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${
                   plan.popular
                   ? "gradient-flow text-white shadow-xl shadow-insight-teal/20 hover:scale-[1.02]"
