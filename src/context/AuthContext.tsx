@@ -22,6 +22,7 @@ interface AuthContextType {
   register: (data: any) => Promise<ApiResponse>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -79,6 +80,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshUser = async () => {
+    const token = api.getToken();
+    if (token) {
+      const response = await api.get("/api/user");
+      if (response.status === "success") {
+        setUser(response.data);
+      } else {
+        api.setToken(null);
+        setUser(null);
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -88,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         updateUser,
+        refreshUser,
         isAuthenticated: !!user,
       }}
     >
