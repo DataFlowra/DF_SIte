@@ -32,7 +32,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     if (!executeRecaptcha) {
-      setError("reCAPTCHA service is not ready. If you are using an ad-blocker, please disable it or wait a few seconds and try again.");
+      setError("reCAPTCHA service is not ready. Please wait a few seconds and try again.");
       setIsLoading(false);
       return;
     }
@@ -70,19 +70,16 @@ export default function RegisterPage() {
   return (
     <AuthLayout 
       title="Create Account" 
-      subtitle="Join the future of data infrastructure"
+      subtitle="Join thousands of teams building with FlowR AI"
     >
       <div className="space-y-8">
         {/* Social Login */}
         <SocialButtons />
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/5"></div>
-          </div>
-          <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em]">
-            <span className="bg-[#161B22] px-4 text-[var(--text-muted)]">Or register with email</span>
-          </div>
+        <div className="relative flex items-center gap-4">
+          <div className="flex-1 border-t border-[var(--text-primary)]/5" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate whitespace-nowrap">Or register with email</span>
+          <div className="flex-1 border-t border-[var(--text-primary)]/5" />
         </div>
 
         {/* Error Message */}
@@ -98,32 +95,32 @@ export default function RegisterPage() {
 
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+          <div className="space-y-4 text-left">
             <div className="group space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1 group-focus-within:text-flow-indigo transition-colors block">
                 Username
               </label>
               <div className="relative">
-                <AtSign className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
+                <AtSign className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate group-focus-within:text-flow-indigo transition-colors" />
                 <input 
                   type="text" 
                   name="username"
                   required
                   value={formData.username}
                   onChange={handleChange}
-                  placeholder="johndoe"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-sm text-[var(--text-primary)] placeholder:text-white/20"
+                  placeholder="Your username"
+                  className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="group space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1 group-focus-within:text-flow-indigo transition-colors block">
                   First Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate group-focus-within:text-flow-indigo transition-colors" />
                   <input 
                     type="text" 
                     name="firstName"
@@ -131,16 +128,16 @@ export default function RegisterPage() {
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="John"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-sm text-[var(--text-primary)] placeholder:text-white/20"
+                    className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                   />
                 </div>
               </div>
               <div className="group space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1 group-focus-within:text-flow-indigo transition-colors block">
                   Last Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate group-focus-within:text-flow-indigo transition-colors" />
                   <input 
                     type="text" 
                     name="lastName"
@@ -148,18 +145,18 @@ export default function RegisterPage() {
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Doe"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-sm text-[var(--text-primary)] placeholder:text-white/20"
+                    className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                   />
                 </div>
               </div>
             </div>
 
             <div className="group space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1 group-focus-within:text-flow-indigo transition-colors block">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate group-focus-within:text-flow-indigo transition-colors" />
                 <input 
                   type="email" 
                   name="email"
@@ -167,25 +164,25 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="name@company.com"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-sm text-[var(--text-primary)] placeholder:text-white/20"
+                  className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                 />
               </div>
             </div>
 
             <div className="group space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1 group-focus-within:text-insight-teal transition-colors">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1 group-focus-within:text-flow-indigo transition-colors block">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate group-focus-within:text-flow-indigo transition-colors" />
                 <input 
                   type="password" 
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-insight-teal/50 focus:bg-white/10 transition-all text-sm text-[var(--text-primary)] placeholder:text-white/20"
+                  placeholder="Minimum 8 characters"
+                  className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                 />
               </div>
             </div>
@@ -193,10 +190,10 @@ export default function RegisterPage() {
 
           <div className="flex items-start gap-3 px-1">
             <div className="mt-1">
-              <ShieldCheck className="w-4 h-4 text-insight-teal" />
+              <ShieldCheck className="w-4 h-4 text-flow-indigo" />
             </div>
-            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed uppercase tracking-wider">
-              By creating an account, you agree to our <Link href="#" className="text-insight-teal hover:underline decoration-insight-teal/30">Terms of Service</Link> and <Link href="#" className="text-insight-teal hover:underline decoration-insight-teal/30">Privacy Policy</Link>.
+            <p className="text-[10px] text-data-slate leading-relaxed uppercase tracking-wider">
+              By creating an account, you agree to our <Link href="#" className="text-flow-indigo hover:underline decoration-flow-indigo/30">Terms of Service</Link> and <Link href="#" className="text-flow-indigo hover:underline decoration-flow-indigo/30">Privacy Policy</Link>.
             </p>
           </div>
 
@@ -205,7 +202,7 @@ export default function RegisterPage() {
             whileTap={{ scale: 0.99 }}
             disabled={isLoading}
             type="submit"
-            className="w-full py-5 rounded-2xl gradient-flow text-white font-bold text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-insight-teal/20 group disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-5 rounded-2xl bg-flow-indigo text-white font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-flow-indigo/20 group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -218,9 +215,9 @@ export default function RegisterPage() {
           </motion.button>
         </form>
 
-        <p className="text-center text-sm text-[var(--text-muted)]">
+        <p className="text-center text-sm text-data-slate">
           Already have an account?{" "}
-          <Link href="/login" className="font-bold text-[var(--text-primary)] hover:text-insight-teal transition-colors">
+          <Link href="/login" className="font-bold text-[var(--text-primary)] hover:text-flow-indigo transition-colors">
             Sign in
           </Link>
         </p>

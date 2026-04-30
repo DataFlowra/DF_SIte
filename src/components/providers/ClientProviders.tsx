@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import { AuthProvider } from "@/context/AuthContext";
 import ScrollToTop from "./ScrollToTop";
@@ -22,7 +23,9 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       }}
     >
       <AuthProvider>
-        <ScrollToTop />
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         {children}
       </AuthProvider>
     </GoogleReCaptchaProvider>

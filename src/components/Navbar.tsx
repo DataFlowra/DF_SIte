@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import Logo from "./Logo";
 
 const navLinks = [
@@ -16,12 +18,18 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const isShowcase = pathname.includes("/showcase");
+  const ctaLink = user ? "/dashboard" : (isShowcase ? "/login" : "/showcase");
+  const ctaText = user ? "Go to Dashboard" : (isShowcase ? "Sign In" : "Get Started");
 
   return (
     <motion.nav
@@ -58,13 +66,13 @@ export default function Navbar() {
         {/* CTA Button */}
         <div className="hidden md:block">
           <Link
-            href="/showcase"
+            href={ctaLink}
             scroll={false}
             data-hoverable
             className="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden group"
           >
             <div className="absolute inset-0 gradient-flow transition-all duration-300 group-hover:opacity-90" />
-            <span className="relative">Get Started</span>
+            <span className="relative">{ctaText}</span>
           </Link>
         </div>
 
@@ -108,12 +116,12 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href="/showcase"
+                href={ctaLink}
                 scroll={false}
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-full gradient-flow mt-2"
               >
-                Get Started
+                {ctaText}
               </Link>
             </div>
           </motion.div>
