@@ -47,7 +47,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center group" data-hoverable>
-          <Logo width={150} height={40} />
+          <Logo width={180} height={48} />
         </Link>
 
         {/* Desktop Links */}

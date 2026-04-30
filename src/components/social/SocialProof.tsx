@@ -37,14 +37,6 @@ const testimonials = [
     role: "Lead Architect, Velocity Labs",
     avatar: "https://i.pravatar.cc/150?u=james",
     color: "#06B6D4"
-  },
-  {
-    id: 5,
-    quote: "Scaling our infrastructure used to take weeks. With Dataflowra, it's a matter of minutes and a few clicks.",
-    author: "Elena Rodriguez",
-    role: "DevOps Lead, StreamCore",
-    avatar: "https://i.pravatar.cc/150?u=elena",
-    color: "#8B5CF6"
   }
 ];
 

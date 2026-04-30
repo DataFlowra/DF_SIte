@@ -5,6 +5,7 @@ import HeroSection from "@/components/hero/HeroSection";
 import DashboardShowcase from "@/components/showcase/DashboardShowcase";
 import FeaturesBento from "@/components/features/FeaturesBento";
 import HowItWorks from "@/components/workflow/HowItWorks";
+import SocialProof from "@/components/social/SocialProof";
 
 import FAQAccordion from "@/components/faq/FAQAccordion";
 import ContactSection from "@/components/contact/ContactSection";
@@ -22,6 +23,7 @@ export default function HomePage() {
         <DashboardShowcase />
         <FeaturesBento />
         <HowItWorks />
+        <SocialProof />
         <PricingSection />
 
         <FAQAccordion />
