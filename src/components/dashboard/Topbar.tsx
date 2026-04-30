@@ -16,11 +16,13 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   const pathname = usePathname();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [latency, setLatency] = useState(12);
+  const [coreLoad, setCoreLoad] = useState(0.02);
 
-  // Simulated live latency tracking
+  // Simulated live metrics tracking
   useEffect(() => {
     const interval = setInterval(() => {
       setLatency(prev => Math.max(8, Math.min(25, prev + (Math.random() * 4 - 2))));
+      setCoreLoad(prev => Math.max(0.01, Math.min(0.08, prev + (Math.random() * 0.02 - 0.01))));
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -32,7 +34,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   };
 
   return (
-    <header className="w-full flex items-center justify-between gap-6 py-4">
+    <header className="w-full flex items-center justify-between gap-6 py-4 relative">
       {/* Mobile Menu Toggle */}
       <button 
         onClick={onMenuClick}
@@ -60,13 +62,13 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
       {/* Global Actions */}
       <div className="flex-1 flex items-center justify-end gap-6">
         
-        {/* Real-time System Metrics (Active Elements) */}
-        <div className="hidden xl:flex items-center gap-6 px-6 py-2 rounded-2xl bg-white/[0.02] border border-white/5">
+        {/* Real-time System Metrics (Active Elements) - Visible on large screens */}
+        <div className="hidden lg:flex items-center gap-6 px-6 py-2 rounded-2xl bg-white/[0.02] border border-white/5">
            <div className="flex items-center gap-3">
               <Wifi size={14} className="text-insight-teal animate-pulse" />
               <div className="flex flex-col">
                  <span className="text-[7px] font-black text-data-slate uppercase">Latency</span>
-                 <span className="text-[10px] font-mono font-bold text-white">{latency.toFixed(0)}ms</span>
+                 <span className="text-[10px] font-mono font-bold text-[var(--text-primary)]">{latency.toFixed(0)}ms</span>
               </div>
            </div>
            <div className="w-px h-6 bg-white/5" />
@@ -74,7 +76,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
               <Cpu size={14} className="text-flow-indigo" />
               <div className="flex flex-col">
                  <span className="text-[7px] font-black text-data-slate uppercase">Core Load</span>
-                 <span className="text-[10px] font-mono font-bold text-white">0.02%</span>
+                 <span className="text-[10px] font-mono font-bold text-[var(--text-primary)]">{coreLoad.toFixed(2)}%</span>
               </div>
            </div>
         </div>

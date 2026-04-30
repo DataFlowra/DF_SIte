@@ -186,7 +186,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col sticky top-0 h-screen bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 overflow-hidden ${
+        className={`hidden md:flex flex-col h-full bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 ${
           collapsed ? "w-24" : "w-72"
         }`}
       >
