@@ -164,6 +164,7 @@ export default function HeroSection() {
         >
           <Link
             href="/showcase"
+            scroll={false}
             className="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl shadow-insight-teal/20"
           >
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-insight-teal to-aura-violet opacity-0 group-hover:opacity-10 transition-opacity" />
@@ -173,6 +174,7 @@ export default function HeroSection() {
           
           <Link
             href="/#contact"
+            scroll={false}
             className="group inline-flex items-center gap-3 px-10 py-5 glass border border-white/10 font-bold rounded-full transition-all duration-300 hover:bg-white/5 active:scale-95"
           >
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-insight-teal/10 transition-colors">

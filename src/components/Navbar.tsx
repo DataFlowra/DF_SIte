@@ -68,6 +68,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              scroll={false}
               data-hoverable
               className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors relative group"
             >
@@ -81,6 +82,7 @@ export default function Navbar() {
         <div className="hidden md:block">
           <Link
             href="/showcase"
+            scroll={false}
             data-hoverable
             className="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden group"
           >
@@ -117,6 +119,7 @@ export default function Navbar() {
             <div className="p-6 flex flex-col gap-4">
               <Link
                 href="/showcase"
+                scroll={false}
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-base font-bold text-insight-teal"
               >
@@ -127,6 +130,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  scroll={false}
                   onClick={() => setMobileOpen(false)}
                   className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
@@ -135,6 +139,7 @@ export default function Navbar() {
               ))}
               <Link
                 href="/showcase"
+                scroll={false}
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-full gradient-flow mt-2"
               >

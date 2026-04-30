@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ArrowUp, Zap, X, Send, ShieldCheck, Heart } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import Link from "next/link";
 
 export default function Footer() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -151,10 +152,14 @@ export default function Footer() {
               <ul className="space-y-5">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all flex items-center group">
+                    <Link 
+                      href={link.href} 
+                      scroll={false}
+                      className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all flex items-center group"
+                    >
                       <span className="w-0 group-hover:w-4 h-px bg-insight-teal mr-0 group-hover:mr-3 transition-all duration-300 opacity-0 group-hover:opacity-100" />
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
