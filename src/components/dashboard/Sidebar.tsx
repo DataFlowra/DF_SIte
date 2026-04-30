@@ -51,13 +51,16 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
         {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
 
-      {/* Brand Logo */}
-      <div className="p-8 flex items-center justify-between gap-3 overflow-hidden">
-        <div className="flex items-center">
+      {/* Brand Logo Section */}
+      <div className="p-8 flex items-center justify-between gap-3 overflow-hidden relative">
+        {/* Subtle technical background for logo area */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "radial-gradient(#4F46E5 1px, transparent 1px)", backgroundSize: "10px 10px" }} />
+        
+        <div className="flex items-center relative z-10">
           {collapsed ? (
-            <Logo width={40} height={40} className="shrink-0" /> // Show small square-ish part or icon part if possible, otherwise just small logo
+            <Logo width={36} height={36} className="shrink-0" />
           ) : (
-            <Logo width={140} height={40} className="shrink-0" />
+            <Logo width={130} height={36} className="shrink-0" />
           )}
         </div>
         {mobileOpen && (
@@ -68,33 +71,37 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       </div>
 
       {/* Nav Links */}
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+      <nav className="flex-1 px-4 space-y-2 mt-6">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href} onClick={() => setMobileOpen?.(false)}>
               <div
-                className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-300 group relative ${
+                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
                   isActive 
-                  ? "bg-insight-teal/10 text-insight-teal border border-insight-teal/20" 
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 border border-transparent"
+                  ? "bg-flow-indigo/10 text-flow-indigo border border-flow-indigo/20 shadow-[0_0_20px_rgba(79,70,229,0.1)]" 
+                  : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-transparent"
                 }`}
               >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-insight-teal" : "group-hover:text-insight-teal transition-colors"}`} />
+                <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${isActive ? "text-flow-indigo scale-110" : "group-hover:text-flow-indigo group-hover:scale-110"}`} />
                 {(!collapsed || mobileOpen) && (
                   <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-sm font-semibold"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-sm font-black uppercase tracking-widest"
                   >
                     {item.label}
                   </motion.span>
                 )}
+                
                 {isActive && (
-                  <motion.div
-                    layoutId="sidebar-active"
-                    className="absolute left-0 w-1 h-6 bg-insight-teal rounded-r-full"
-                  />
+                  <>
+                    <motion.div
+                      layoutId="sidebar-glow"
+                      className="absolute left-0 w-1 h-8 bg-flow-indigo shadow-[0_0_15px_#4F46E5] rounded-r-full"
+                    />
+                    <div className="absolute right-4 w-1.5 h-1.5 rounded-full bg-flow-indigo animate-pulse" />
+                  </>
                 )}
               </div>
             </Link>

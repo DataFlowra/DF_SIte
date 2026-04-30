@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClientProviders } from "@/components/providers/ClientProviders";
+import Chatbot from "@/components/chat/Chatbot";
 
 export const metadata: Metadata = {
   title: "Dataflowra | Future of Data Infrastructure",
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body>
         <ClientProviders>
           {children}
+          <Chatbot />
         </ClientProviders>
       </body>
     </html>
