@@ -33,7 +33,17 @@ const navItems = [
     ]
   },
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+  { 
+    icon: Settings, 
+    label: "Settings", 
+    href: "/dashboard/settings",
+    subItems: [
+      { label: "Overview", href: "/dashboard/settings" },
+      { label: "Profile", href: "/dashboard/settings/profile" },
+      { label: "Security", href: "/dashboard/settings/security" },
+      { label: "Billing", href: "/dashboard/settings/billing" }
+    ]
+  },
 ];
 
 interface SidebarProps {
@@ -57,16 +67,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
     setOpenSubMenu(openSubMenu === label ? null : label);
   };
 
-  const sidebarContent = (
+  const sidebarInnerContent = (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Sidebar Toggle (Desktop only) */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-insight-teal border border-white/20 hidden md:flex items-center justify-center text-white z-20 shadow-lg hover:scale-110 transition-transform"
-      >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-      </button>
-
       {/* Brand Logo Section */}
       <div className="p-8 flex items-center justify-between gap-3 overflow-hidden relative shrink-0 min-h-[100px]">
         {/* Subtle technical background for logo area */}
@@ -186,11 +188,19 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col h-full bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 ${
+        className={`hidden md:flex flex-col h-full bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 relative ${
           collapsed ? "w-24" : "w-72"
         }`}
       >
-        {sidebarContent}
+        {/* Sidebar Toggle (Desktop only) */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-insight-teal border border-white/20 flex items-center justify-center text-white z-40 shadow-lg hover:scale-110 transition-transform"
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
+
+        {sidebarInnerContent}
       </aside>
 
       {/* Mobile Drawer */}
@@ -211,7 +221,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-y-0 left-0 w-72 bg-[var(--surface)] border-r border-white/5 z-50 md:hidden flex flex-col"
             >
-              {sidebarContent}
+              {sidebarInnerContent}
             </motion.aside>
           </>
         )}

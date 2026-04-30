@@ -8,28 +8,28 @@ const settingsGroups = [
   {
     title: "Account",
     items: [
-      { icon: User, label: "Profile Information", desc: "Update your personal details and avatar.", href: "#" },
-      { icon: Mail, label: "Email Preferences", desc: "Manage your communication and newsletter settings.", href: "#" },
+      { icon: User, label: "Profile Information", desc: "Update your personal details and avatar.", href: "/dashboard/settings/profile" },
+      { icon: Mail, label: "Email Preferences", desc: "Manage your communication and newsletter settings.", href: "/dashboard/settings/profile" },
     ]
   },
   {
     title: "Security",
     items: [
-      { icon: Shield, label: "Security & Privacy", desc: "Manage two-factor authentication and session data.", href: "#" },
-      { icon: Key, label: "API Access Tokens", desc: "Generate and manage keys for programmatic access.", href: "#" },
+      { icon: Shield, label: "Security & Privacy", desc: "Manage two-factor authentication and session data.", href: "/dashboard/settings/security" },
+      { icon: Key, label: "API Access Tokens", desc: "Generate and manage keys for programmatic access.", href: "/dashboard/settings/security" },
     ]
   },
   {
     title: "Infrastructure",
     items: [
-      { icon: Globe, label: "Regional Defaults", desc: "Set your preferred edge node deployments.", href: "#" },
-      { icon: Bell, label: "Alert Configuration", desc: "Customize thresholds for Morpheus watchdog.", href: "#" },
+      { icon: Globe, label: "Regional Defaults", desc: "Set your preferred edge node deployments.", href: "/dashboard/nodes" },
+      { icon: Bell, label: "Alert Configuration", desc: "Customize thresholds for Morpheus watchdog.", href: "/dashboard/intelligence/neural" },
     ]
   },
   {
     title: "Billing",
     items: [
-      { icon: CreditCard, label: "Plan & Payment", desc: "Manage your subscription and view invoices.", href: "#" },
+      { icon: CreditCard, label: "Plan & Payment", desc: "Manage your subscription and view invoices.", href: "/dashboard/settings/billing" },
     ]
   }
 ];
