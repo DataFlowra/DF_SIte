@@ -29,11 +29,10 @@ export default function Footer() {
 
   const footerLinks = {
     company: [
-      { name: "Showcase", href: "/showcase" },
-      { name: "About", href: "#" },
-      { name: "Blog", href: "#" },
+      { name: "About", href: "/#hero" },
+      { name: "Blog", href: "/blog" },
       { name: "Careers", href: "#" },
-      { name: "FAQ", href: "#" },
+      { name: "FAQ", href: "/#faq" },
     ],
     legal: [
       { name: "Privacy Policy", href: "#" },

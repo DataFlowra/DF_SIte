@@ -27,7 +27,12 @@ export default function PricingSection() {
     async function fetchPlans() {
       const response = await api.get("/api/subscription-plans");
       if (response.status === "success") {
-        setPlans(response.data);
+        const sortedPlans = [...response.data].sort((a, b) => {
+          if (a.monthly_price === null) return 1;
+          if (b.monthly_price === null) return -1;
+          return 0;
+        });
+        setPlans(sortedPlans);
       }
       setLoading(false);
     }

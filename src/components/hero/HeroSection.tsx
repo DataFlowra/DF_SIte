@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, MessageSquare } from "lucide-react";
 
 const ParticleBackground = dynamic(() => import("./ParticleBackground"), {
   ssr: false,
@@ -163,7 +163,7 @@ export default function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
           <Link
-            href="/register"
+            href="/showcase"
             className="group relative inline-flex items-center gap-3 px-10 py-5 bg-white text-black font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl shadow-insight-teal/20"
           >
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-insight-teal to-aura-violet opacity-0 group-hover:opacity-10 transition-opacity" />
@@ -172,13 +172,13 @@ export default function HeroSection() {
           </Link>
           
           <Link
-            href="/showcase"
+            href="/#contact"
             className="group inline-flex items-center gap-3 px-10 py-5 glass border border-white/10 font-bold rounded-full transition-all duration-300 hover:bg-white/5 active:scale-95"
           >
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-insight-teal/10 transition-colors">
-              <Play className="w-4 h-4 text-insight-teal fill-insight-teal" />
+              <MessageSquare className="w-4 h-4 text-insight-teal" />
             </div>
-            Watch Demo
+            Contact Us
           </Link>
         </motion.div>
       </motion.div>
@@ -188,15 +188,17 @@ export default function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 z-[5]"
       >
-        <div className="flex flex-col items-center gap-4">
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[var(--text-muted)] opacity-50">Scroll</span>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-insight-teal/50 to-transparent relative overflow-hidden">
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-[var(--text-muted)] opacity-30 mb-8 [writing-mode:vertical-rl] rotate-180">
+            Scroll
+          </span>
+          <div className="w-[1px] h-32 bg-gradient-to-b from-insight-teal/50 via-insight-teal/20 to-transparent relative overflow-hidden">
             <motion.div
               animate={{ y: ["-100%", "100%"] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-              className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-white to-transparent"
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-insight-teal/50 to-transparent"
             />
           </div>
         </div>

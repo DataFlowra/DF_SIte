@@ -64,14 +64,6 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          <Link
-            href="/showcase"
-            data-hoverable
-            className="flex items-center gap-1.5 text-sm font-bold text-insight-teal hover:text-[var(--text-primary)] transition-colors relative group px-3 py-1 rounded-full bg-insight-teal/10 border border-insight-teal/20 shadow-glow-sm"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Showcase
-          </Link>
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -88,7 +80,7 @@ export default function Navbar() {
         {/* CTA Button */}
         <div className="hidden md:block">
           <Link
-            href="/register"
+            href="/showcase"
             data-hoverable
             className="relative inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden group"
           >
@@ -142,7 +134,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href="/register"
+                href="/showcase"
                 onClick={() => setMobileOpen(false)}
                 className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white rounded-full gradient-flow mt-2"
               >

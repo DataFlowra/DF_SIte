@@ -2,6 +2,7 @@
 
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import { AuthProvider } from "@/context/AuthContext";
+import ScrollToTop from "./ScrollToTop";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
@@ -21,6 +22,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       }}
     >
       <AuthProvider>
+        <ScrollToTop />
         {children}
       </AuthProvider>
     </GoogleReCaptchaProvider>

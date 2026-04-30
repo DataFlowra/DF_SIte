@@ -7,27 +7,27 @@ import Image from "next/image";
 
 const faqs = [
   {
-    icon: Zap,
-    question: "How quickly can I get started with Dataflowra?",
-    answer: "You can connect your first data source in under 5 minutes. Our universal connectors support 200+ data sources out of the box, and our guided setup wizard walks you through the process step by step.",
+    icon: Globe,
+    question: "What is a data command center in Dataflowra?",
+    answer: "It is a unified interface that combines analytics, monitoring, and data visualization into a single operational system.",
     color: "#06B6D4"
   },
   {
-    icon: Globe,
-    question: "What data sources does Dataflowra support?",
-    answer: "Dataflowra supports databases (PostgreSQL, MongoDB), cloud storage (S3, GCS), streaming platforms (Kafka, Pub/Sub), REST APIs, GraphQL, and 200+ more through our connector marketplace.",
+    icon: Zap,
+    question: "Why is real-time data important?",
+    answer: "Real-time data allows businesses to make immediate decisions based on current conditions, improving accuracy and responsiveness.",
     color: "#8B5CF6"
   },
   {
-    icon: Shield,
-    question: "How does Dataflowra handle data security?",
-    answer: "We implement a zero-trust security model with end-to-end AES-256 encryption. All data processing occurs in isolated environments, and we maintain SOC 2 Type II and HIPAA compliance.",
+    icon: HelpCircle,
+    question: "Does Dataflowra include system monitoring features?",
+    answer: "Yes, it includes infrastructure metrics like latency, processing load, and system performance indicators.",
     color: "#4F46E5"
   },
   {
-    icon: HelpCircle,
-    question: "Can Dataflowra handle enterprise-scale volumes?",
-    answer: "Absolutely. Dataflowra processes millions of events per second with sub-millisecond latency. Our architecture auto-scales horizontally across 200+ edge locations worldwide.",
+    icon: Zap,
+    question: "How does it improve business efficiency?",
+    answer: "By centralizing tools and reducing manual reporting delays, it significantly speeds up decision-making processes.",
     color: "#10B981"
   }
 ];
@@ -46,21 +46,20 @@ function ParallaxImage({ src, y, x, rotate, scale, className }: any) {
     <motion.div
       ref={ref}
       style={{ x: parallaxX, y: parallaxY }}
-      className={`absolute z-0 pointer-events-none relative ${className}`}
+      className={`absolute z-0 pointer-events-none ${className}`}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.5, rotate: 0 }}
-        whileInView={{ opacity: 0.3, scale, rotate }}
+        whileInView={{ opacity: 0.15, scale, rotate }}
         transition={{ duration: 1.5, type: "spring" }}
-        className="relative w-64 h-64 blur-xl rounded-full overflow-hidden border border-white/10"
+        className="w-96 h-96 blur-[2px] rounded-[3rem] overflow-hidden border border-white/5"
       >
         <Image 
           src={src} 
-          alt="Atmospheric Layer" 
+          alt="" 
           fill 
-          className="object-cover opacity-60"
+          className="object-cover grayscale contrast-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/40" />
       </motion.div>
     </motion.div>
   );
@@ -72,27 +71,27 @@ export default function FAQAccordion() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" ref={sectionRef} className="relative py-32 overflow-hidden bg-[var(--background)]">
+    <section id="faq" ref={sectionRef} className="relative py-48 overflow-hidden bg-[var(--background)]">
       {/* High-Visibility Parallax Background Layers */}
       <ParallaxImage 
-        src="https://picsum.photos/seed/tech1/400/400" 
-        y={-200} x={-50} rotate={15} scale={1.5} 
-        className="-top-20 -left-20" 
+        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop" 
+        y={-150} x={-100} rotate={15} scale={2} 
+        className="-top-40 left-0" 
       />
       <ParallaxImage 
-        src="https://picsum.photos/seed/tech2/400/400" 
-        y={150} x={100} rotate={-20} scale={1.2} 
-        className="top-1/4 -right-20" 
+        src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" 
+        y={100} x={150} rotate={-20} scale={1.8} 
+        className="-top-20 -right-20" 
       />
       <ParallaxImage 
-        src="https://picsum.photos/seed/tech3/400/400" 
-        y={-100} x={-150} rotate={10} scale={1.8} 
-        className="bottom-0 -left-32" 
+        src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" 
+        y={-120} x={-50} rotate={10} scale={2.2} 
+        className="top-1/2 -left-40" 
       />
       <ParallaxImage 
-        src="https://picsum.photos/seed/tech4/400/400" 
-        y={200} x={80} rotate={45} scale={1.3} 
-        className="-bottom-20 right-0" 
+        src="https://images.unsplash.com/photo-1558494949-ef010cbdcc48?q=80&w=800&auto=format&fit=crop" 
+        y={180} x={120} rotate={45} scale={1.5} 
+        className="bottom-0 right-10" 
       />
 
       <div className="relative z-10 max-w-4xl mx-auto px-6">
@@ -110,7 +109,7 @@ export default function FAQAccordion() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter"
           >
-            Common <span className="gradient-text">Clarities</span>
+            Future of <span className="gradient-text">Data Insights</span>
           </motion.h2>
           <p className="text-xl text-[var(--text-muted)] max-w-2xl mx-auto font-medium">
             Everything you need to know about the platform. <br />

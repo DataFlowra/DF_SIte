@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { 
   Activity, 
   ShieldCheck, 
@@ -10,7 +10,11 @@ import {
   Terminal as TerminalIcon,
   Search,
   Settings,
-  Bell
+  Bell,
+  Cpu,
+  Database,
+  Share2,
+  Code
 } from "lucide-react";
 
 // Mock Data
@@ -29,6 +33,37 @@ const metrics = [
   { label: "Uptime", value: "99.99%", icon: ShieldCheck, color: "#10B981" },
   { label: "Latency", value: "4.2ms", icon: Activity, color: "#F59E0B" },
 ];
+
+function FloatingNode({ icon: Icon, label, delay = 0, x, y, scrollY }: any) {
+  const moveY = useTransform(scrollY, [0, 1], [0, y * 2]);
+  
+  return (
+    <motion.div
+      style={{ y: moveY, left: x }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.8 }}
+      className="absolute glass-subtle p-3 rounded-xl border border-white/10 flex items-center gap-3 shadow-xl z-30 whitespace-nowrap pointer-events-none md:pointer-events-auto"
+    >
+      <div className="w-8 h-8 rounded-lg bg-insight-teal/10 flex items-center justify-center">
+        <Icon className="w-4 h-4 text-insight-teal" />
+      </div>
+      <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+    </motion.div>
+  );
+}
+
+function CodeSnippet({ scrollY, y, x, code }: any) {
+  const moveY = useTransform(scrollY, [0, 1], [0, y * 3]);
+  return (
+    <motion.div
+      style={{ y: moveY, left: x }}
+      className="absolute font-mono text-[8px] text-insight-teal/40 pointer-events-none z-0 hidden md:block"
+    >
+      <pre>{code}</pre>
+    </motion.div>
+  );
+}
 
 function Terminal() {
   const [entries, setEntries] = useState(logEntries);
@@ -175,8 +210,18 @@ function MainDashboard() {
 
 export default function DashboardShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Parallax transforms
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+  const dashboardY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const foregroundY = useTransform(scrollYProgress, [0, 1], [250, -250]);
+  const rotateSlight = useTransform(scrollYProgress, [0, 1], [-3, 3]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
@@ -192,19 +237,26 @@ export default function DashboardShowcase() {
       id="showcase"
       ref={sectionRef}
       onMouseMove={handleMouseMove}
-      className="relative py-32 overflow-hidden bg-[var(--background)]"
+      className="relative py-48 overflow-hidden bg-[var(--background)]"
     >
       {/* Background Atmosphere */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-insight-teal/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-      </div>
+      <motion.div style={{ y: backgroundY }} className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-insight-teal/5 blur-[150px] rounded-full" />
+        
+        {/* Orbital Rings */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full animate-[spin_90s_linear_infinite_reverse]" />
+        
+        <CodeSnippet scrollY={scrollYProgress} x="15%" y={-100} code={`pipeline {\n  stage('ingest') {\n    sync(edge_nodes)\n  }\n}`} />
+        <CodeSnippet scrollY={scrollYProgress} x="85%" y={150} code={`const flow = new Flow({\n  source: 'AWS',\n  target: 'GCP'\n})`} />
+      </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          className="text-center mb-24"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-32"
         >
           <span className="text-sm font-bold tracking-[0.3em] uppercase text-insight-teal mb-4 block">The Interface</span>
           <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-[var(--text-primary)]">
@@ -218,9 +270,20 @@ export default function DashboardShowcase() {
         </motion.div>
 
         {/* The Stack Showcase */}
-        <div className="relative perspective-1000 min-h-[600px] md:min-h-[800px] flex items-center justify-center">
+        <div className="relative perspective-2000 min-h-[700px] md:min-h-[900px] flex items-center justify-center">
+          {/* Floating Data Nodes - Only visible on desktop for layout control */}
+          <div className="hidden lg:block">
+            <FloatingNode icon={Cpu} label="Neural Edge NYC-01" x="5%" y={-80} scrollY={scrollYProgress} delay={0.2} />
+            <FloatingNode icon={Database} label="Sync Cluster" x="80%" y={60} scrollY={scrollYProgress} delay={0.4} />
+            <FloatingNode icon={Share2} label="P2P Mesh Network" x="10%" y={180} scrollY={scrollYProgress} delay={0.6} />
+          </div>
+
           {/* Layer 1: Global Node Map (Blurred Background) */}
           <motion.div
+            style={{ 
+              y: backgroundY,
+              rotateZ: rotateSlight
+            }}
             animate={{ 
               x: mousePos.x * -0.5, 
               y: mousePos.y * -0.5,
@@ -234,6 +297,10 @@ export default function DashboardShowcase() {
 
           {/* Layer 2: Main Dashboard */}
           <motion.div
+            style={{ 
+              y: dashboardY,
+              rotateZ: rotateSlight
+            }}
             animate={{ 
               x: mousePos.x, 
               y: mousePos.y,
@@ -247,34 +314,36 @@ export default function DashboardShowcase() {
 
           {/* Layer 3: Side Terminal (Floating) */}
           <motion.div
+            style={{ y: foregroundY }}
             animate={{ 
-              x: mousePos.x * 1.5 + 300, 
-              y: mousePos.y * 1.5 + 200,
+              x: mousePos.x * 1.5 + 380, 
+              y: mousePos.y * 1.5 + 280,
               rotateX: mousePos.y * 0.3,
               rotateY: mousePos.x * -0.3,
             }}
-            className="hidden lg:block absolute z-30 w-80 h-64"
+            className="hidden xl:block absolute z-30 w-80 h-72"
           >
             <Terminal />
           </motion.div>
 
           {/* Layer 4: Security Alert (Floating) */}
           <motion.div
+            style={{ y: foregroundY }}
             animate={{ 
-              x: mousePos.x * 2 - 400, 
-              y: mousePos.y * 2 - 150,
+              x: mousePos.x * 2 - 480, 
+              y: mousePos.y * 2 - 250,
               rotateX: mousePos.y * 0.4,
               rotateY: mousePos.x * -0.4,
             }}
-            className="hidden lg:block absolute z-30"
+            className="hidden xl:block absolute z-30"
           >
-            <div className="glass-subtle p-5 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-insight-teal/10 flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-insight-teal" />
+            <div className="glass-subtle p-6 rounded-2xl border border-white/10 shadow-3xl flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-insight-teal/10 flex items-center justify-center">
+                <ShieldCheck className="w-7 h-7 text-insight-teal" />
               </div>
               <div>
                 <div className="text-[10px] font-bold uppercase text-insight-teal mb-1">Protection Layer</div>
-                <div className="text-sm font-bold">Encrypted End-to-End</div>
+                <div className="text-base font-bold">Encrypted End-to-End</div>
               </div>
             </div>
           </motion.div>
