@@ -5,6 +5,7 @@ import { Search, Bell, User, Menu, Cpu, Wifi, Command, Zap } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 interface TopbarProps {
   onMenuClick?: () => void;
