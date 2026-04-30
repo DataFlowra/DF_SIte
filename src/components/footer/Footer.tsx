@@ -69,10 +69,10 @@ export default function Footer() {
       { name: "FAQ", href: "/#faq" },
     ],
     legal: [
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Security", href: "#" },
-      { name: "Compliance", href: "#" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Service", href: "/terms" },
+      { name: "Security", href: "/security" },
+      { name: "Compliance", href: "/compliance" },
     ],
   };
 
@@ -218,10 +218,13 @@ export default function Footer() {
               <ul className="space-y-5">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
-                    <a href={link.href} className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all flex items-center group">
+                    <Link 
+                      href={link.href} 
+                      className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all flex items-center group"
+                    >
                       <span className="w-0 group-hover:w-4 h-px bg-aura-violet mr-0 group-hover:mr-3 transition-all duration-300 opacity-0 group-hover:opacity-100" />
                       {link.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

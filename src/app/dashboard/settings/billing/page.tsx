@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Check, ArrowRight, Loader2, Receipt, Zap, ShieldCheck, X, Sparkles } from "lucide-react";
+import { CreditCard, Check, ArrowRight, Loader2, Receipt, Zap, ShieldCheck, X, Sparkles, Lock } from "lucide-react";
 import { api } from "@/lib/api-client";
 import Link from "next/link";
 import CardInput from "@/components/checkout/CardInput";
