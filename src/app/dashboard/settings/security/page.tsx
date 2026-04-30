@@ -78,11 +78,11 @@ export default function SecuritySettingsPage() {
     <div className="space-y-8 pb-20">
       {/* Header */}
       <div className="flex items-center gap-4 mb-10">
-        <Link href="/dashboard/settings" className="text-data-slate hover:text-white transition-colors">
+        <Link href="/dashboard/settings" className="text-data-slate hover:text-[var(--text-primary)] transition-colors">
           Settings
         </Link>
-        <span className="text-white/10">/</span>
-        <h1 className="text-xl font-bold text-white uppercase tracking-widest">Security Protocols</h1>
+        <span className="text-[var(--text-primary)] opacity-10">/</span>
+        <h1 className="text-xl font-bold text-[var(--text-primary)] uppercase tracking-widest">Security Protocols</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -92,13 +92,13 @@ export default function SecuritySettingsPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass rounded-[2.5rem] p-10 border border-white/5"
+            className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)]"
           >
             <div className="flex items-center gap-4 mb-8">
               <div className="w-10 h-10 rounded-xl bg-flow-indigo/10 flex items-center justify-center text-flow-indigo border border-flow-indigo/20">
                 <Lock size={18} />
               </div>
-              <h3 className="text-xl font-bold text-white">Update Password</h3>
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">Update Password</h3>
             </div>
 
             {passError && (
@@ -116,7 +116,7 @@ export default function SecuritySettingsPage() {
                     type="password" required
                     value={passData.current}
                     onChange={(e) => setPassData({...passData, current: e.target.value})}
-                    className="w-full bg-[var(--surface-elevated)] border border-white/5 rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                    className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -126,7 +126,7 @@ export default function SecuritySettingsPage() {
                       type="password" required
                       value={passData.new}
                       onChange={(e) => setPassData({...passData, new: e.target.value})}
-                      className="w-full bg-[var(--surface-elevated)] border border-white/5 rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
                     />
                   </div>
                   <div className="space-y-2 text-left">
@@ -135,12 +135,12 @@ export default function SecuritySettingsPage() {
                       type="password" required
                       value={passData.confirm}
                       onChange={(e) => setPassData({...passData, confirm: e.target.value})}
-                      className="w-full bg-[var(--surface-elevated)] border border-white/5 rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)]">
                 <div>
                    {passSuccess && (
                      <div className="flex items-center gap-2 text-green-500">
@@ -152,7 +152,7 @@ export default function SecuritySettingsPage() {
                 <button 
                   disabled={isChangingPass}
                   type="submit"
-                  className="px-8 py-3 rounded-xl bg-white text-black font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl disabled:opacity-50"
+                  className="px-8 py-3 rounded-xl bg-[var(--text-primary)] text-[var(--background)] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl disabled:opacity-50"
                 >
                   {isChangingPass ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify & Save"}
                 </button>
@@ -165,19 +165,19 @@ export default function SecuritySettingsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass rounded-[2.5rem] p-10 border border-white/5"
+            className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)]"
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-insight-teal/10 flex items-center justify-center text-insight-teal border border-insight-teal/20 shadow-glow-sm">
                   <Key size={18} />
                 </div>
-                <h3 className="text-xl font-bold text-white">Access Tokens</h3>
+                <h3 className="text-xl font-bold text-[var(--text-primary)]">Access Tokens</h3>
               </div>
               <button 
                 onClick={generateKey}
                 disabled={isGenerating}
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
+                className="p-2.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--glass-border)] text-[var(--text-primary)] transition-all active:scale-95 disabled:opacity-50"
               >
                 {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
               </button>
@@ -191,13 +191,13 @@ export default function SecuritySettingsPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
-                    className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between group"
+                    className="p-4 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--glass-border)] flex items-center justify-between group"
                   >
                     <div>
-                      <div className="text-sm font-bold text-white mb-1 text-left">{key.name}</div>
+                      <div className="text-sm font-bold text-[var(--text-primary)] mb-1 text-left">{key.name}</div>
                       <div className="flex items-center gap-3">
                         <code className="text-[10px] text-data-slate font-mono bg-black/20 px-2 py-0.5 rounded">{key.key}</code>
-                        <span className="text-[8px] text-white/20 font-mono">Created: {key.created}</span>
+                        <span className="text-[8px] text-[var(--text-primary)] opacity-20 font-mono">Created: {key.created}</span>
                       </div>
                     </div>
                     <button 
@@ -219,7 +219,7 @@ export default function SecuritySettingsPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass rounded-[2.5rem] p-10 border border-white/5"
+            className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)]"
           >
             <h4 className="text-[10px] font-black text-data-slate uppercase tracking-[0.2em] mb-8">Active Neural Uplinks</h4>
             <div className="space-y-6">
@@ -228,11 +228,11 @@ export default function SecuritySettingsPage() {
                  { device: "iPhone 15", location: "London, UK", status: "2h ago", icon: Smartphone },
                ].map((session, i) => (
                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-data-slate">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-data-slate">
                        <session.icon size={18} />
                     </div>
                     <div className="flex-1 text-left">
-                       <div className="text-sm font-bold text-white">{session.device}</div>
+                       <div className="text-sm font-bold text-[var(--text-primary)]">{session.device}</div>
                        <div className="text-[10px] text-data-slate uppercase font-black">{session.location}</div>
                     </div>
                     <div className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${i === 0 ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'text-data-slate'}`}>
@@ -241,7 +241,7 @@ export default function SecuritySettingsPage() {
                  </div>
                ))}
             </div>
-            <button className="w-full mt-10 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
+            <button className="w-full mt-10 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-[var(--text-primary)] transition-all">
                Terminate All Sessions
             </button>
           </motion.div>

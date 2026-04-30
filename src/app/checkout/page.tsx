@@ -17,10 +17,10 @@ import {
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
-
-
+import CardInput from "@/components/checkout/CardInput";
 
 interface Plan {
+
   id: number;
   name: string;
   slug: string;
@@ -56,6 +56,10 @@ function CheckoutContent() {
     zip: "",
     country: "USA"
   });
+
+  const handleCardChange = (cardData: any) => {
+    setFormData(prev => ({ ...prev, ...cardData }));
+  };
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -181,76 +185,7 @@ function CheckoutContent() {
                     Payment Method
                   </h3>
                   
-                  <div className="space-y-4">
-                    <div className="group space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Cardholder Name</label>
-                      <input 
-                        required
-                        name="card_holder"
-                        value={formData.card_holder}
-                        onChange={handleInputChange}
-                        placeholder="John Doe"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
-                      />
-                    </div>
-                    
-                    <div className="group space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Card Number</label>
-                      <div className="relative">
-                        <input 
-                          required
-                          name="card_number"
-                          value={formData.card_number}
-                          onChange={handleInputChange}
-                          placeholder="4111 1111 1111 1111"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
-                        />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-                          <div className="w-8 h-5 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">VISA</div>
-                          <div className="w-8 h-5 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold">MC</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Exp Month</label>
-                        <input 
-                          required
-                          name="expiry_month"
-                          value={formData.expiry_month}
-                          onChange={handleInputChange}
-                          placeholder="MM"
-                          maxLength={2}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
-                        />
-                      </div>
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Exp Year</label>
-                        <input 
-                          required
-                          name="expiry_year"
-                          value={formData.expiry_year}
-                          onChange={handleInputChange}
-                          placeholder="YY"
-                          maxLength={2}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
-                        />
-                      </div>
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">CVV</label>
-                        <input 
-                          required
-                          name="cvv"
-                          value={formData.cvv}
-                          onChange={handleInputChange}
-                          placeholder="123"
-                          maxLength={4}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <CardInput onCardChange={handleCardChange} />
                 </div>
 
                 {/* Billing Address */}

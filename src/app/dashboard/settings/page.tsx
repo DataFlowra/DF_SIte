@@ -44,8 +44,8 @@ export default function SettingsPage() {
       >
         <div className="relative z-10">
           <span className="text-[10px] font-black text-flow-indigo uppercase tracking-[0.4em] mb-4 block">System Configuration</span>
-          <h1 className="text-4xl font-black tracking-tighter mb-4 text-white">Control Center</h1>
-          <p className="text-base text-data-slate font-medium max-w-xl leading-relaxed">
+          <h1 className="text-4xl font-black tracking-tighter mb-4 text-[var(--text-primary)]">Control Center</h1>
+          <p className="text-base text-[var(--text-muted)] font-medium max-w-xl leading-relaxed">
             Orchestrate your experience. Manage your identity, security protocols, 
             and infrastructure scaling parameters from a single interface.
           </p>
@@ -58,7 +58,7 @@ export default function SettingsPage() {
       <div className="max-w-5xl space-y-12">
         {settingsGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-6">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-data-slate ml-4">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)] ml-4">
               {group.title}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -70,15 +70,15 @@ export default function SettingsPage() {
                     className="h-full glass-subtle p-6 rounded-[2rem] border border-white/5 flex items-center justify-between group hover:border-flow-indigo/30 transition-all cursor-pointer shadow-lg"
                   >
                     <div className="flex items-center gap-6">
-                      <div className="w-14 h-14 rounded-2xl bg-white/[0.03] flex items-center justify-center text-data-slate group-hover:text-flow-indigo transition-colors border border-white/5 group-hover:border-flow-indigo/20 shadow-inner">
+                      <div className="w-14 h-14 rounded-2xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-flow-indigo transition-colors border border-white/5 group-hover:border-flow-indigo/20 shadow-inner">
                         <item.icon size={24} />
                       </div>
                       <div className="text-left">
-                        <h3 className="font-bold text-white group-hover:text-[var(--text-primary)] transition-colors">{item.label}</h3>
-                        <p className="text-xs text-data-slate font-medium leading-relaxed max-w-[200px]">{item.desc}</p>
+                        <h3 className="font-bold text-[var(--text-primary)] transition-colors">{item.label}</h3>
+                        <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed max-w-[200px]">{item.desc}</p>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-data-slate group-hover:text-white transition-all group-hover:bg-flow-indigo/20">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-all group-hover:bg-flow-indigo/20">
                       <ChevronRight size={18} />
                     </div>
                   </motion.div>
