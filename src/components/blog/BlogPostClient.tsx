@@ -177,7 +177,7 @@ export default function BlogPostClient({ post }: BlogPostProps) {
                   <Link href="/register" className="px-10 py-5 bg-white text-black font-bold rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl">
                     Get Started Free
                   </Link>
-                  <Link href="/contact" className="px-10 py-5 glass border border-white/10 font-bold rounded-2xl hover:bg-white/5 transition-all">
+                  <Link href="/#contact" className="px-10 py-5 glass border border-white/10 font-bold rounded-2xl hover:bg-white/5 transition-all">
                     Talk to Sales
                   </Link>
                 </div>

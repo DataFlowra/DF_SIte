@@ -46,7 +46,7 @@ export default function CTASection() {
               </Link>
               
               <Link
-                href="/contact"
+                href="/#contact"
                 className="group inline-flex items-center gap-3 px-12 py-6 glass border border-white/10 font-bold rounded-full transition-all duration-300 hover:bg-white/5 active:scale-95 w-full sm:w-auto"
               >
                 Schedule a Technical Demo
