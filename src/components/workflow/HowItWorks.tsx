@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const steps = [
   {
@@ -11,55 +12,16 @@ const steps = [
     description:
       "Connect databases, APIs, streams, and files in seconds. Our universal connectors speak every data language.",
     color: "#06B6D4",
+    iconImage: "/images/Connect.webp",
     icon: (isActive: boolean) => (
-      <svg viewBox="0 0 80 80" className="w-20 h-20">
-        <motion.circle
-          cx="25"
-          cy="40"
-          r="8"
-          fill="none"
-          stroke="#06B6D4"
-          strokeWidth="2"
-          animate={isActive ? { cx: [25, 35, 25] } : { cx: 25 }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+      <div className="relative w-24 h-24">
+        <Image 
+          src="/images/Connect.webp" 
+          alt="Connect" 
+          fill 
+          className={`object-contain transition-all duration-500 ${isActive ? 'scale-110 rotate-3' : 'scale-100'}`}
         />
-        <motion.circle
-          cx="55"
-          cy="40"
-          r="8"
-          fill="none"
-          stroke="#8B5CF6"
-          strokeWidth="2"
-          animate={isActive ? { cx: [55, 45, 55] } : { cx: 55 }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-        <motion.line
-          x1="33"
-          y1="40"
-          x2="47"
-          y2="40"
-          stroke="#4F46E5"
-          strokeWidth="2"
-          strokeDasharray="4 4"
-          animate={
-            isActive
-              ? { strokeDashoffset: [14, 0], opacity: [0, 1] }
-              : { opacity: 0 }
-          }
-          transition={{ duration: 1, repeat: Infinity }}
-        />
-        {isActive && (
-          <motion.circle
-            cx="40"
-            cy="40"
-            r="3"
-            fill="#06B6D4"
-            initial={{ scale: 0 }}
-            animate={{ scale: [0, 1.2, 1] }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-          />
-        )}
-      </svg>
+      </div>
     ),
   },
   {
@@ -69,60 +31,16 @@ const steps = [
     description:
       "Apply real-time transformations, filtering, and enrichment. Watch raw chaos become structured intelligence.",
     color: "#8B5CF6",
+    iconImage: "/images/Transform.webp",
     icon: (isActive: boolean) => (
-      <svg viewBox="0 0 80 80" className="w-20 h-20">
-        {/* Chaotic lines */}
-        {[0, 1, 2, 3, 4].map((i) => {
-          const qx = [35, 38, 32, 36, 34][i];
-          const qy = [18, 30, 40, 55, 70][i];
-          return (
-            <motion.path
-              key={i}
-              d={`M 10 ${20 + i * 12} Q ${qx} ${qy}, 40 40`}
-              fill="none"
-              stroke="#8B5CF6"
-              strokeWidth="1.5"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={
-                isActive
-                  ? { pathLength: 1, opacity: [0, 0.8, 0.4] }
-                  : { pathLength: 0, opacity: 0 }
-              }
-              transition={{ delay: i * 0.15, duration: 0.8, repeat: isActive ? Infinity : 0, repeatDelay: 1 }}
-            />
-          );
-        })}
-        {/* Organized output lines */}
-        {[0, 1, 2].map((i) => (
-          <motion.line
-            key={`out-${i}`}
-            x1="44"
-            y1="40"
-            x2="70"
-            y2={30 + i * 10}
-            stroke="#06B6D4"
-            strokeWidth="2"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={
-              isActive
-                ? { pathLength: 1, opacity: 1 }
-                : { pathLength: 0, opacity: 0 }
-            }
-            transition={{ delay: 0.6 + i * 0.15, duration: 0.5 }}
-          />
-        ))}
-        <motion.circle
-          cx="40"
-          cy="40"
-          r="6"
-          fill="none"
-          stroke="#4F46E5"
-          strokeWidth="2"
-          animate={isActive ? { rotate: 360 } : { rotate: 0 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "40px 40px" }}
+      <div className="relative w-24 h-24">
+        <Image 
+          src="/images/Transform.webp" 
+          alt="Transform" 
+          fill 
+          className={`object-contain transition-all duration-500 ${isActive ? 'scale-110 -rotate-3' : 'scale-100'}`}
         />
-      </svg>
+      </div>
     ),
   },
   {
@@ -132,52 +50,16 @@ const steps = [
     description:
       "Push processed data to dashboards, alerts, and APIs instantly. Real-time delivery that never misses a beat.",
     color: "#4F46E5",
+    iconImage: "/images/Deliver.webp",
     icon: (isActive: boolean) => (
-      <svg viewBox="0 0 80 80" className="w-20 h-20">
-        {/* Chart building itself */}
-        {[0, 1, 2, 3, 4].map((i) => (
-          <motion.rect
-            key={i}
-            x={18 + i * 10}
-            y={60}
-            width="7"
-            rx="2"
-            fill={
-              i % 2 === 0 ? "#06B6D4" : "#8B5CF6"
-            }
-            initial={{ height: 0, y: 60 }}
-            animate={
-              isActive
-                ? {
-                    height: [0, 15 + i * 7],
-                    y: [60, 60 - (15 + i * 7)],
-                  }
-                : { height: 0, y: 60 }
-            }
-            transition={{
-              delay: i * 0.15,
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          />
-        ))}
-        {/* Checkmark */}
-        <motion.path
-          d="M55 25 L60 30 L70 18"
-          fill="none"
-          stroke="#4F46E5"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={
-            isActive
-              ? { pathLength: 1, opacity: 1 }
-              : { pathLength: 0, opacity: 0 }
-          }
-          transition={{ delay: 0.8, duration: 0.5 }}
+      <div className="relative w-24 h-24">
+        <Image 
+          src="/images/Deliver.webp" 
+          alt="Deliver" 
+          fill 
+          className={`object-contain transition-all duration-500 ${isActive ? 'scale-110 rotate-3' : 'scale-100'}`}
         />
-      </svg>
+      </div>
     ),
   },
 ];

@@ -29,7 +29,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
       <div className="hidden lg:block sticky top-0 h-screen overflow-hidden bg-[var(--surface)]">
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[var(--background)]/20 to-transparent" />
         <Image
-          src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop"
+          src="/images/Authentication Pages Split-Screen Visual.webp"
           alt="Technical Background"
           fill
           className="object-cover grayscale contrast-125 opacity-30"

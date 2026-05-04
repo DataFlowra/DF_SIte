@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Clock, User } from "lucide-react";
 import Link from "next/link";
 import { BlogPost } from "@/lib/blog-data";
+import Image from "next/image";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -22,10 +23,11 @@ export default function BlogCard({ post, index }: BlogCardProps) {
       {/* Image Wrap */}
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-        <img
+        <Image
           src={post.image}
           alt={post.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute top-6 left-6 z-20">
           <span className="px-4 py-1.5 rounded-full glass-subtle border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white">
@@ -55,8 +57,13 @@ export default function BlogCard({ post, index }: BlogCardProps) {
 
         <div className="flex items-center justify-between pt-6 border-t border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-insight-teal to-aura-violet flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
-              {post.author.avatar}
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/10 shadow-lg">
+              <Image 
+                src={post.author.avatar} 
+                alt={post.author.name}
+                fill
+                className="object-cover"
+              />
             </div>
             <div className="text-xs">
               <div className="font-bold text-[var(--text-primary)]">{post.author.name}</div>

@@ -18,60 +18,66 @@ const features = [
   {
     id: "realtime",
     icon: Zap,
+    iconImage: "/images/Real-Time Processing (2).webp",
     title: "Real-Time Processing",
     description: "Process millions of data points per second with sub-millisecond latency. Your data never sleeps.",
     details: ["Sub-millisecond latency", "Dynamic auto-scaling", "Backpressure management", "Stream enrichment"],
-    image: "/images/features/realtime.png",
+    image: "/images/Real-Time Processing.webp",
     color: "#06B6D4",
     span: "md:col-span-1 md:row-span-2"
   },
   {
     id: "analytics",
     icon: BarChart3,
+    iconImage: "/images/Adaptive Analytics (2).webp",
     title: "Adaptive Analytics",
     description: "AI-powered visualizations that evolve with your data patterns.",
     details: ["Neural recognition", "Predictive trends", "Self-healing", "Anomaly detection"],
-    image: "/images/features/analytics.png",
+    image: "/images/Adaptive Analytics.webp",
     color: "#8B5CF6",
     span: "md:col-span-1 md:row-span-1"
   },
   {
     id: "security",
     icon: Shield,
+    iconImage: "/images/Zero-Trust Security (2).webp",
     title: "Zero-Trust Security",
     description: "End-to-end encryption with granular access controls.",
     details: ["AES-256 encryption", "Key management", "Identity proxying", "Compliance logs"],
-    image: "/images/features/security.png",
+    image: "/images/Zero-Trust Security.webp",
     color: "#4F46E5",
     span: "md:col-span-1 md:row-span-2"
   },
   {
     id: "edge",
     icon: Globe,
+    iconImage: "/images/Global Edge Network (2).webp",
     title: "Global Edge Network",
     description: "Deploy across 200+ edge locations. Speed of light, everywhere.",
     details: ["Anycast routing", "Edge-side compute", "Data residency", "Load balancing"],
-    image: "/images/features/realtime.png",
+    image: "/images/Global Edge Network.webp",
     color: "#06B6D4",
     span: "md:col-span-1 md:row-span-1"
   },
   {
     id: "orchestration",
     icon: Cpu,
+    iconImage: "/images/Smart Orchestration (2).webp",
     title: "Smart Orchestration",
     description: "Intelligent workflow automation that routes data to the right destination.",
     details: ["Logic-based routing", "Conditional triggers", "Retry & recovery", "Hybrid-cloud"],
-    image: "/images/features/analytics.png",
+    image: "/images/Smart Orchestration.webp",
     color: "#8B5CF6",
     span: "md:col-span-2 md:row-span-1"
   },
   {
     id: "fabric",
     icon: Layers,
+    iconImage: "/images/Unified Data Fabric (2).webp",
     title: "Unified Data Fabric",
     description: "Connect any source, any format, any volume. One fabric.",
     details: ["Schema-less ingestion", "Auto-conversion", "Unified query API", "Multi-source joining"],
-    image: "/images/features/security.png",
+    image: "/images/Unified Data Fabric.webp",
     color: "#4F46E5",
     span: "md:col-span-1 md:row-span-1"
   }
@@ -120,13 +126,20 @@ function FeatureCard({ feature, index }: { feature: typeof features[0], index: n
           <div className="flex items-start justify-between mb-8">
             <motion.div 
               layout
-              className={`rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 shadow-2xl transition-all duration-500
+              className={`rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 relative overflow-hidden
                 ${isExpanded ? 'w-20 h-20' : 'w-16 h-16 group-hover:scale-105'}
               `}
             >
-              <feature.icon 
-                className={`${isExpanded ? 'w-10 h-10' : 'w-8 h-8'} transition-all`} 
-                style={{ color: feature.color }} 
+              <Image 
+                src={feature.iconImage} 
+                alt={feature.title} 
+                width={isExpanded ? 40 : 32}
+                height={isExpanded ? 40 : 32}
+                className="relative z-10"
+              />
+              <div 
+                className="absolute inset-0 opacity-20 blur-sm"
+                style={{ backgroundColor: feature.color }}
               />
             </motion.div>
             

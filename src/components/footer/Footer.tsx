@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ArrowUp, Zap, X, Send, ShieldCheck, Heart, Loader2 } from "lucide-react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaYoutube, FaFacebook, FaPinterest } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
@@ -67,6 +67,11 @@ export default function Footer() {
       { name: "Blog", href: "/blog" },
       { name: "Careers", href: "#" },
       { name: "FAQ", href: "/#faq" },
+    ],
+    ecosystem: [
+      { name: "Crunchbase", href: "https://www.crunchbase.com/organization/dataflowra" },
+      { name: "F6S", href: "https://www.f6s.com/dataflowra" },
+      { name: "Company LinkedIn", href: "https://www.linkedin.com/company/dataflowra" },
     ],
     legal: [
       { name: "Privacy Policy", href: "/privacy" },
@@ -186,7 +191,7 @@ export default function Footer() {
           </div>
 
           {/* Links Grid */}
-          <div className="lg:col-span-7 grid grid-cols-2 gap-12 md:gap-24">
+          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -204,6 +209,29 @@ export default function Footer() {
                       <span className="w-0 group-hover:w-4 h-px bg-insight-teal mr-0 group-hover:mr-3 transition-all duration-300 opacity-0 group-hover:opacity-100" />
                       {link.name}
                     </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.35 }}
+            >
+              <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-flow-indigo mb-10">Ecosystem</h4>
+              <ul className="space-y-5">
+                {footerLinks.ecosystem.map((link) => (
+                  <li key={link.name}>
+                    <a 
+                      href={link.href} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all flex items-center group"
+                    >
+                      <span className="w-0 group-hover:w-4 h-px bg-flow-indigo mr-0 group-hover:mr-3 transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                      {link.name}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -244,13 +272,17 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
             {[
-              { icon: FaGithub, href: "#", label: "GitHub", color: "hover:text-white" },
-              { icon: FaXTwitter, href: "#", label: "X (Twitter)", color: "hover:text-white" },
-              { icon: FaLinkedin, href: "#", label: "LinkedIn", color: "hover:text-insight-teal" },
+              { icon: FaXTwitter, href: "https://x.com/dataflowra", label: "X (Twitter)", color: "hover:text-white" },
+              { icon: FaLinkedin, href: "https://www.linkedin.com/company/dataflowra", label: "LinkedIn", color: "hover:text-insight-teal" },
+              { icon: FaYoutube, href: "https://www.youtube.com/@Dataflowra", label: "YouTube", color: "hover:text-red-500" },
+              { icon: FaFacebook, href: "https://www.facebook.com/Dataflowra/", label: "Facebook", color: "hover:text-blue-500" },
+              { icon: FaPinterest, href: "https://www.pinterest.com/Dataflowra_/", label: "Pinterest", color: "hover:text-red-600" },
             ].map((social) => (
               <a 
                 key={social.label}
                 href={social.href} 
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.label}
                 className={`w-12 h-12 rounded-xl glass flex items-center justify-center text-[var(--text-muted)] ${social.color} hover:border-white/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20`}
               >

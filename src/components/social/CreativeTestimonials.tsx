@@ -9,25 +9,25 @@ const testimonials = [
     name: "Sarah Chen",
     role: "VP Engineering, NeuralPath",
     quote: "Dataflowra saved us 40 hours per week on data management. The real-time dashboard is a complete game-changer for our scale.",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
+    avatar: "/images/Sarah Chen.webp",
     tag: "EFFICIENCY",
     icon: Zap,
     color: "#06B6D4"
   },
   {
-    name: "Marcus Rivera",
+    name: "Marcus Thorne",
     role: "CTO, CloudScale",
     quote: "We reduced our data latency by 95% after switching. Our customers now get instant updates instead of waiting for batch processes.",
-    avatar: "https://i.pravatar.cc/150?u=marcus",
+    avatar: "/images/Marcus Thorne.webp",
     tag: "PERFORMANCE",
     icon: Activity,
     color: "#4F46E5"
   },
   {
-    name: "Aisha Okonkwo",
-    role: "Head of Data, QuantumSync",
+    name: "Alex Rivet",
+    role: "Lead Architect, QuantumSync",
     quote: "The zero-trust security model gave us the confidence to process sensitive data at the edge. Compliance is finally seamless.",
-    avatar: "https://i.pravatar.cc/150?u=aisha",
+    avatar: "/images/Alex Rivet.webp",
     tag: "SECURITY",
     icon: ShieldCheck,
     color: "#8B5CF6"

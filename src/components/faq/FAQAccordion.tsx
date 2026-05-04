@@ -74,22 +74,22 @@ export default function FAQAccordion() {
     <section id="faq" ref={sectionRef} className="relative py-48 overflow-hidden bg-[var(--background)]">
       {/* High-Visibility Parallax Background Layers */}
       <ParallaxImage 
-        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop" 
+        src="/images/1st question.webp" 
         y={-150} x={-100} rotate={15} scale={2} 
         className="-top-40 left-0" 
       />
       <ParallaxImage 
-        src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" 
+        src="/images/2nd question.webp" 
         y={100} x={150} rotate={-20} scale={1.8} 
         className="-top-20 -right-20" 
       />
       <ParallaxImage 
-        src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" 
+        src="/images/3rd question.webp" 
         y={-120} x={-50} rotate={10} scale={2.2} 
         className="top-1/2 -left-40" 
       />
       <ParallaxImage 
-        src="https://images.unsplash.com/photo-1558494949-ef010cbdcc48?q=80&w=800&auto=format&fit=crop" 
+        src="/images/4th question.webp" 
         y={180} x={120} rotate={45} scale={1.5} 
         className="bottom-0 right-10" 
       />

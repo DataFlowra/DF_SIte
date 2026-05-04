@@ -23,11 +23,11 @@ export const blogPosts: BlogPost[] = [
     category: "Analytics",
     date: "June 05, 2026",
     readTime: "7 min read",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2000&auto=format&fit=crop",
+    image: "/images/The Rise of Unified Data Intelligence in Modern Business Systems.webp",
     author: {
       name: "Marcus Thorne",
       role: "CTO",
-      avatar: "MT"
+      avatar: "/images/Marcus Thorne.webp"
     },
     tags: ["Data Intelligence", "Unified Analytics", "Business Strategy", "Dataflowra", "Decision Intelligence"],
     content: `
@@ -53,11 +53,11 @@ export const blogPosts: BlogPost[] = [
     category: "Operations",
     date: "June 12, 2026",
     readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1551288049-bbda646ff21d?q=80&w=2000&auto=format&fit=crop",
+    image: "/images/Building the Modern Data Command Center for Business Performance.webp",
     author: {
       name: "Sarah Chen",
       role: "Operations Director",
-      avatar: "SC"
+      avatar: "/images/Sarah Chen.webp"
     },
     tags: ["Command Center", "Operations", "Real-time Data", "Infrastructure", "Business Performance"],
     content: `
@@ -87,11 +87,11 @@ export const blogPosts: BlogPost[] = [
     category: "Technology",
     date: "June 20, 2026",
     readTime: "8 min read",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop",
+    image: "/images/The Future of Integrated Data Ecosystems and Intelligent Analytics Platforms.webp",
     author: {
       name: "Alex Rivet",
       role: "Lead Architect",
-      avatar: "AR"
+      avatar: "/images/Alex Rivet.webp"
     },
     tags: ["Data Ecosystems", "Integration", "Future Tech", "Intelligent Analytics", "Scalability"],
     content: `

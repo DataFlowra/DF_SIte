@@ -9,7 +9,6 @@ import {
   Loader2, 
   Terminal, 
   Sparkles,
-  Bot,
   User,
   ShieldCheck,
   Zap,
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 interface Message {
   role: "user" | "assistant";
@@ -116,8 +116,14 @@ export default function Chatbot() {
               <div className="absolute inset-0 bg-gradient-to-r from-flow-indigo/10 via-insight-teal/5 to-transparent pointer-events-none" />
               <div className="flex items-center gap-4 relative z-10">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-xl bg-flow-indigo/20 flex items-center justify-center border border-flow-indigo/30">
-                    <Bot className="w-5 h-5 text-flow-indigo" />
+                  <div className="w-10 h-10 rounded-xl bg-flow-indigo/20 flex items-center justify-center border border-flow-indigo/30 overflow-hidden">
+                    <Image 
+                      src="/images/AI Chatbot (Site-wide)Bot Identity.webp" 
+                      alt="FlowR AI" 
+                      width={40} 
+                      height={40}
+                      className="object-cover"
+                    />
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[var(--background)] animate-pulse" />
                 </div>
@@ -157,8 +163,14 @@ export default function Chatbot() {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} items-end gap-3`}
                 >
                   {m.role === "assistant" && (
-                    <div className="w-8 h-8 rounded-lg bg-flow-indigo/10 flex items-center justify-center border border-flow-indigo/20 shrink-0">
-                      <Bot className="w-4 h-4 text-flow-indigo" />
+                    <div className="w-8 h-8 rounded-lg bg-flow-indigo/10 flex items-center justify-center border border-flow-indigo/20 shrink-0 overflow-hidden">
+                      <Image 
+                        src="/images/AI Chatbot (Site-wide)Bot Identity.webp" 
+                        alt="Bot" 
+                        width={32} 
+                        height={32}
+                        className="object-cover"
+                      />
                     </div>
                   )}
                   <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${
