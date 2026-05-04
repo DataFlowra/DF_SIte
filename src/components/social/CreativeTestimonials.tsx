@@ -6,28 +6,28 @@ import Image from "next/image";
 
 const testimonials = [
   {
-    name: "Sarah Chen",
+    name: "Lyra Belrose",
     role: "VP Engineering, NeuralPath",
     quote: "Dataflowra saved us 40 hours per week on data management. The real-time dashboard is a complete game-changer for our scale.",
-    avatar: "/images/Sarah Chen.webp",
+    avatar: "/images/16.webp",
     tag: "EFFICIENCY",
     icon: Zap,
     color: "#06B6D4"
   },
   {
-    name: "Marcus Thorne",
+    name: "Caspian Drake",
     role: "CTO, CloudScale",
     quote: "We reduced our data latency by 95% after switching. Our customers now get instant updates instead of waiting for batch processes.",
-    avatar: "/images/Marcus Thorne.webp",
+    avatar: "/images/17.webp",
     tag: "PERFORMANCE",
     icon: Activity,
     color: "#4F46E5"
   },
   {
-    name: "Alex Rivet",
-    role: "Lead Architect, QuantumSync",
+    name: "Seraphina Voss",
+    role: "Head of Data, QuantumSync",
     quote: "The zero-trust security model gave us the confidence to process sensitive data at the edge. Compliance is finally seamless.",
-    avatar: "/images/Alex Rivet.webp",
+    avatar: "/images/18.webp",
     tag: "SECURITY",
     icon: ShieldCheck,
     color: "#8B5CF6"

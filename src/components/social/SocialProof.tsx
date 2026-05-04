@@ -9,34 +9,26 @@ const testimonials = [
   {
     id: 1,
     quote: "Dataflowra saved us 40 hours per week on data pipeline management. The real-time dashboard is a game-changer.",
-    author: "Sarah Chen",
+    author: "Lyra Belrose",
     role: "VP Engineering, NeuralPath",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
+    avatar: "/images/16.webp",
     color: "#06B6D4"
   },
   {
     id: 2,
     quote: "We reduced our data latency by 95% after switching. Our customers now get instant updates instead of waiting.",
-    author: "Marcus Rivera",
+    author: "Caspian Drake",
     role: "CTO, CloudScale",
-    avatar: "https://i.pravatar.cc/150?u=marcus",
+    avatar: "/images/17.webp",
     color: "#8B5CF6"
   },
   {
     id: 3,
     quote: "The zero-trust security model gave us confidence to process sensitive data. Compliance is finally seamless.",
-    author: "Aisha Okonkwo",
+    author: "Seraphina Voss",
     role: "Head of Data, QuantumSync",
-    avatar: "https://i.pravatar.cc/150?u=aisha",
+    avatar: "/images/18.webp",
     color: "#4F46E5"
-  },
-  {
-    id: 4,
-    quote: "The most intuitive data orchestration platform I've ever used. It just flows where others struggle.",
-    author: "James Wilson",
-    role: "Lead Architect, Velocity Labs",
-    avatar: "https://i.pravatar.cc/150?u=james",
-    color: "#06B6D4"
   }
 ];
 
@@ -236,7 +228,7 @@ export default function SocialProof() {
           <div className="absolute top-1/2 -translate-y-1/2 -left-6 md:-left-12 z-30">
             <button 
               onClick={prev}
-              className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-95"
+              className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/20 flex items-center justify-center text-insight-teal hover:bg-white/10 transition-all hover:scale-110 active:scale-95 shadow-2xl"
             >
               <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
@@ -244,7 +236,7 @@ export default function SocialProof() {
           <div className="absolute top-1/2 -translate-y-1/2 -right-6 md:-right-12 z-30">
             <button 
               onClick={next}
-              className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all hover:scale-110 active:scale-95"
+              className="w-12 h-12 md:w-16 md:h-16 rounded-full glass border border-white/20 flex items-center justify-center text-insight-teal hover:bg-white/10 transition-all hover:scale-110 active:scale-95 shadow-2xl"
             >
               <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>

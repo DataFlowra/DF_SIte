@@ -25,7 +25,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "7 min read",
     image: "/images/The Rise of Unified Data Intelligence in Modern Business Systems.webp",
     author: {
-      name: "Marcus Thorne",
+      name: "Silas Vane",
       role: "CTO",
       avatar: "/images/Marcus Thorne.webp"
     },
@@ -55,7 +55,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "6 min read",
     image: "/images/Building the Modern Data Command Center for Business Performance.webp",
     author: {
-      name: "Sarah Chen",
+      name: "Elena Rossi",
       role: "Operations Director",
       avatar: "/images/Sarah Chen.webp"
     },
@@ -89,7 +89,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "8 min read",
     image: "/images/The Future of Integrated Data Ecosystems and Intelligent Analytics Platforms.webp",
     author: {
-      name: "Alex Rivet",
+      name: "Julian Vance",
       role: "Lead Architect",
       avatar: "/images/Alex Rivet.webp"
     },

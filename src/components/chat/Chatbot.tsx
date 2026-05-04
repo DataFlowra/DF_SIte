@@ -260,8 +260,15 @@ export default function Chatbot() {
         className="w-16 h-16 rounded-full gradient-flow text-white flex items-center justify-center shadow-2xl shadow-flow-indigo/30 pointer-events-auto relative group overflow-hidden"
       >
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-        <MessageSquare className="w-8 h-8 relative z-10" />
-        <div className="absolute -top-1 -right-1 w-5 h-5 bg-insight-teal rounded-full flex items-center justify-center border-4 border-[var(--background)]">
+        <div className="relative z-10 w-full h-full p-3">
+          <Image 
+            src="/images/AI Chatbot (Site-wide)Bot Identity.webp" 
+            alt="FlowR AI" 
+            fill
+            className="object-contain p-3"
+          />
+        </div>
+        <div className="absolute -top-1 -right-1 w-5 h-5 bg-insight-teal rounded-full flex items-center justify-center border-4 border-[var(--background)] z-20">
           <Sparkles size={10} />
         </div>
       </motion.button>

@@ -116,9 +116,9 @@ function FeatureCard({ feature, index }: { feature: typeof features[0], index: n
             src={feature.image} 
             alt={feature.title} 
             fill 
-            className={`object-cover transition-opacity duration-1000 ${isExpanded ? 'opacity-30' : 'opacity-10 group-hover:opacity-15'}`}
+            className={`object-cover transition-opacity duration-1000 ${isExpanded ? 'opacity-40' : 'opacity-25 group-hover:opacity-35'}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--surface)]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--surface)]/90 to-transparent" />
         </motion.div>
 
         {/* Content Layer */}
@@ -133,9 +133,8 @@ function FeatureCard({ feature, index }: { feature: typeof features[0], index: n
               <Image 
                 src={feature.iconImage} 
                 alt={feature.title} 
-                width={isExpanded ? 40 : 32}
-                height={isExpanded ? 40 : 32}
-                className="relative z-10"
+                fill
+                className="relative z-10 object-cover"
               />
               <div 
                 className="absolute inset-0 opacity-20 blur-sm"
