@@ -3,17 +3,37 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
-import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
-import { FaLinkedin } from "react-icons/fa";
+import { ArrowLeft, Clock, Calendar, Share2, Check } from "lucide-react";
+import { FaLinkedin, FaLink } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
 import { BlogPost } from "@/lib/blog-data";
+import Image from "next/image";
+import { useState } from "react";
 
 interface BlogPostProps {
   post: BlogPost;
 }
 
 export default function BlogPostClient({ post }: BlogPostProps) {
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  const handleShare = (platform: 'x' | 'linkedin' | 'copy') => {
+    const text = `Check out this article from Dataflowra: ${post.title}`;
+    
+    if (platform === 'x') {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+    } else if (platform === 'linkedin') {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank');
+    } else if (platform === 'copy') {
+      navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   return (
     <div className="bg-[var(--background)] min-h-screen">
       <Navbar />
@@ -53,8 +73,13 @@ export default function BlogPostClient({ post }: BlogPostProps) {
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 pb-12 border-b border-white/10 mb-12">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-insight-teal to-aura-violet flex items-center justify-center text-lg font-bold text-white shadow-xl">
-                    {post.author.avatar}
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-white/10 shadow-xl">
+                    <Image 
+                      src={post.author.avatar} 
+                      alt={post.author.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                   <div>
                     <div className="text-lg font-bold text-[var(--text-primary)]">{post.author.name}</div>
@@ -69,14 +94,26 @@ export default function BlogPostClient({ post }: BlogPostProps) {
                   </div>
                   <div className="w-px h-6 bg-white/10" />
                   <div className="flex items-center gap-3">
-                    <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
+                    <button 
+                      onClick={() => handleShare('x')}
+                      className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all"
+                      title="Share on X"
+                    >
                       <FaXTwitter size={18} />
                     </button>
-                    <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
+                    <button 
+                      onClick={() => handleShare('linkedin')}
+                      className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all"
+                      title="Share on LinkedIn"
+                    >
                       <FaLinkedin size={18} />
                     </button>
-                    <button className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all">
-                      <Share2 size={18} />
+                    <button 
+                      onClick={() => handleShare('copy')}
+                      className="w-10 h-10 rounded-xl glass-subtle border border-white/5 flex items-center justify-center hover:text-insight-teal hover:border-insight-teal/20 transition-all"
+                      title="Copy Link"
+                    >
+                      {copied ? <Check size={18} className="text-green-500" /> : <FaLink size={16} />}
                     </button>
                   </div>
                 </div>

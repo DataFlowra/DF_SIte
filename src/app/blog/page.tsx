@@ -15,6 +15,20 @@ export default function BlogPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All Posts");
+
+  const categories = ["All Posts", "Analytics", "Operations", "Technology"];
+
+  const filteredPosts = blogPosts.filter((post) => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesCategory = activeCategory === "All Posts" || post.category === activeCategory;
+    
+    return matchesSearch && matchesCategory;
+  });
 
   const { executeRecaptcha } = useGoogleReCaptcha();
 
@@ -97,11 +111,12 @@ export default function BlogPage() {
         <section className="px-6 mb-16">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-4 overflow-x-auto pb-2 no-scrollbar w-full md:w-auto">
-              {["All Posts", "Technology", "Security", "Infrastructure", "Product"].map((cat, i) => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
+                  onClick={() => setActiveCategory(cat)}
                   className={`px-6 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                    i === 0 
+                    activeCategory === cat 
                     ? "bg-white text-black border-white" 
                     : "glass-subtle border-white/10 text-[var(--text-muted)] hover:border-white/20"
                   }`}
@@ -115,6 +130,8 @@ export default function BlogPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-insight-teal transition-colors" />
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles..."
                 className="w-full pl-12 pr-6 py-3 rounded-full glass border border-white/10 outline-none focus:border-insight-teal/30 transition-all text-sm"
               />
@@ -125,9 +142,22 @@ export default function BlogPage() {
         {/* Blog Grid */}
         <section className="px-6">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post, i) => (
-              <BlogCard key={post.slug} post={post} index={i} />
-            ))}
+            <AnimatePresence mode="popLayout">
+              {filteredPosts.length > 0 ? (
+                filteredPosts.map((post, i) => (
+                  <BlogCard key={post.slug} post={post} index={i} />
+                ))
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  key="no-results"
+                  className="col-span-full py-20 text-center"
+                >
+                  <p className="text-xl text-[var(--text-muted)]">No articles found matching your criteria.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </section>
 
