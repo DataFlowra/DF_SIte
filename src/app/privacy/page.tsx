@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
 import { motion } from "framer-motion";
 import { Shield, Lock, Scale, Mail } from "lucide-react";
+import Link from "next/link";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -136,7 +137,7 @@ export default function PrivacyPolicyPage() {
                 <p className="text-[var(--text-muted)] mb-8 max-w-md">Questions about this Privacy Policy? Our data protection officer is here to help.</p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a href="mailto:help@dataverg.com" className="px-8 py-4 rounded-2xl gradient-flow text-white font-black text-xs uppercase tracking-widest shadow-xl">help@dataverg.com</a>
-                  <a href="/contact" className="px-8 py-4 rounded-2xl glass border border-white/10 font-black text-xs uppercase tracking-widest">Contact Form</a>
+                  <Link href="/#contact" className="px-8 py-4 rounded-2xl glass border border-white/10 font-black text-xs uppercase tracking-widest">Contact Form</Link>
                 </div>
               </div>
             </section>

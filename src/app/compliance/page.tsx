@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer/Footer";
 import { motion } from "framer-motion";
 import { Scale, Shield, Globe, CheckCircle2, FileCheck } from "lucide-react";
+import Link from "next/link";
 
 export default function CompliancePage() {
   return (
@@ -83,7 +84,7 @@ export default function CompliancePage() {
                 <div>
                   <h3 className="text-xl font-bold mb-2">Request Compliance Documents</h3>
                   <p className="text-[var(--text-muted)] text-sm mb-6">Need our latest SOC 2 report or DPA? Our compliance portal is available for enterprise customers and prospects under NDA.</p>
-                  <a href="/contact" className="inline-flex px-8 py-3 rounded-xl gradient-flow text-white font-black text-xs uppercase tracking-widest shadow-xl">Access Portal</a>
+                  <Link href="/#contact" className="inline-flex px-8 py-3 rounded-xl gradient-flow text-white font-black text-xs uppercase tracking-widest shadow-xl">Access Portal</Link>
                 </div>
               </div>
             </section>
