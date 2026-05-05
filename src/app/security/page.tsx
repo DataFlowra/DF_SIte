@@ -96,7 +96,7 @@ export default function SecurityPage() {
               </h4>
               <p className="text-xs text-[var(--text-muted)] mb-4 uppercase tracking-widest font-bold">Safe Harbor Policy</p>
               <p className="text-sm text-[var(--text-muted)] mb-6">If you believe you've found a security vulnerability in our platform, please report it to our security team immediately at:</p>
-              <a href="mailto:security@dataverg.com" className="text-insight-teal font-black text-sm uppercase tracking-widest hover:underline">security@dataverg.com</a>
+              <a href="mailto:help@dataflowra.com" className="text-insight-teal font-black text-sm uppercase tracking-widest hover:underline">help@dataflowra.com</a>
             </div>
           </div>
         </div>

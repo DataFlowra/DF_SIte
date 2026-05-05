@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
 
           <div className="glass p-12 rounded-[3rem] border border-white/10 prose prose-invert prose-insight max-w-none">
             <p className="lead text-lg text-[var(--text-muted)] mb-12">
-              Welcome to DataVerg. Please read these terms and conditions carefully before using Our Service.
+              Welcome to Dataflowra. Please read these terms and conditions carefully before using Our Service.
             </p>
 
             <section className="mb-12">
@@ -67,7 +67,7 @@ export default function TermsOfServicePage() {
                 <h2 className="text-2xl font-bold m-0">3. Intellectual Property</h2>
               </div>
               <p className="text-[var(--text-muted)]">
-                The Service and its original content, features and functionality are and will remain the exclusive property of DataVerg Tech LLC and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.
+                The Service and its original content, features and functionality are and will remain the exclusive property of Dataflowra and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.
               </p>
             </section>
 
@@ -79,7 +79,7 @@ export default function TermsOfServicePage() {
                 <h2 className="text-2xl font-bold m-0">4. Limitation of Liability</h2>
               </div>
               <p className="text-[var(--text-muted)] italic border-l-4 border-insight-teal/30 pl-6 py-2">
-                In no event shall DataVerg Tech LLC, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from Your access to or use of or inability to access or use the Service.
+                In no event shall Dataflowra, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from Your access to or use of or inability to access or use the Service.
               </p>
             </section>
 
@@ -92,7 +92,7 @@ export default function TermsOfServicePage() {
 
             <section className="mt-16 pt-16 border-t border-white/10 text-center">
               <h2 className="text-2xl font-bold mb-4">Questions?</h2>
-              <p className="text-[var(--text-muted)] mb-8">If you have any questions about these Terms, please contact us at <a href="mailto:legal@dataverg.com" className="text-aura-violet hover:underline">legal@dataverg.com</a></p>
+              <p className="text-[var(--text-muted)] mb-8">If you have any questions about these Terms, please contact us at <a href="mailto:help@dataflowra.com" className="text-aura-violet hover:underline">help@dataflowra.com</a></p>
             </section>
           </div>
         </div>
