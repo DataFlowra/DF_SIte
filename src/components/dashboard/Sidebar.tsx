@@ -51,21 +51,24 @@ interface SidebarProps {
   setMobileOpen?: (open: boolean) => void;
 }
 
+const normalizePath = (path: string) => path.replace(/\/+$/, '') || '/';
+
 export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
   const pathname = usePathname();
+  const normalizedPathname = normalizePath(pathname);
   const { logout } = useAuth();
 
   // Automatically open the correct submenu based on current path
   useEffect(() => {
     const activeItem = navItems.find(item => 
-      item.subItems?.some(sub => pathname === sub.href)
+      item.subItems?.some(sub => normalizedPathname === normalizePath(sub.href))
     );
     if (activeItem) {
       setOpenSubMenu(activeItem.label);
     }
-  }, [pathname]);
+  }, [normalizedPathname]);
 
   const handleLogout = async () => {
     if (confirm("Are you sure you want to sign out?")) {
@@ -103,8 +106,9 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       {/* Nav Links */}
       <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto custom-scrollbar overflow-x-hidden">
         {navItems.map((item) => {
-          const isParentOfActive = item.subItems?.some(s => pathname === s.href);
-          const isDirectActive = pathname === item.href;
+          const itemHref = normalizePath(item.href);
+          const isParentOfActive = item.subItems?.some(s => normalizedPathname === normalizePath(s.href));
+          const isDirectActive = normalizedPathname === itemHref;
           const isActive = isDirectActive || isParentOfActive;
           const hasSubItems = !!item.subItems;
           const isSubMenuOpen = openSubMenu === item.label;
@@ -138,16 +142,16 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                 <Link href={item.href} onClick={() => setMobileOpen?.(false)}>
                   <div
                     className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
-                      pathname === item.href 
+                      normalizedPathname === itemHref 
                       ? "bg-gradient-to-r from-flow-indigo to-flow-indigo/80 text-white shadow-[0_0_25px_rgba(79,70,229,0.4)] border border-white/20 scale-[1.02]" 
                       : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.04] border border-transparent"
                     }`}
                   >
-                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${pathname === item.href ? "text-white scale-110" : "group-hover:text-flow-indigo"}`} />
+                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${normalizedPathname === itemHref ? "text-white scale-110" : "group-hover:text-flow-indigo"}`} />
                     {(!collapsed || mobileOpen) && (
-                      <span className={`text-sm font-black uppercase tracking-widest whitespace-nowrap ${pathname === item.href ? 'text-white' : ''}`}>{item.label}</span>
+                      <span className={`text-sm font-black uppercase tracking-widest whitespace-nowrap ${normalizedPathname === itemHref ? 'text-white' : ''}`}>{item.label}</span>
                     )}
-                    {pathname === item.href && (
+                    {normalizedPathname === itemHref && (
                       <motion.div
                         layoutId="sidebar-active-pill"
                         className="absolute left-0 top-0 bottom-0 w-2 bg-white shadow-[0_0_20px_#fff] rounded-r-xl"
@@ -167,7 +171,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                     className="overflow-hidden pl-12 space-y-1"
                   >
                     {item.subItems?.map((sub) => {
-                      const isSubActive = pathname === sub.href;
+                      const subHref = normalizePath(sub.href);
+                      const isSubActive = normalizedPathname === subHref;
                       return (
                         <Link key={sub.href} href={sub.href} onClick={() => setMobileOpen?.(false)}>
                           <div className={`py-2 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${isSubActive ? 'text-white' : 'text-data-slate hover:text-white'}`}>
