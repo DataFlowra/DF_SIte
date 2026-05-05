@@ -32,12 +32,12 @@ export default function PipelineOrchestrationPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-[2.5rem] p-10 border border-white/5 relative overflow-hidden"
+        className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)] relative overflow-hidden"
       >
-        <div className="relative z-10">
+        <div className="relative z-10 text-left">
           <span className="text-[10px] font-black text-flow-indigo uppercase tracking-[0.4em] mb-4 block">Data Orchestration</span>
-          <h1 className="text-4xl font-black tracking-tighter mb-4 text-white">Pipeline Flow</h1>
-          <p className="text-base text-data-slate font-medium max-w-xl leading-relaxed">
+          <h1 className="text-4xl font-black tracking-tighter mb-4 text-[var(--text-primary)]">Pipeline Flow</h1>
+          <p className="text-base text-[var(--text-muted)] font-medium max-w-xl leading-relaxed">
             Manage the end-to-end data lifecycle. Orchestrate ingestion points, 
             transformation logic, and multi-region synchronization.
           </p>
@@ -49,7 +49,7 @@ export default function PipelineOrchestrationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pipeline Builder Visual */}
-        <div className="lg:col-span-2 glass rounded-[2.5rem] p-10 border border-white/5 relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
+        <div className="lg:col-span-2 glass rounded-[2.5rem] p-10 border border-[var(--glass-border)] relative overflow-hidden h-[500px] flex flex-col items-center justify-center text-center">
            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
            
            <div className="relative flex items-center justify-center gap-20">
@@ -68,7 +68,7 @@ export default function PipelineOrchestrationPage() {
                    >
                       <step.icon size={32} />
                    </motion.div>
-                   <span className="text-[10px] font-black text-data-slate uppercase tracking-widest">{step.label}</span>
+                   <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">{step.label}</span>
                    
                    {i < 3 && (
                      <div className="absolute left-full top-10 w-20 h-px bg-gradient-to-r from-flow-indigo/50 to-transparent" />
@@ -90,7 +90,7 @@ export default function PipelineOrchestrationPage() {
               <button 
                 onClick={handleSync}
                 disabled={isSyncing}
-                className="px-10 py-4 rounded-xl bg-white text-black font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-2xl"
+                className="px-10 py-4 rounded-xl bg-[var(--text-primary)] text-[var(--background)] font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-2xl"
               >
                  {isSyncing ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
                  {synced ? "Pipeline Synced" : "Start Global Sync"}
@@ -99,16 +99,16 @@ export default function PipelineOrchestrationPage() {
         </div>
 
         {/* Sync Summary */}
-        <div className="glass rounded-[2.5rem] p-10 border border-white/5 flex flex-col justify-between">
+        <div className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)] flex flex-col justify-between text-left">
            <div>
-              <h3 className="text-xl font-bold text-white mb-6">Orchestration Info</h3>
+              <h3 className="text-xl font-bold text-[var(--text-primary)] mb-6 uppercase tracking-tight">Orchestration Info</h3>
               <div className="space-y-6">
-                 <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <div className="text-[10px] font-black text-data-slate uppercase mb-1">Active Schedulers</div>
-                    <div className="text-sm font-bold text-white">24 Continuous Threads</div>
+                 <div className="p-4 rounded-2xl bg-white/[0.02] border border-[var(--glass-border)]">
+                    <div className="text-[10px] font-black text-[var(--text-muted)] uppercase mb-1">Active Schedulers</div>
+                    <div className="text-sm font-bold text-[var(--text-primary)]">24 Continuous Threads</div>
                  </div>
-                 <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <div className="text-[10px] font-black text-data-slate uppercase mb-1">Backlog Buffer</div>
+                 <div className="p-4 rounded-2xl bg-white/[0.02] border border-[var(--glass-border)]">
+                    <div className="text-[10px] font-black text-[var(--text-muted)] uppercase mb-1">Backlog Buffer</div>
                     <div className="text-sm font-bold text-insight-teal">0.00ms Nominal</div>
                  </div>
               </div>
@@ -122,7 +122,7 @@ export default function PipelineOrchestrationPage() {
                  className="p-6 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center gap-4"
                >
                   <CheckCircle2 className="text-green-500" size={24} />
-                  <p className="text-xs font-medium text-white">All regional pipelines are now operating on Version 4.2.1-stable.</p>
+                  <p className="text-xs font-medium text-[var(--text-primary)]">All regional pipelines are now operating on Version 4.2.1-stable.</p>
                </motion.div>
              )}
            </AnimatePresence>

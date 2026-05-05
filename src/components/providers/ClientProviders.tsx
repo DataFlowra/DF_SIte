@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 import { AuthProvider } from "@/context/AuthContext";
 import ScrollToTop from "./ScrollToTop";
+import CookieConsent from "./CookieConsent";
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
@@ -27,6 +28,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
           <ScrollToTop />
         </Suspense>
         {children}
+        <CookieConsent />
       </AuthProvider>
     </GoogleReCaptchaProvider>
   );

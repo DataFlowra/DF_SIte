@@ -55,7 +55,7 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      <div className="max-w-5xl space-y-12">
+      <div className="max-w-5xl space-y-12 text-left">
         {settingsGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-6">
             <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)] ml-4">
@@ -63,14 +63,14 @@ export default function SettingsPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {group.items.map((item, i) => (
-                <Link key={i} href={item.href}>
+                <Link key={i} href={item.href} className="block group">
                   <motion.div 
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="h-full glass-subtle p-6 rounded-[2rem] border border-white/5 flex items-center justify-between group hover:border-flow-indigo/30 transition-all cursor-pointer shadow-lg"
+                    className="h-full bg-[var(--surface)] border border-[var(--glass-border)] p-6 rounded-[2rem] flex items-center justify-between transition-all duration-300 group-hover:border-flow-indigo/30 shadow-lg relative overflow-hidden"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-14 h-14 rounded-2xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-flow-indigo transition-colors border border-white/5 group-hover:border-flow-indigo/20 shadow-inner">
+                    <div className="flex items-center gap-6 relative z-10">
+                      <div className="w-14 h-14 rounded-2xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-flow-indigo transition-colors border border-[var(--glass-border)] group-hover:border-flow-indigo/20 shadow-inner">
                         <item.icon size={24} />
                       </div>
                       <div className="text-left">
@@ -78,9 +78,11 @@ export default function SettingsPage() {
                         <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed max-w-[200px]">{item.desc}</p>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-all group-hover:bg-flow-indigo/20">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-all group-hover:bg-flow-indigo/20 relative z-10">
                       <ChevronRight size={18} />
                     </div>
+                    {/* Subtle Hover Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-flow-indigo/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                   </motion.div>
                 </Link>
               ))}

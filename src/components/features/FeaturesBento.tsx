@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { LayoutGroup, motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Zap,
   BarChart3,
@@ -10,7 +10,8 @@ import {
   Cpu,
   Layers,
   ChevronRight,
-  X
+  X,
+  Plus
 } from "lucide-react";
 import Image from "next/image";
 
@@ -83,156 +84,13 @@ const features = [
   }
 ];
 
-function FeatureCard({ feature, index }: { feature: typeof features[0], index: number }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ 
-        layout: { type: "spring", stiffness: 200, damping: 25, bounce: 0 },
-        opacity: { duration: 0.8 },
-        y: { duration: 0.8 }
-      }}
-      className={`relative group perspective-1000 ${isExpanded ? 'md:col-span-3' : feature.span}`}
-    >
-      <motion.div
-        layout
-        className={`relative h-full w-full glass rounded-[2.5rem] overflow-hidden border border-white/10 transition-all duration-500 will-change-transform
-          ${isExpanded ? 'p-10 md:p-14 bg-[var(--surface-elevated)]' : 'p-8 hover:border-white/20'}
-        `}
-        style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
-      >
-        {/* Background Image with Theme-Aware Overlay */}
-        <motion.div layout className="absolute inset-0 z-0 pointer-events-none">
-          <Image 
-            src={feature.image} 
-            alt={feature.title} 
-            fill 
-            className={`object-cover transition-opacity duration-1000 ${isExpanded ? 'opacity-40' : 'opacity-25 group-hover:opacity-35'}`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)] via-[var(--surface)]/90 to-transparent" />
-        </motion.div>
-
-        {/* Content Layer */}
-        <div className="relative z-10 h-full flex flex-col">
-          <div className="flex items-start justify-between mb-8">
-            <motion.div 
-              layout
-              className={`rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 shadow-2xl transition-all duration-500 relative overflow-hidden
-                ${isExpanded ? 'w-20 h-20' : 'w-16 h-16 group-hover:scale-105'}
-              `}
-            >
-              <Image 
-                src={feature.iconImage} 
-                alt={feature.title} 
-                fill
-                className="relative z-10 object-cover"
-              />
-              <div 
-                className="absolute inset-0 opacity-20 blur-sm"
-                style={{ backgroundColor: feature.color }}
-              />
-            </motion.div>
-            
-            <motion.button
-              layout
-              onClick={toggle}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 z-50
-                ${isExpanded ? 'bg-[var(--background)] border border-white/10 rotate-0' : 'bg-white/5 border border-white/5 group-hover:translate-x-1 group-hover:bg-white/10'}
-              `}
-            >
-              {isExpanded ? (
-                <X className="w-6 h-6 text-[var(--text-primary)]" />
-              ) : (
-                <ChevronRight className="w-6 h-6 text-[var(--text-primary)]" />
-              )}
-            </motion.button>
-          </div>
-
-          <motion.h3 
-            layout
-            className={`font-bold transition-all duration-500 text-[var(--text-primary)] 
-              ${isExpanded ? 'text-4xl md:text-5xl mb-6' : 'text-2xl mb-4'}
-            `}
-            style={{ transform: "translateZ(0)" }}
-          >
-            {feature.title}
-          </motion.h3>
-
-          <motion.p 
-            layout
-            className={`text-[var(--text-muted)] leading-relaxed transition-all duration-500 font-medium
-              ${isExpanded ? 'text-xl max-w-2xl mb-10' : 'text-base mb-6'}
-            `}
-            style={{ transform: "translateZ(0)" }}
-          >
-            {feature.description}
-          </motion.p>
-
-          <AnimatePresence mode="popLayout">
-            {isExpanded && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.4 }}
-                className="mt-6 pt-10 border-t border-white/10"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {feature.details.map((detail, i) => (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex flex-col gap-2"
-                    >
-                      <div className="w-8 h-[2px]" style={{ backgroundColor: feature.color }} />
-                      <span className="text-sm font-bold uppercase tracking-widest" style={{ color: feature.color }}>{`0${i+1}`}</span>
-                      <span className="text-lg text-[var(--text-primary)] font-semibold">{detail}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {!isExpanded && (
-            <motion.div layout className="mt-auto">
-              <button 
-                onClick={toggle}
-                className="text-xs font-bold uppercase tracking-[0.2em] text-insight-teal opacity-50 group-hover:opacity-100 transition-all hover:tracking-[0.3em]"
-              >
-                Learn More
-              </button>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Dynamic Glow */}
-        <div 
-          className="absolute -bottom-40 -right-40 w-80 h-80 blur-[120px] rounded-full opacity-5 group-hover:opacity-20 transition-opacity duration-1000 pointer-events-none"
-          style={{ backgroundColor: feature.color }}
-        />
-      </motion.div>
-    </motion.div>
-  );
-}
-
 export default function FeaturesBento() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [activeFeature, setActiveFeature] = useState<typeof features[0] | null>(null);
 
   return (
-    <section id="features" ref={sectionRef} className="relative py-32 overflow-hidden bg-[var(--background)]">
+    <section id="features" className="relative py-32 overflow-hidden bg-[var(--background)]">
       <div className="relative z-10 max-w-7xl mx-auto px-6">
+        {/* Section Header */}
         <div className="text-center mb-24">
           <motion.span 
             initial={{ opacity: 0, y: 10 }}
@@ -251,17 +109,152 @@ export default function FeaturesBento() {
           </motion.h2>
         </div>
 
-        <LayoutGroup>
-          <motion.div 
-            layout
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto"
-          >
-            {features.map((feature, i) => (
-              <FeatureCard key={feature.id} feature={feature} index={i} />
-            ))}
-          </motion.div>
-        </LayoutGroup>
+        {/* Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto">
+          {features.map((feature, i) => (
+            <motion.div
+              key={feature.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              onClick={() => setActiveFeature(feature)}
+              className={`relative group cursor-pointer h-full glass rounded-[2.5rem] p-8 border border-white/10 overflow-hidden transition-all duration-500 hover:border-flow-indigo/30 shadow-2xl ${feature.span}`}
+            >
+              {/* Background Image Layer */}
+              <div className="absolute inset-0 z-0 pointer-events-none transition-transform duration-700 group-hover:scale-105">
+                <Image 
+                  src={feature.image} 
+                  alt="" 
+                  fill 
+                  className="object-cover opacity-30 group-hover:opacity-50 transition-opacity" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface)]/90 via-[var(--surface)]/40 to-transparent" />
+              </div>
+
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-10">
+                  <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                    <Image src={feature.iconImage} alt={feature.title} fill className="object-cover" />
+                    <div className="absolute inset-0 bg-black/20" />
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/5 group-hover:bg-flow-indigo/20 group-hover:border-flow-indigo/30 transition-all">
+                    <Plus className="w-5 h-5 text-[var(--text-muted)] group-hover:text-white" />
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4">{feature.title}</h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-6 font-medium">
+                  {feature.description}
+                </p>
+
+                <div className="mt-auto pt-6 border-t border-white/5">
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-insight-teal opacity-60 group-hover:opacity-100 transition-all">
+                    Examine Architecture
+                  </span>
+                </div>
+              </div>
+
+              {/* Hover Glow */}
+              <div 
+                className="absolute -bottom-40 -right-40 w-80 h-80 blur-[120px] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none"
+                style={{ backgroundColor: feature.color }}
+              />
+            </motion.div>
+          ))}
+        </div>
       </div>
+
+      {/* Feature Modal */}
+      <AnimatePresence>
+        {activeFeature && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveFeature(null)}
+              className="absolute inset-0 bg-[var(--background)]/90 backdrop-blur-2xl"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-5xl bg-[var(--surface)] rounded-[3.5rem] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col md:flex-row h-full max-h-[800px]"
+            >
+              {/* Image Side */}
+              <div className="relative flex-1 h-64 md:h-auto overflow-hidden">
+                <Image 
+                  src={activeFeature.image} 
+                  alt={activeFeature.title} 
+                  fill 
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
+                
+                <div className="absolute bottom-10 left-10 text-left">
+                  <div className="w-20 h-20 rounded-3xl overflow-hidden border border-white/20 mb-6 shadow-2xl relative">
+                    <Image src={activeFeature.iconImage} alt="" fill className="object-cover" />
+                  </div>
+                  <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none">
+                    {activeFeature.title.split(' ')[0]} <br />
+                    <span className="text-insight-teal">{activeFeature.title.split(' ').slice(1).join(' ')}</span>
+                  </h2>
+                </div>
+              </div>
+
+              {/* Info Side */}
+              <div className="flex-1 p-10 md:p-16 overflow-y-auto custom-scrollbar flex flex-col justify-center text-left">
+                <div className="mb-10">
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-flow-indigo mb-4 block">Detailed Protocol</span>
+                  <p className="text-lg md:text-xl text-[var(--text-muted)] font-medium leading-relaxed">
+                    {activeFeature.description}
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 border-b border-white/5 pb-4">Key Performance Indicators</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {activeFeature.details.map((detail, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 + 0.3 }}
+                        className="flex items-center gap-4 group"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-flow-indigo group-hover:scale-150 group-hover:bg-insight-teal transition-all duration-300" />
+                        <span className="text-sm font-bold text-[var(--text-primary)]">{detail}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-16 flex items-center gap-6">
+                  <button 
+                    onClick={() => setActiveFeature(null)}
+                    className="px-10 py-4 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
+                  >
+                    Close Protocol
+                  </button>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button 
+                onClick={() => setActiveFeature(null)}
+                className="absolute top-8 right-8 p-3 rounded-full bg-black/20 hover:bg-black/40 border border-white/5 text-white transition-all z-20"
+              >
+                <X size={20} />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

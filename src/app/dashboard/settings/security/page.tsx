@@ -77,12 +77,12 @@ export default function SecuritySettingsPage() {
   return (
     <div className="space-y-8 pb-20">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-10">
-        <Link href="/dashboard/settings" className="text-data-slate hover:text-[var(--text-primary)] transition-colors">
+      <div className="flex items-center gap-4 mb-10 text-sm font-bold uppercase tracking-widest">
+        <Link href="/dashboard/settings" className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
           Settings
         </Link>
         <span className="text-[var(--text-primary)] opacity-10">/</span>
-        <h1 className="text-xl font-bold text-[var(--text-primary)] uppercase tracking-widest">Security Protocols</h1>
+        <h1 className="text-[var(--text-primary)]">Security Protocols</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -102,7 +102,7 @@ export default function SecuritySettingsPage() {
             </div>
 
             {passError && (
-              <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
+              <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-3 text-left">
                 <AlertCircle size={14} />
                 {passError}
               </div>
@@ -111,31 +111,31 @@ export default function SecuritySettingsPage() {
             <form onSubmit={handlePasswordChange} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2 text-left">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">Current Password</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Current Password</label>
                   <input 
                     type="password" required
                     value={passData.current}
                     onChange={(e) => setPassData({...passData, current: e.target.value})}
-                    className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                    className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)]"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2 text-left">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">New Password</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">New Password</label>
                     <input 
                       type="password" required
                       value={passData.new}
                       onChange={(e) => setPassData({...passData, new: e.target.value})}
-                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)]"
                     />
                   </div>
                   <div className="space-y-2 text-left">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">Confirm New</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Confirm New</label>
                     <input 
                       type="password" required
                       value={passData.confirm}
                       onChange={(e) => setPassData({...passData, confirm: e.target.value})}
-                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm"
+                      className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)]"
                     />
                   </div>
                 </div>
@@ -143,7 +143,7 @@ export default function SecuritySettingsPage() {
               <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)]">
                 <div>
                    {passSuccess && (
-                     <div className="flex items-center gap-2 text-green-500">
+                     <div className="flex items-center gap-2 text-green-500 text-left">
                         <CheckCircle2 size={16} />
                         <span className="text-[10px] font-black uppercase tracking-widest">Protocol Updated</span>
                      </div>
@@ -154,7 +154,7 @@ export default function SecuritySettingsPage() {
                   type="submit"
                   className="px-8 py-3 rounded-xl bg-[var(--text-primary)] text-[var(--background)] font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl disabled:opacity-50"
                 >
-                  {isChangingPass ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify & Save"}
+                  {isChangingPass ? <Loader2 size={3} className="animate-spin" /> : "Verify & Save"}
                 </button>
               </div>
             </form>
@@ -196,13 +196,13 @@ export default function SecuritySettingsPage() {
                     <div>
                       <div className="text-sm font-bold text-[var(--text-primary)] mb-1 text-left">{key.name}</div>
                       <div className="flex items-center gap-3">
-                        <code className="text-[10px] text-data-slate font-mono bg-black/20 px-2 py-0.5 rounded">{key.key}</code>
+                        <code className="text-[10px] text-[var(--text-muted)] font-mono bg-black/20 px-2 py-0.5 rounded">{key.key}</code>
                         <span className="text-[8px] text-[var(--text-primary)] opacity-20 font-mono">Created: {key.created}</span>
                       </div>
                     </div>
                     <button 
                       onClick={() => deleteKey(key.id)}
-                      className="p-2 text-data-slate hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                      className="p-2 text-red-500/50 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -210,38 +210,38 @@ export default function SecuritySettingsPage() {
                 ))}
               </AnimatePresence>
             </div>
-            <p className="text-[8px] text-data-slate uppercase tracking-widest mt-6 text-center opacity-30">Frontend Prototype: Tokens are managed locally in current session.</p>
+            <p className="text-[8px] text-[var(--text-muted)] uppercase tracking-widest mt-6 text-center opacity-30 font-bold">Frontend Prototype: Tokens are managed locally in current session.</p>
           </motion.div>
         </div>
 
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-6 text-left">
           {/* Active Sessions */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)]"
           >
-            <h4 className="text-[10px] font-black text-data-slate uppercase tracking-[0.2em] mb-8">Active Neural Uplinks</h4>
+            <h4 className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-8">Active Neural Uplinks</h4>
             <div className="space-y-6">
                {[
                  { device: "MacBook Pro", location: "Los Angeles, USA", status: "Current", icon: Globe },
                  { device: "iPhone 15", location: "London, UK", status: "2h ago", icon: Smartphone },
                ].map((session, i) => (
                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-data-slate">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--surface-elevated)] flex items-center justify-center text-[var(--text-muted)]">
                        <session.icon size={18} />
                     </div>
                     <div className="flex-1 text-left">
                        <div className="text-sm font-bold text-[var(--text-primary)]">{session.device}</div>
-                       <div className="text-[10px] text-data-slate uppercase font-black">{session.location}</div>
+                       <div className="text-[10px] text-[var(--text-muted)] uppercase font-black">{session.location}</div>
                     </div>
-                    <div className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${i === 0 ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'text-data-slate'}`}>
+                    <div className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${i === 0 ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'text-[var(--text-muted)]'}`}>
                        {session.status}
                     </div>
                  </div>
                ))}
             </div>
-            <button className="w-full mt-10 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-[var(--text-primary)] transition-all">
+            <button className="w-full mt-10 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
                Terminate All Sessions
             </button>
           </motion.div>

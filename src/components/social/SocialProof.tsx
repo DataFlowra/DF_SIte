@@ -25,9 +25,9 @@ const testimonials = [
   {
     id: 3,
     quote: "The zero-trust security model gave us confidence to process sensitive data. Compliance is finally seamless.",
-    author: "Seraphina Voss",
-    role: "Head of Data, QuantumSync",
-    avatar: "/images/18.webp",
+    author: "Julian Vance",
+    role: "Lead Architect, Velocity Labs",
+    avatar: "/images/Alex Rivet.webp",
     color: "#4F46E5"
   }
 ];

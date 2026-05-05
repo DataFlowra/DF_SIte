@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import Logo from "./Logo";
 
 const navLinks = [
+  { label: "Home", href: "/" },
   { label: "Features", href: "/#features" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Blog", href: "/blog" },
@@ -18,20 +19,52 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
   const pathname = usePathname();
   const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Intersection Observer for Scroll Spy
+    if (pathname === "/") {
+      const sections = navLinks
+        .map(link => link.href.split("#")[1])
+        .filter(Boolean);
+      
+      const observers = sections.map(id => {
+        const el = document.getElementById(id!);
+        if (!el) return null;
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              setActiveSection(id!);
+            }
+          },
+          { threshold: 0.2, rootMargin: "-80px 0px -50% 0px" }
+        );
+        observer.observe(el);
+        return observer;
+      });
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+        observers.forEach(o => o?.disconnect());
+      };
+    } else {
+      setActiveSection("");
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const isShowcasePage = pathname === "/showcase" || pathname.startsWith("/showcase/");
   const ctaLink = user ? "/dashboard" : (isShowcasePage ? "/login" : "/showcase");
   const ctaText = user ? "Go to Dashboard" : (isShowcasePage ? "Sign In" : "Get Started");
   
-  // Only open Dashboard or Login in a new tab
+  // Always open app-like transitions (Auth, Dashboard, or Showcase from Home) in new tab
   const ctaTarget = (ctaLink === "/dashboard" || ctaLink === "/login") ? "_blank" : "_self";
 
   return (
@@ -52,18 +85,36 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              scroll={false}
-              data-hoverable
-              className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors relative group"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-insight-teal to-aura-violet group-hover:w-full transition-all duration-300" />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const id = link.href.split("#")[1];
+            // Active logic: 
+            // 1. If link has an anchor, highlight if we're on Home and that section is active.
+            // 2. If link is a page (like /blog), highlight if the pathname starts with it.
+            // 3. For Home (/), highlight if pathname is / AND no other section is active.
+            const isActive = id 
+              ? (pathname === "/" && activeSection === id) 
+              : (link.href === "/" 
+                  ? (pathname === "/" && !activeSection) 
+                  : (pathname.startsWith(link.href) && !activeSection)
+                );
+            
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                scroll={false}
+                data-hoverable
+                className={`text-sm font-medium transition-all duration-300 relative group ${
+                  isActive ? "text-flow-indigo" : "text-data-slate hover:text-[var(--text-primary)]"
+                }`}
+              >
+                {link.label}
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-insight-teal to-aura-violet transition-all duration-300 ${
+                  isActive ? "w-full" : "w-0 group-hover:w-full"
+                }`} />
+              </Link>
+            );
+          })}
         </div>
 
         {/* CTA Button */}
@@ -103,22 +154,34 @@ export default function Navbar() {
                 href="/showcase"
                 scroll={false}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-base font-bold text-insight-teal"
+                className={`flex items-center gap-2 text-base font-bold transition-colors ${pathname === "/showcase" ? "text-flow-indigo" : "text-insight-teal"}`}
               >
                 <Sparkles className="w-4 h-4" />
                 Showcase
               </Link>
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  scroll={false}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-base font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const id = link.href.split("#")[1];
+                const isActive = id 
+                  ? (pathname === "/" && activeSection === id) 
+                  : (link.href === "/" 
+                      ? (pathname === "/" && !activeSection) 
+                      : (pathname.startsWith(link.href) && !activeSection)
+                    );
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    scroll={false}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-base font-medium transition-colors ${
+                      isActive ? "text-flow-indigo" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <Link
                 href={ctaLink}
                 target={ctaTarget}

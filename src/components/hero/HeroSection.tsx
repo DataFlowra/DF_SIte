@@ -125,13 +125,13 @@ export default function HeroSection() {
         <h1 className="perspective-1000 mb-8">
           <span className="flex flex-wrap justify-center gap-x-[0.3em] gap-y-2">
             {words.map((word, i) => (
-              <span key={i} className="inline-block overflow-hidden py-2">
+              <span key={i} className="inline-block py-2">
                 <motion.span
                   custom={i}
                   initial="hidden"
                   animate="visible"
                   variants={wordVariants}
-                  className={`inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter
+                  className={`inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter pr-4
                     ${(word === "Data" || word === "Wake") ? "gradient-text" : "text-[var(--text-primary)]"}
                   `}
                 >

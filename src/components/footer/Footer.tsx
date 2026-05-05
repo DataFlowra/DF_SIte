@@ -71,7 +71,6 @@ export default function Footer() {
     ecosystem: [
       { name: "Crunchbase", href: "https://www.crunchbase.com/organization/dataflowra" },
       { name: "F6S", href: "https://www.f6s.com/dataflowra" },
-      { name: "Company LinkedIn", href: "https://www.linkedin.com/company/dataflowra" },
     ],
     legal: [
       { name: "Privacy Policy", href: "/privacy" },

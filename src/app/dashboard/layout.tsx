@@ -32,9 +32,9 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="relative min-h-screen bg-[var(--background)] text-[var(--text-primary)] overflow-hidden">
+    <div className="relative min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
       {/* Dynamic Animated Background */}
-      <div className="absolute inset-0 pointer-events-none z-0">
+      <div className="fixed inset-0 pointer-events-none z-0">
         <motion.div
           animate={{
             x: [0, 50, 0],
@@ -62,18 +62,21 @@ export default function DashboardLayout({
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay" />
       </div>
 
-      <div className="relative z-10 flex h-screen overflow-hidden p-4 md:p-6 gap-6">
+      <div className="relative z-10 flex min-h-screen">
         {/* Navigation Sidebar */}
         <Sidebar mobileOpen={mobileMenuOpen} setMobileOpen={setMobileMenuOpen} />
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col min-w-0 gap-6">
-          <Topbar onMenuClick={() => setMobileMenuOpen(true)} />
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <main className="flex-1 flex flex-col min-w-0 min-h-screen relative">
+          <div className="sticky top-0 z-30 px-4 md:px-8 bg-[var(--background)]/80 backdrop-blur-md border-b border-white/5">
+            <Topbar onMenuClick={() => setMobileMenuOpen(true)} />
+          </div>
+          
+          <div className="flex-1 p-4 md:p-8 overflow-x-hidden">
             {children}
           </div>
         </main>
       </div>
-      </div>
+    </div>
   );
 }

@@ -20,7 +20,6 @@ import Footer from "@/components/footer/Footer";
 import CardInput from "@/components/checkout/CardInput";
 
 interface Plan {
-
   id: number;
   name: string;
   slug: string;
@@ -135,7 +134,7 @@ function CheckoutContent() {
           className="glass p-12 rounded-[3rem] border border-insight-teal/30 max-w-xl"
         >
           <CheckCircle2 className="w-20 h-20 text-insight-teal mx-auto mb-8 animate-pulse" />
-          <h1 className="text-4xl font-black mb-4">Subscription Active!</h1>
+          <h1 className="text-4xl font-black mb-4 text-[var(--text-primary)]">Subscription Active!</h1>
           <p className="text-[var(--text-muted)] text-lg mb-8 leading-relaxed">
             Welcome to the {plan?.name} tier. Your account is being upgraded and you're being redirected to your dashboard.
           </p>
@@ -158,9 +157,9 @@ function CheckoutContent() {
     <div className="bg-[var(--background)] min-h-screen">
       <Navbar />
       
-      <main className="pt-32 pb-24">
+      <main className="pt-32 pb-24 text-left">
         <div className="max-w-7xl mx-auto px-6">
-          <Link href="/#pricing" className="inline-flex items-center gap-2 text-sm font-bold text-[var(--text-muted)] hover:text-insight-teal transition-colors mb-12">
+          <Link href="/#pricing" className="inline-flex items-center gap-2 text-sm font-bold text-[var(--text-muted)] hover:text-insight-teal transition-colors mb-12 uppercase tracking-widest">
             <ArrowLeft size={16} />
             Back to plans
           </Link>
@@ -168,7 +167,7 @@ function CheckoutContent() {
           <div className="grid lg:grid-cols-12 gap-12 items-start">
             {/* Payment Form */}
             <div className="lg:col-span-7">
-              <h1 className="text-4xl font-black tracking-tighter mb-8">Checkout</h1>
+              <h1 className="text-4xl font-black tracking-tighter mb-8 text-[var(--text-primary)]">Checkout</h1>
               
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Error Banner */}
@@ -179,8 +178,8 @@ function CheckoutContent() {
                 )}
 
                 {/* Card Info */}
-                <div className="glass p-8 rounded-3xl border border-white/10">
-                  <h3 className="text-lg font-bold mb-6 flex items-center gap-3">
+                <div className="glass p-8 rounded-3xl border border-[var(--glass-border)]">
+                  <h3 className="text-lg font-bold mb-6 flex items-center gap-3 text-[var(--text-primary)]">
                     <CreditCard size={20} className="text-insight-teal" />
                     Payment Method
                   </h3>
@@ -189,69 +188,69 @@ function CheckoutContent() {
                 </div>
 
                 {/* Billing Address */}
-                <div className="glass p-8 rounded-3xl border border-white/10">
-                  <h3 className="text-lg font-bold mb-6 flex items-center gap-3">
+                <div className="glass p-8 rounded-3xl border border-[var(--glass-border)] text-left">
+                  <h3 className="text-lg font-bold mb-6 flex items-center gap-3 text-[var(--text-primary)]">
                     <Lock size={20} className="text-insight-teal" />
                     Billing Address
                   </h3>
                   
                   <div className="space-y-4">
                     <div className="group space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Street Address</label>
+                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Street Address</label>
                       <input 
                         required
                         name="street"
                         value={formData.street}
                         onChange={handleInputChange}
-                        placeholder="123 Convergence Way"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
+                        placeholder="Enter street address"
+                        className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-5 py-3.5 focus:border-flow-indigo/50 outline-none transition-all text-[var(--text-primary)]"
                       />
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">City</label>
+                      <div className="group space-y-2 text-left">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">City</label>
                         <input 
                           required
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
-                          placeholder="New York"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
+                          placeholder="Enter city"
+                          className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-5 py-3.5 focus:border-flow-indigo/50 outline-none transition-all text-[var(--text-primary)]"
                         />
                       </div>
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">State / Province</label>
+                      <div className="group space-y-2 text-left">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">State / Province</label>
                         <input 
                           required
                           name="state"
                           value={formData.state}
                           onChange={handleInputChange}
-                          placeholder="NY"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
+                          placeholder="Enter state"
+                          className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-5 py-3.5 focus:border-flow-indigo/50 outline-none transition-all text-[var(--text-primary)]"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">ZIP / Postal Code</label>
+                      <div className="group space-y-2 text-left">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">ZIP / Postal Code</label>
                         <input 
                           required
                           name="zip"
                           value={formData.zip}
                           onChange={handleInputChange}
-                          placeholder="10001"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all"
+                          placeholder="Enter zip code"
+                          className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-5 py-3.5 focus:border-flow-indigo/50 outline-none transition-all text-[var(--text-primary)]"
                         />
                       </div>
-                      <div className="group space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">Country</label>
+                      <div className="group space-y-2 text-left">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Country</label>
                         <select 
                           name="country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 focus:border-insight-teal/50 outline-none transition-all appearance-none"
+                          className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl px-5 py-3.5 focus:border-flow-indigo/50 outline-none transition-all appearance-none text-[var(--text-primary)]"
                         >
                           <option value="USA">United States</option>
                           <option value="UK">United Kingdom</option>
@@ -268,7 +267,7 @@ function CheckoutContent() {
                   whileTap={{ scale: 0.99 }}
                   disabled={processing}
                   type="submit"
-                  className="w-full py-5 rounded-2xl gradient-flow text-white font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-insight-teal/20 group disabled:opacity-50"
+                  className="w-full py-5 rounded-2xl bg-flow-indigo text-white font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-xl shadow-flow-indigo/20 group disabled:opacity-50"
                 >
                   {processing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -283,11 +282,11 @@ function CheckoutContent() {
             </div>
 
             {/* Order Summary */}
-            <div className="lg:col-span-5 lg:sticky lg:top-32">
+            <div className="lg:col-span-5 lg:sticky lg:top-32 text-left">
               <div className="glass p-10 rounded-[3rem] border border-insight-teal/20">
-                <h3 className="text-xl font-bold mb-8">Order Summary</h3>
+                <h3 className="text-xl font-bold mb-8 text-[var(--text-primary)]">Order Summary</h3>
                 
-                <div className="space-y-6 pb-8 border-b border-white/10">
+                <div className="space-y-6 pb-8 border-b border-white/5">
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-bold text-insight-teal">{plan?.name} Plan</h4>
@@ -296,7 +295,7 @@ function CheckoutContent() {
                         Billed {billingCycle}
                       </p>
                     </div>
-                    <span className="font-black text-lg">${price}</span>
+                    <span className="font-black text-lg text-[var(--text-primary)]">${price}</span>
                   </div>
                   
                   <ul className="space-y-3">
@@ -312,11 +311,11 @@ function CheckoutContent() {
                 <div className="pt-8 space-y-4">
                   <div className="flex justify-between text-sm font-bold">
                     <span className="text-[var(--text-muted)]">Subtotal</span>
-                    <span>${price}</span>
+                    <span className="text-[var(--text-primary)]">${price}</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold">
                     <span className="text-[var(--text-muted)]">Tax</span>
-                    <span>$0.00</span>
+                    <span className="text-[var(--text-primary)]">$0.00</span>
                   </div>
                   <div className="flex justify-between text-2xl font-black pt-4">
                     <span>Total</span>

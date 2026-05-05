@@ -44,12 +44,12 @@ export default function ProfileSettingsPage() {
   return (
     <div className="space-y-8 pb-20">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-10">
-        <Link href="/dashboard/settings" className="text-data-slate hover:text-[var(--text-primary)] transition-colors">
+      <div className="flex items-center gap-4 mb-10 text-sm font-bold uppercase tracking-widest">
+        <Link href="/dashboard/settings" className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
           Settings
         </Link>
         <span className="text-[var(--text-primary)] opacity-10">/</span>
-        <h1 className="text-xl font-bold text-[var(--text-primary)] uppercase tracking-widest">Profile Information</h1>
+        <h1 className="text-[var(--text-primary)]">Profile Information</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -68,11 +68,11 @@ export default function ProfileSettingsPage() {
             )}
 
             <form onSubmit={handleSave} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">First Name</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">First Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                     <input 
                       type="text" 
                       value={formData.first_name}
@@ -82,9 +82,9 @@ export default function ProfileSettingsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">Last Name</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Last Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                     <input 
                       type="text" 
                       value={formData.last_name}
@@ -95,24 +95,24 @@ export default function ProfileSettingsPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">Email Address</label>
+              <div className="space-y-2 text-left">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                   <input 
                     type="email" 
                     readOnly
                     value={user?.email || ""}
-                    className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl pl-12 pr-6 py-4 text-data-slate/50 text-sm cursor-not-allowed"
+                    className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xl pl-12 pr-6 py-4 text-[var(--text-muted)]/50 text-sm cursor-not-allowed"
                   />
                 </div>
-                <p className="text-[8px] text-data-slate uppercase tracking-widest mt-2 ml-1">Contact support to change primary email.</p>
+                <p className="text-[8px] text-[var(--text-muted)] uppercase tracking-widest mt-2 ml-1">Contact support to change primary email.</p>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate ml-1">Username</label>
+              <div className="space-y-2 text-left">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] ml-1">Username</label>
                 <div className="relative">
-                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-data-slate" />
+                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                   <input 
                     type="text" 
                     value={formData.username}
@@ -170,15 +170,15 @@ export default function ProfileSettingsPage() {
               </div>
             </div>
             <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">{user?.first_name} {user?.last_name}</h3>
-            <p className="text-xs text-data-slate font-medium mb-6">{user?.current_plan || "Free"} Node Access</p>
+            <p className="text-xs text-[var(--text-muted)] font-medium mb-6">{user?.current_plan || "Free"} Node Access</p>
             
             <div className="pt-8 border-t border-[var(--glass-border)] grid grid-cols-2 gap-4">
               <div className="p-4 bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-2xl">
-                 <div className="text-[8px] font-black text-data-slate uppercase mb-1">Status</div>
+                 <div className="text-[8px] font-black text-[var(--text-muted)] uppercase mb-1">Status</div>
                  <div className="text-[10px] font-bold text-green-500 uppercase">Verified</div>
               </div>
               <div className="p-4 bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-2xl">
-                 <div className="text-[8px] font-black text-data-slate uppercase mb-1">Role</div>
+                 <div className="text-[8px] font-black text-[var(--text-muted)] uppercase mb-1">Role</div>
                  <div className="text-[10px] font-bold text-flow-indigo uppercase">Architect</div>
               </div>
             </div>

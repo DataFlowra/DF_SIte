@@ -26,7 +26,7 @@ export const blogPosts: BlogPost[] = [
     image: "/images/The Rise of Unified Data Intelligence in Modern Business Systems.webp",
     author: {
       name: "Silas Vane",
-      role: "CTO",
+      role: "CTO, CloudScale",
       avatar: "/images/Marcus Thorne.webp"
     },
     tags: ["Data Intelligence", "Unified Analytics", "Business Strategy", "Dataflowra", "Decision Intelligence"],
@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
     title: "Building the Modern Data Command Center for Business Performance",
     excerpt: "Learn why organizations today require systems that actively simulate a control environment where performance, infrastructure, and analytics converge.",
     category: "Operations",
-    date: "June 12, 2026",
+    date: "March 04, 2026",
     readTime: "6 min read",
     image: "/images/Building the Modern Data Command Center for Business Performance.webp",
     author: {
@@ -89,9 +89,9 @@ export const blogPosts: BlogPost[] = [
     readTime: "8 min read",
     image: "/images/The Future of Integrated Data Ecosystems and Intelligent Analytics Platforms.webp",
     author: {
-      name: "Julian Vance",
-      role: "Lead Architect",
-      avatar: "/images/Alex Rivet.webp"
+      name: "Seraphina Voss",
+      role: "Lead Architect, QuantumSync",
+      avatar: "/images/18.webp"
     },
     tags: ["Data Ecosystems", "Integration", "Future Tech", "Intelligent Analytics", "Scalability"],
     content: `
@@ -115,3 +115,4 @@ export const blogPosts: BlogPost[] = [
     `
   }
 ];
+;

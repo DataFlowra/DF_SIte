@@ -38,7 +38,7 @@ export default function StatCard({ label, value, trend, icon: Icon, color }: Sta
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-muted)] mb-1">
           {label}
         </p>
-        <h3 className="text-3xl font-black tracking-tight">{value}</h3>
+        <h3 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">{value}</h3>
       </div>
       
       {/* Decorative Glow */}

@@ -78,22 +78,22 @@ export default function DashboardPage() {
           <ActivityChart />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass rounded-[2rem] p-8 border border-white/5 flex items-center gap-6 group hover:border-insight-teal/30 transition-all">
+            <div className="glass rounded-[2rem] p-8 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-insight-teal/30 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-insight-teal/10 flex items-center justify-center text-insight-teal group-hover:scale-110 transition-transform">
                 <RefreshCcw className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">Auto-Scaling</h4>
-                <p className="text-xs text-data-slate font-medium leading-relaxed">Dynamic resource allocation active in 12 nodes.</p>
+                <h4 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-1 text-left">Auto-Scaling</h4>
+                <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed text-left">Dynamic resource allocation active in 12 nodes.</p>
               </div>
             </div>
-            <div className="glass rounded-[2rem] p-8 border border-white/5 flex items-center gap-6 group hover:border-aura-violet/30 transition-all">
+            <div className="glass rounded-[2rem] p-8 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-aura-violet/30 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-aura-violet/10 flex items-center justify-center text-aura-violet group-hover:scale-110 transition-transform">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">Neural Health</h4>
-                <p className="text-xs text-data-slate font-medium leading-relaxed">Optimization threshold maintained at 98.4%.</p>
+                <h4 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-1 text-left">Neural Health</h4>
+                <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed text-left">Optimization threshold maintained at 98.4%.</p>
               </div>
             </div>
           </div>

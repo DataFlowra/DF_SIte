@@ -58,7 +58,7 @@ export default function DailyBriefing() {
           ))}
         </div>
       </div>
-      <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 text-[var(--text-primary)] flex items-center gap-3">
+      <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 text-[var(--text-primary)] flex items-center gap-3 text-left">
         <Bot className="w-8 h-8 text-flow-indigo" />
         FlowR <span className="gradient-text">Insights</span>
       </h1>
@@ -70,7 +70,7 @@ export default function DailyBriefing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 text-data-slate"
+            className="flex items-center gap-3 text-[var(--text-muted)]"
           >
             <Loader2 className="w-5 h-5 animate-spin text-flow-indigo" />
             <span className="text-sm font-medium">Synthesizing telemetry data...</span>
@@ -80,10 +80,10 @@ export default function DailyBriefing() {
             key="content"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl relative group"
+            className="p-4 bg-white/[0.04] border border-[var(--glass-border)] rounded-2xl relative group text-left"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-flow-indigo/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-            <p className="text-base text-data-slate font-medium leading-relaxed italic relative z-10">
+            <p className="text-base text-[var(--text-primary)] font-medium leading-relaxed italic relative z-10">
               "{briefing}"
             </p>
           </motion.div>

@@ -104,16 +104,22 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   onClick={() => toggleSubMenu(item.label)}
                   className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
                     isActive 
-                    ? "bg-flow-indigo/10 text-flow-indigo border border-flow-indigo/20" 
-                    : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-transparent"
+                    ? "bg-gradient-to-r from-flow-indigo to-flow-indigo/80 text-white shadow-[0_0_30px_rgba(79,70,229,0.5)] border border-white/30 scale-[1.02]" 
+                    : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.04] border border-transparent"
                   }`}
                 >
-                  <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${isActive ? "text-flow-indigo scale-110" : "group-hover:text-flow-indigo"}`} />
+                  <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${isActive ? "text-white scale-110" : "group-hover:text-flow-indigo"}`} />
                   {(!collapsed || mobileOpen) && (
                     <>
-                      <span className="text-sm font-black uppercase tracking-widest flex-1 text-left whitespace-nowrap">{item.label}</span>
-                      <ChevronDown size={14} className={`transition-transform duration-300 ${isSubMenuOpen ? 'rotate-180' : ''}`} />
+                      <span className={`text-sm font-black uppercase tracking-widest flex-1 text-left whitespace-nowrap ${isActive ? 'text-white' : ''}`}>{item.label}</span>
+                      <ChevronDown size={14} className={`transition-transform duration-300 ${isSubMenuOpen ? 'rotate-180' : ''} ${isActive ? 'text-white' : ''}`} />
                     </>
+                  )}
+                  {isActive && (
+                    <motion.div
+                      layoutId="sidebar-active-pill"
+                      className="absolute left-0 top-0 bottom-0 w-2 bg-white shadow-[0_0_20px_#fff] rounded-r-xl"
+                    />
                   )}
                 </button>
               ) : (
@@ -121,18 +127,18 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   <div
                     className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
                       pathname === item.href 
-                      ? "bg-flow-indigo/10 text-flow-indigo border border-flow-indigo/20 shadow-[0_0_20px_rgba(79,70,229,0.1)]" 
-                      : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-transparent"
+                      ? "bg-gradient-to-r from-flow-indigo to-flow-indigo/80 text-white shadow-[0_0_30px_rgba(79,70,229,0.5)] border border-white/30 scale-[1.02]" 
+                      : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.04] border border-transparent"
                     }`}
                   >
-                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${pathname === item.href ? "text-flow-indigo scale-110" : "group-hover:text-flow-indigo"}`} />
+                    <item.icon className={`w-5 h-5 shrink-0 transition-transform duration-500 ${pathname === item.href ? "text-white scale-110" : "group-hover:text-flow-indigo"}`} />
                     {(!collapsed || mobileOpen) && (
-                      <span className="text-sm font-black uppercase tracking-widest whitespace-nowrap">{item.label}</span>
+                      <span className={`text-sm font-black uppercase tracking-widest whitespace-nowrap ${pathname === item.href ? 'text-white' : ''}`}>{item.label}</span>
                     )}
                     {pathname === item.href && (
                       <motion.div
-                        layoutId="sidebar-glow"
-                        className="absolute left-0 w-1 h-8 bg-flow-indigo shadow-[0_0_15px_#4F46E5] rounded-r-full"
+                        layoutId="sidebar-active-pill"
+                        className="absolute left-0 top-0 bottom-0 w-2 bg-white shadow-[0_0_20px_#fff] rounded-r-xl"
                       />
                     )}
                   </div>
@@ -150,7 +156,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   >
                     {item.subItems?.map((sub) => (
                       <Link key={sub.href} href={sub.href} onClick={() => setMobileOpen?.(false)}>
-                        <div className={`py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${pathname === sub.href ? 'text-insight-teal' : 'text-data-slate hover:text-white'}`}>
+                        <div className={`py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${pathname === sub.href ? 'text-white underline decoration-insight-teal decoration-2 underline-offset-4' : 'text-data-slate hover:text-white'}`}>
                           {sub.label}
                         </div>
                       </Link>
@@ -188,7 +194,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden md:flex flex-col h-full bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 relative ${
+        className={`hidden md:flex flex-col sticky top-0 h-screen bg-[var(--surface)] border-r border-white/5 transition-all duration-500 z-30 relative shrink-0 ${
           collapsed ? "w-24" : "w-72"
         }`}
       >

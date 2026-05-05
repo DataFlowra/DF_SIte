@@ -127,7 +127,7 @@ export default function RegisterPage() {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="John"
+                    placeholder="Enter first name"
                     className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                   />
                 </div>
@@ -144,7 +144,7 @@ export default function RegisterPage() {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    placeholder="Doe"
+                    placeholder="Enter last name"
                     className="w-full bg-[var(--surface)] border border-white/5 rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-flow-indigo/50 transition-all text-sm text-[var(--text-primary)] placeholder:text-data-slate/40"
                   />
                 </div>

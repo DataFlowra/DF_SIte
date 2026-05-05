@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { 
   Activity, 
   ShieldCheck, 
@@ -29,36 +29,38 @@ const logEntries = [
 
 const metrics = [
   { label: "Active Nodes", value: "1,284", icon: Globe, color: "#06B6D4" },
-  { label: "Throughput", value: "8.4 GB/s", icon: Zap, color: "#8B5CF6" },
+  { label: "Throughput", value: "8.4 GB/s", icon: Zap, color: "#4F46E5" },
   { label: "Uptime", value: "99.99%", icon: ShieldCheck, color: "#10B981" },
   { label: "Latency", value: "4.2ms", icon: Activity, color: "#F59E0B" },
 ];
 
 function FloatingNode({ icon: Icon, label, delay = 0, x, y, scrollY }: any) {
-  const moveY = useTransform(scrollY, [0, 1], [0, y * 2]);
+  const moveY = useTransform(scrollY, [0, 1], [0, y * 1.5]);
+  const smoothY = useSpring(moveY, { stiffness: 100, damping: 30 });
   
   return (
     <motion.div
-      style={{ y: moveY, left: x }}
+      style={{ y: smoothY, left: x }}
       initial={{ opacity: 0, scale: 0.8 }}
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.8 }}
-      className="absolute glass-subtle p-3 rounded-xl border border-white/10 flex items-center gap-3 shadow-xl z-30 whitespace-nowrap pointer-events-none md:pointer-events-auto"
+      className="absolute glass-subtle p-3 rounded-xl border border-white/10 flex items-center gap-3 shadow-xl z-30 whitespace-nowrap pointer-events-none md:pointer-events-auto will-change-transform"
     >
-      <div className="w-8 h-8 rounded-lg bg-insight-teal/10 flex items-center justify-center">
-        <Icon className="w-4 h-4 text-insight-teal" />
+      <div className="w-8 h-8 rounded-lg bg-insight-teal/10 flex items-center justify-center text-insight-teal">
+        <Icon className="w-4 h-4" />
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-primary)]">{label}</span>
     </motion.div>
   );
 }
 
 function CodeSnippet({ scrollY, y, x, code }: any) {
-  const moveY = useTransform(scrollY, [0, 1], [0, y * 3]);
+  const moveY = useTransform(scrollY, [0, 1], [0, y * 2]);
+  const smoothY = useSpring(moveY, { stiffness: 100, damping: 30 });
   return (
     <motion.div
-      style={{ y: moveY, left: x }}
-      className="absolute font-mono text-[8px] text-insight-teal/40 pointer-events-none z-0 hidden md:block"
+      style={{ y: smoothY, left: x }}
+      className="absolute font-mono text-[8px] text-insight-teal/40 pointer-events-none z-0 hidden md:block will-change-transform"
     >
       <pre>{code}</pre>
     </motion.div>
@@ -76,7 +78,7 @@ function Terminal() {
   }, []);
 
   return (
-    <div className="bg-black/80 rounded-xl p-4 font-mono text-[10px] md:text-xs text-green-400 border border-white/5 h-full overflow-hidden shadow-2xl">
+    <div className="bg-black/80 rounded-xl p-4 font-mono text-[10px] md:text-xs text-green-400 border border-white/5 h-full overflow-hidden shadow-2xl text-left">
       <div className="flex items-center gap-2 mb-3 border-b border-white/10 pb-2">
         <div className="flex gap-1.5">
           <div className="w-2 h-2 rounded-full bg-red-500/50" />
@@ -109,13 +111,13 @@ function Terminal() {
 
 function MainDashboard() {
   return (
-    <div className="glass rounded-[2.5rem] p-6 md:p-10 border border-white/10 shadow-2xl w-full">
+    <div className="glass rounded-[2.5rem] p-6 md:p-10 border border-white/10 shadow-2xl w-full text-left">
       {/* App Bar */}
       <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-insight-teal to-aura-violet flex items-center justify-center text-white font-bold">DF</div>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-insight-teal to-aura-violet flex items-center justify-center text-white font-bold shadow-glow-sm">DF</div>
           <div>
-            <h4 className="text-lg font-bold">Dataflowra Command</h4>
+            <h4 className="text-lg font-bold text-[var(--text-primary)]">Dataflowra Command</h4>
             <p className="text-xs text-[var(--text-muted)]">Enterprise Console v4.2</p>
           </div>
         </div>
@@ -139,7 +141,7 @@ function MainDashboard() {
               </div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{m.label}</span>
             </div>
-            <div className="text-2xl font-bold">{m.value}</div>
+            <div className="text-2xl font-bold text-[var(--text-primary)]">{m.value}</div>
           </div>
         ))}
       </div>
@@ -148,7 +150,7 @@ function MainDashboard() {
       <div className="glass-subtle rounded-3xl p-6 border border-white/5 relative overflow-hidden group">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h5 className="font-bold">Flow Intelligence</h5>
+            <h5 className="font-bold text-[var(--text-primary)]">Flow Intelligence</h5>
             <p className="text-[10px] text-[var(--text-muted)]">Real-time throughput analytics</p>
           </div>
           <div className="flex items-center gap-4">
@@ -217,18 +219,27 @@ export default function DashboardShowcase() {
     offset: ["start end", "end start"]
   });
 
-  // Parallax transforms
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const dashboardY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const foregroundY = useTransform(scrollYProgress, [0, 1], [250, -250]);
-  const rotateSlight = useTransform(scrollYProgress, [0, 1], [-3, 3]);
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
+
+  // Parallax transforms with spring smoothing
+  const backgroundYRaw = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+  const backgroundY = useSpring(backgroundYRaw as any, springConfig);
+
+  const dashboardYRaw = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const dashboardY = useSpring(dashboardYRaw, springConfig);
+
+  const foregroundYRaw = useTransform(scrollYProgress, [0, 1], [150, -150]);
+  const foregroundY = useSpring(foregroundYRaw, springConfig);
+
+  const rotateSlightRaw = useTransform(scrollYProgress, [0, 1], [-2, 2]);
+  const rotateSlight = useSpring(rotateSlightRaw, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     setMousePos({
-      x: (clientX / innerWidth - 0.5) * 20,
-      y: (clientY / innerHeight - 0.5) * 20,
+      x: (clientX / innerWidth - 0.5) * 15,
+      y: (clientY / innerHeight - 0.5) * 15,
     });
   };
 
@@ -240,15 +251,15 @@ export default function DashboardShowcase() {
       className="relative py-48 overflow-hidden bg-[var(--background)]"
     >
       {/* Background Atmosphere */}
-      <motion.div style={{ y: backgroundY }} className="absolute inset-0 pointer-events-none">
+      <motion.div style={{ y: backgroundY }} className="absolute inset-0 pointer-events-none will-change-transform">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-insight-teal/5 blur-[150px] rounded-full" />
         
         {/* Orbital Rings */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full animate-[spin_90s_linear_infinite_reverse]" />
         
-        <CodeSnippet scrollY={scrollYProgress} x="15%" y={-100} code={`pipeline {\n  stage('ingest') {\n    sync(edge_nodes)\n  }\n}`} />
-        <CodeSnippet scrollY={scrollYProgress} x="85%" y={150} code={`const flow = new Flow({\n  source: 'AWS',\n  target: 'GCP'\n})`} />
+        <CodeSnippet scrollY={scrollYProgress} x="15%" y={-80} code={`pipeline {\n  stage('ingest') {\n    sync(edge_nodes)\n  }\n}`} />
+        <CodeSnippet scrollY={scrollYProgress} x="85%" y={100} code={`const flow = new Flow({\n  source: 'AWS',\n  target: 'GCP'\n})`} />
       </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -259,11 +270,11 @@ export default function DashboardShowcase() {
           className="text-center mb-32"
         >
           <span className="text-sm font-bold tracking-[0.3em] uppercase text-insight-teal mb-4 block">The Interface</span>
-          <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-[var(--text-primary)]">
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-[var(--text-primary)] text-center">
             Command Your <br />
             <span className="gradient-text">Data Universe</span>
           </h2>
-          <p className="text-xl text-[var(--text-muted)] max-w-3xl mx-auto font-medium">
+          <p className="text-xl text-[var(--text-muted)] max-w-3xl mx-auto font-medium text-center">
             A beautiful, high-performance command center designed for the scale of tomorrow. 
             Real-time observability meets absolute control.
           </p>
@@ -271,11 +282,11 @@ export default function DashboardShowcase() {
 
         {/* The Stack Showcase */}
         <div className="relative perspective-2000 min-h-[700px] md:min-h-[900px] flex items-center justify-center">
-          {/* Floating Data Nodes - Only visible on desktop for layout control */}
+          {/* Floating Data Nodes */}
           <div className="hidden lg:block">
-            <FloatingNode icon={Cpu} label="Neural Edge NYC-01" x="5%" y={-80} scrollY={scrollYProgress} delay={0.2} />
-            <FloatingNode icon={Database} label="Sync Cluster" x="80%" y={60} scrollY={scrollYProgress} delay={0.4} />
-            <FloatingNode icon={Share2} label="P2P Mesh Network" x="10%" y={180} scrollY={scrollYProgress} delay={0.6} />
+            <FloatingNode icon={Cpu} label="Neural Edge NYC-01" x="5%" y={-60} scrollY={scrollYProgress} delay={0.2} />
+            <FloatingNode icon={Database} label="Sync Cluster" x="80%" y={40} scrollY={scrollYProgress} delay={0.4} />
+            <FloatingNode icon={Share2} label="P2P Mesh Network" x="10%" y={140} scrollY={scrollYProgress} delay={0.6} />
           </div>
 
           {/* Layer 1: Global Node Map (Blurred Background) */}
@@ -285,12 +296,12 @@ export default function DashboardShowcase() {
               rotateZ: rotateSlight
             }}
             animate={{ 
-              x: mousePos.x * -0.5, 
-              y: mousePos.y * -0.5,
-              rotateX: mousePos.y * 0.1,
-              rotateY: mousePos.x * -0.1,
+              x: mousePos.x * -0.4, 
+              y: mousePos.y * -0.4,
+              rotateX: mousePos.y * 0.05,
+              rotateY: mousePos.x * -0.05,
             }}
-            className="absolute inset-0 opacity-20 blur-sm flex items-center justify-center pointer-events-none"
+            className="absolute inset-0 opacity-20 blur-sm flex items-center justify-center pointer-events-none will-change-transform"
           >
             <div className="w-full h-full max-w-5xl rounded-[3rem] border border-white/5 bg-white/[0.02]" />
           </motion.div>
@@ -304,10 +315,10 @@ export default function DashboardShowcase() {
             animate={{ 
               x: mousePos.x, 
               y: mousePos.y,
-              rotateX: mousePos.y * 0.2,
-              rotateY: mousePos.x * -0.2,
+              rotateX: mousePos.y * 0.15,
+              rotateY: mousePos.x * -0.15,
             }}
-            className="relative z-20 w-full max-w-5xl"
+            className="relative z-20 w-full max-w-5xl will-change-transform"
           >
             <MainDashboard />
           </motion.div>
@@ -316,12 +327,12 @@ export default function DashboardShowcase() {
           <motion.div
             style={{ y: foregroundY }}
             animate={{ 
-              x: mousePos.x * 1.5 + 380, 
-              y: mousePos.y * 1.5 + 280,
-              rotateX: mousePos.y * 0.3,
-              rotateY: mousePos.x * -0.3,
+              x: mousePos.x * 1.2 + 380, 
+              y: mousePos.y * 1.2 + 280,
+              rotateX: mousePos.y * 0.2,
+              rotateY: mousePos.x * -0.2,
             }}
-            className="hidden xl:block absolute z-30 w-80 h-72"
+            className="hidden xl:block absolute z-30 w-80 h-72 will-change-transform"
           >
             <Terminal />
           </motion.div>
@@ -330,20 +341,20 @@ export default function DashboardShowcase() {
           <motion.div
             style={{ y: foregroundY }}
             animate={{ 
-              x: mousePos.x * 2 - 480, 
-              y: mousePos.y * 2 - 250,
-              rotateX: mousePos.y * 0.4,
-              rotateY: mousePos.x * -0.4,
+              x: mousePos.x * 1.5 - 480, 
+              y: mousePos.y * 1.5 - 250,
+              rotateX: mousePos.y * 0.25,
+              rotateY: mousePos.x * -0.25,
             }}
-            className="hidden xl:block absolute z-30"
+            className="hidden xl:block absolute z-30 will-change-transform"
           >
             <div className="glass-subtle p-6 rounded-2xl border border-white/10 shadow-3xl flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-insight-teal/10 flex items-center justify-center">
                 <ShieldCheck className="w-7 h-7 text-insight-teal" />
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-insight-teal mb-1">Protection Layer</div>
-                <div className="text-base font-bold">Encrypted End-to-End</div>
+                <div className="text-[10px] font-bold uppercase text-insight-teal mb-1 text-left">Protection Layer</div>
+                <div className="text-base font-bold text-left text-[var(--text-primary)]">Encrypted End-to-End</div>
               </div>
             </div>
           </motion.div>

@@ -63,20 +63,24 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
       <div className="flex-1 flex items-center justify-end gap-6">
         
         {/* Real-time System Metrics (Active Elements) - Visible on large screens */}
-        <div className="hidden lg:flex items-center gap-6 px-6 py-2 rounded-2xl bg-white/[0.02] border border-white/5">
+        <div className="hidden lg:flex items-center gap-6 px-6 py-2 rounded-2xl bg-white/[0.04] border border-white/5 shadow-inner">
            <div className="flex items-center gap-3">
               <Wifi size={14} className="text-insight-teal animate-pulse" />
               <div className="flex flex-col">
-                 <span className="text-[7px] font-black text-data-slate uppercase">Latency</span>
-                 <span className="text-[10px] font-mono font-bold text-[var(--text-primary)]">{latency.toFixed(0)}ms</span>
+                 <span className="text-[7px] font-black text-[var(--text-muted)] uppercase leading-none mb-1">Latency</span>
+                 <span className="text-xs font-mono font-bold text-[var(--text-primary)] leading-none">
+                   {typeof latency === 'number' ? latency.toFixed(0) : '12'}ms
+                 </span>
               </div>
            </div>
-           <div className="w-px h-6 bg-white/5" />
+           <div className="w-px h-6 bg-white/10" />
            <div className="flex items-center gap-3">
               <Cpu size={14} className="text-flow-indigo" />
               <div className="flex flex-col">
-                 <span className="text-[7px] font-black text-data-slate uppercase">Core Load</span>
-                 <span className="text-[10px] font-mono font-bold text-[var(--text-primary)]">{coreLoad.toFixed(2)}%</span>
+                 <span className="text-[7px] font-black text-[var(--text-muted)] uppercase leading-none mb-1">Core Load</span>
+                 <span className="text-xs font-mono font-bold text-[var(--text-primary)] leading-none">
+                   {typeof coreLoad === 'number' ? coreLoad.toFixed(2) : '0.02'}%
+                 </span>
               </div>
            </div>
         </div>

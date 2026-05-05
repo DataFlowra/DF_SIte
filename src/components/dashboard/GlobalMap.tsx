@@ -46,14 +46,14 @@ export default function GlobalMap() {
           <div className="w-16 h-16 rounded-2xl bg-flow-indigo/10 flex items-center justify-center text-flow-indigo mx-auto lg:mx-0 mb-6 border border-flow-indigo/20 shadow-glow-sm">
             <Globe className="w-8 h-8" />
           </div>
-          <h2 className="text-3xl font-black tracking-tighter mb-4 text-white">Global Distribution Network</h2>
-          <p className="text-data-slate font-medium mb-8 leading-relaxed">
+          <h2 className="text-3xl font-black tracking-tighter mb-4 text-[var(--text-primary)]">Global Distribution Network</h2>
+          <p className="text-[var(--text-muted)] font-medium mb-8 leading-relaxed">
             Your data mesh is currently spanning across 6 continents with redundant fiber links. 
             Visualizing primary ingest node location.
           </p>
           <div className="flex flex-wrap justify-center lg:justify-start gap-3">
              {["San Francisco", "London", "Tokyo", "Sydney", "Singapore", "New York"].map((city, i) => (
-               <div key={city} className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest ${i === 0 ? 'bg-insight-teal/10 border-insight-teal/20 text-insight-teal' : 'glass-subtle border-white/5 text-data-slate'}`}>
+               <div key={city} className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest ${i === 0 ? 'bg-insight-teal/10 border-insight-teal/20 text-insight-teal' : 'glass-subtle border-[var(--glass-border)] text-[var(--text-muted)]'}`}>
                  {city} {i === 0 ? "• Primary" : "• Active"}
                </div>
              ))}

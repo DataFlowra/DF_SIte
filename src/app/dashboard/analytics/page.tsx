@@ -44,10 +44,10 @@ export default function AnalyticsPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-[2.5rem] p-10 border border-white/5 relative overflow-hidden"
+        className="glass rounded-[2.5rem] p-10 border border-[var(--glass-border)] relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-aura-violet/5 to-transparent pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row gap-10 items-center justify-between">
+        <div className="relative z-10 flex flex-col md:flex-row gap-10 items-center justify-between text-left">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="px-3 py-1 rounded-full bg-aura-violet/10 border border-aura-violet/20 flex items-center gap-2">
@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
             <h1 className="text-4xl font-black tracking-tighter mb-2 text-[var(--text-primary)]">
               Talk to Your <span className="gradient-text">Data</span>
             </h1>
-            <p className="text-data-slate font-medium max-w-lg mb-8">
+            <p className="text-[var(--text-muted)] font-medium max-w-lg mb-8">
               Ask natural language questions. Our LLM parses your RAPIDS data processing engine output into clear, actionable summaries.
             </p>
 
@@ -70,7 +70,7 @@ export default function AnalyticsPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="e.g., Summarize revenue trends and identify any latency drops in EMEA..."
-                  className="w-full bg-[var(--surface-elevated)] border border-white/10 rounded-2xl pl-6 pr-16 py-5 focus:outline-none focus:border-aura-violet/50 transition-all text-sm text-[var(--text-primary)] shadow-2xl"
+                  className="w-full bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-2xl pl-6 pr-16 py-5 focus:outline-none focus:border-aura-violet/50 transition-all text-sm text-[var(--text-primary)] shadow-2xl"
                 />
                 <button
                   type="submit"
@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
             </form>
           </div>
           
-          <div className="hidden lg:flex w-48 h-48 rounded-full border border-white/5 bg-[var(--surface-elevated)] items-center justify-center relative shadow-3xl">
+          <div className="hidden lg:flex w-48 h-48 rounded-full border border-[var(--glass-border)] bg-[var(--surface-elevated)] items-center justify-center relative shadow-3xl">
              <div className="absolute inset-0 border-[2px] border-dashed border-aura-violet/20 rounded-full animate-[spin_20s_linear_infinite]" />
              <div className="absolute inset-4 border border-insight-teal/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
              <Database className="w-16 h-16 text-flow-indigo opacity-50" />
@@ -109,15 +109,15 @@ export default function AnalyticsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="glass rounded-[2.5rem] p-10 border border-aura-violet/30 relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)]"
+            className="glass rounded-[2.5rem] p-10 border border-aura-violet/30 relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)] text-left"
           >
             <div className="flex items-center gap-4 mb-8 border-b border-white/5 pb-6">
               <div className="w-12 h-12 rounded-2xl bg-aura-violet/20 flex items-center justify-center text-aura-violet border border-aura-violet/30">
                 <Bot className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Neural Summary</h3>
-                <span className="text-[10px] font-black text-data-slate uppercase tracking-widest">Inference Result</span>
+                <h3 className="text-xl font-bold text-[var(--text-primary)]">Neural Summary</h3>
+                <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">Inference Result</span>
               </div>
             </div>
 
@@ -143,20 +143,20 @@ export default function AnalyticsPage() {
 
       {/* Traditional Analytics (Simulated) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="glass-subtle p-10 rounded-[2.5rem] border border-white/5 min-h-[300px] flex items-center justify-center text-center relative overflow-hidden group">
+        <div className="glass-subtle p-10 rounded-[2.5rem] border border-[var(--glass-border)] min-h-[300px] flex items-center justify-center text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.05),transparent_60%)]" />
           <div className="relative z-10 flex flex-col items-center">
             <BarChart3 size={48} className="text-insight-teal mb-6 opacity-50 group-hover:scale-110 transition-transform duration-500" />
-            <h4 className="text-lg font-bold text-white mb-2">Throughput Distribution</h4>
-            <p className="text-sm text-data-slate">GPU-accelerated visualization via cuDF pending data connection.</p>
+            <h4 className="text-lg font-bold text-[var(--text-primary)] mb-2">Throughput Distribution</h4>
+            <p className="text-sm text-[var(--text-muted)]">GPU-accelerated visualization via cuDF pending data connection.</p>
           </div>
         </div>
-        <div className="glass-subtle p-10 rounded-[2.5rem] border border-white/5 min-h-[300px] flex items-center justify-center text-center relative overflow-hidden group">
+        <div className="glass-subtle p-10 rounded-[2.5rem] border border-[var(--glass-border)] min-h-[300px] flex items-center justify-center text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.05),transparent_60%)]" />
           <div className="relative z-10 flex flex-col items-center">
             <PieChart size={48} className="text-aura-violet mb-6 opacity-50 group-hover:scale-110 transition-transform duration-500" />
-            <h4 className="text-lg font-bold text-white mb-2">Regional Traffic</h4>
-            <p className="text-sm text-data-slate">Geospatial distribution metrics pending live feed.</p>
+            <h4 className="text-lg font-bold text-[var(--text-primary)] mb-2">Regional Traffic</h4>
+            <p className="text-sm text-[var(--text-muted)]">Geospatial distribution metrics pending live feed.</p>
           </div>
         </div>
       </div>
