@@ -81,7 +81,7 @@ export default function SecurityStatus() {
         borderColor: hasCritical ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.05)"
       }}
       transition={{ duration: 1 }}
-      className="glass rounded-[2.5rem] border p-8 flex flex-col h-full min-h-[400px] relative overflow-hidden transition-colors"
+      className="glass rounded-[2.5rem] border p-6 flex flex-col h-full min-h-[350px] relative overflow-hidden transition-colors"
     >
       {/* Background Pulse if Critical */}
       <AnimatePresence>
@@ -96,15 +96,15 @@ export default function SecurityStatus() {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between mb-8 relative z-10">
+      <div className="flex items-center justify-between mb-4 relative z-10 text-left">
         <div className="flex items-center gap-4">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-glow-sm transition-colors ${
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shadow-glow-sm transition-colors ${
             hasCritical ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-insight-teal/10 text-insight-teal border-insight-teal/20"
           }`}>
-            {hasCritical ? <ShieldAlert className="w-6 h-6 animate-pulse" /> : <ShieldCheck className="w-6 h-6" />}
+            {hasCritical ? <ShieldAlert className="w-5 h-5 animate-pulse" /> : <ShieldCheck className="w-5 h-5" />}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-[var(--text-primary)]">Watchdog Feed</h3>
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">Watchdog Feed</h3>
             <div className="flex items-center gap-2">
               <span className={`text-[10px] font-black uppercase tracking-widest ${hasCritical ? "text-red-500" : "text-insight-teal"}`}>
                 {hasCritical ? "Active Threats" : "Monitoring Secure"}
@@ -114,7 +114,7 @@ export default function SecurityStatus() {
         </div>
         <div className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/5 flex items-center gap-2">
           <Zap className="w-3 h-3 text-flow-indigo animate-pulse" />
-          <span className="text-[8px] font-mono text-data-slate uppercase tracking-tighter">NVIDIA Morpheus</span>
+          <span className="text-[8px] font-mono text-data-slate uppercase tracking-tighter">Morpheus</span>
         </div>
       </div>
 

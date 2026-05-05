@@ -30,7 +30,12 @@ export default function BillingSettingsPage() {
           setPlan(planRes.data);
         }
         if (allPlansRes.status === "success") {
-          setAvailablePlans(allPlansRes.data);
+          const sorted = allPlansRes.data.sort((a: any, b: any) => {
+            if (a.slug === 'enterprise') return 1;
+            if (b.slug === 'enterprise') return -1;
+            return (a.monthly_price || 0) - (b.monthly_price || 0);
+          });
+          setAvailablePlans(sorted);
         }
       } catch (err) {
         console.error(err);
@@ -261,15 +266,19 @@ export default function BillingSettingsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {availablePlans.map((p) => (
-                <div key={p.slug} className={`p-8 rounded-[2.5rem] border ${p.slug === plan?.slug ? "bg-flow-indigo/5 border-flow-indigo/30" : "bg-[var(--surface-elevated)] border-[var(--glass-border)]"}`}>
+                <div key={p.slug} className={`p-8 rounded-[2.5rem] border ${p.slug === plan?.slug ? "bg-flow-indigo/5 border-flow-indigo/30" : "bg-[var(--surface-elevated)] border-[var(--glass-border)]"} flex flex-col`}>
                   <div className="mb-6 text-left">
                     <h3 className="text-xl font-bold mb-1 text-[var(--text-primary)]">{p.name}</h3>
                     <div className="text-2xl font-black text-[var(--text-primary)]">
-                      ${billingCycle === "monthly" ? p.monthly_price : p.yearly_price}
-                      <span className="text-[10px] text-[var(--text-muted)] font-bold uppercase ml-1">/ mo</span>
+                      {p.slug === 'enterprise' ? (
+                        "Custom"
+                      ) : (
+                        `$${billingCycle === "monthly" ? p.monthly_price : p.yearly_price}`
+                      )}
+                      {p.slug !== 'enterprise' && <span className="text-[10px] text-[var(--text-muted)] font-bold uppercase ml-1">/ mo</span>}
                     </div>
                   </div>
-                  <ul className="space-y-3 mb-8 text-left">
+                  <ul className="space-y-3 mb-8 text-left flex-1">
                     {p.features.slice(0, 5).map((f: string, i: number) => (
                       <li key={i} className="flex items-start gap-2 text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-tight">
                         <Check size={12} className="text-flow-indigo shrink-0 mt-0.5" />
@@ -277,17 +286,27 @@ export default function BillingSettingsPage() {
                       </li>
                     ))}
                   </ul>
-                  <button 
-                    disabled={p.slug === plan?.slug}
-                    onClick={() => handleUpgradePlan(p.slug)}
-                    className={`w-full py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
-                      p.slug === plan?.slug 
-                      ? "bg-white/5 text-[var(--text-muted)] cursor-not-allowed" 
-                      : "bg-[var(--text-primary)] text-[var(--background)] hover:scale-[1.02]"
-                    }`}
-                  >
-                    {p.slug === plan?.slug ? "Current Plan" : "Select Plan"}
-                  </button>
+                  
+                  {p.slug === 'enterprise' ? (
+                    <Link 
+                      href="/#contact"
+                      className="w-full py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all bg-insight-teal text-white text-center hover:scale-[1.02]"
+                    >
+                      Contact Sales
+                    </Link>
+                  ) : (
+                    <button 
+                      disabled={p.slug === plan?.slug}
+                      onClick={() => handleUpgradePlan(p.slug)}
+                      className={`w-full py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
+                        p.slug === plan?.slug 
+                        ? "bg-white/5 text-[var(--text-muted)] cursor-not-allowed" 
+                        : "bg-[var(--text-primary)] text-[var(--background)] hover:scale-[1.02]"
+                      }`}
+                    >
+                      {p.slug === plan?.slug ? "Current Plan" : "Select Plan"}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

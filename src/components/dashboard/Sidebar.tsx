@@ -53,9 +53,19 @@ interface SidebarProps {
 
 export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const [openSubMenu, setOpenSubMenu] = useState<string | null>("Intelligence");
+  const [openSubMenu, setOpenSubMenu] = useState<string | null>(null);
   const pathname = usePathname();
   const { logout } = useAuth();
+
+  // Automatically open the correct submenu based on current path
+  useEffect(() => {
+    const activeItem = navItems.find(item => 
+      item.subItems?.some(sub => pathname === sub.href)
+    );
+    if (activeItem) {
+      setOpenSubMenu(activeItem.label);
+    }
+  }, [pathname]);
 
   const handleLogout = async () => {
     if (confirm("Are you sure you want to sign out?")) {
@@ -93,7 +103,9 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       {/* Nav Links */}
       <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto custom-scrollbar overflow-x-hidden">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || item.subItems?.some(s => pathname === s.href);
+          const isParentOfActive = item.subItems?.some(s => pathname === s.href);
+          const isDirectActive = pathname === item.href;
+          const isActive = isDirectActive || isParentOfActive;
           const hasSubItems = !!item.subItems;
           const isSubMenuOpen = openSubMenu === item.label;
 
@@ -115,7 +127,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                       <ChevronDown size={14} className={`transition-transform duration-300 ${isSubMenuOpen ? 'rotate-180' : ''} ${isActive ? 'text-white' : ''}`} />
                     </>
                   )}
-                  {isActive && (
+                  {isDirectActive && (
                     <motion.div
                       layoutId="sidebar-active-pill"
                       className="absolute left-0 top-0 bottom-0 w-2 bg-white shadow-[0_0_20px_#fff] rounded-r-xl"
@@ -127,7 +139,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   <div
                     className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
                       pathname === item.href 
-                      ? "bg-gradient-to-r from-flow-indigo to-flow-indigo/80 text-white shadow-[0_0_30px_rgba(79,70,229,0.5)] border border-white/30 scale-[1.02]" 
+                      ? "bg-gradient-to-r from-flow-indigo to-flow-indigo/80 text-white shadow-[0_0_25px_rgba(79,70,229,0.4)] border border-white/20 scale-[1.02]" 
                       : "text-data-slate hover:text-[var(--text-primary)] hover:bg-white/[0.04] border border-transparent"
                     }`}
                   >
@@ -154,13 +166,19 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden pl-12 space-y-1"
                   >
-                    {item.subItems?.map((sub) => (
-                      <Link key={sub.href} href={sub.href} onClick={() => setMobileOpen?.(false)}>
-                        <div className={`py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${pathname === sub.href ? 'text-white underline decoration-insight-teal decoration-2 underline-offset-4' : 'text-data-slate hover:text-white'}`}>
-                          {sub.label}
-                        </div>
-                      </Link>
-                    ))}
+                    {item.subItems?.map((sub) => {
+                      const isSubActive = pathname === sub.href;
+                      return (
+                        <Link key={sub.href} href={sub.href} onClick={() => setMobileOpen?.(false)}>
+                          <div className={`py-2 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${isSubActive ? 'text-white' : 'text-data-slate hover:text-white'}`}>
+                            {isSubActive && <div className="w-1 h-1 rounded-full bg-insight-teal shadow-[0_0_8px_#06B6D4]" />}
+                            <span className={isSubActive ? "underline decoration-insight-teal decoration-2 underline-offset-4" : ""}>
+                              {sub.label}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>

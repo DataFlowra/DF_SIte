@@ -118,18 +118,18 @@ export default function TerminalWidget() {
   });
 
   return (
-    <div className="glass rounded-[2rem] border border-white/10 overflow-hidden flex flex-col h-full min-h-[400px] shadow-2xl">
+    <div className="glass rounded-[2rem] border border-white/10 overflow-hidden flex flex-col h-full min-h-[350px] shadow-2xl">
       {/* Terminal Header */}
-      <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-[var(--surface-elevated)]">
+      <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between bg-[var(--surface-elevated)] text-left">
         <div className="flex items-center gap-4">
           <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
           </div>
           <div className="flex items-center gap-2">
             <TerminalIcon size={14} className="text-flow-indigo" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-data-slate">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">
               Audit & Event Logs
             </span>
           </div>
@@ -152,7 +152,7 @@ export default function TerminalWidget() {
       {/* Terminal Content */}
       <div 
         ref={scrollRef}
-        className="flex-1 p-6 font-mono text-[11px] leading-relaxed overflow-y-auto custom-scrollbar bg-[#0B0F1A]"
+        className="flex-1 p-3 font-mono text-[10px] leading-tight overflow-y-auto custom-scrollbar bg-[#0B0F1A] max-h-[300px]"
         onClick={() => { document.getElementById("terminal-input")?.focus(); }}
       >
         <AnimatePresence initial={false}>

@@ -5,21 +5,21 @@ import { Info } from "lucide-react";
 
 export default function ActivityChart() {
   return (
-    <div className="glass rounded-[2rem] border border-white/10 p-8 flex flex-col h-full relative overflow-hidden group">
+    <div className="glass rounded-[2rem] border border-white/10 p-6 flex flex-col h-full relative overflow-hidden group">
       {/* Background Glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-insight-teal/5 blur-[80px] rounded-full pointer-events-none" />
 
-      <div className="flex items-center justify-between mb-10 relative z-10">
+      <div className="flex items-center justify-between mb-6 relative z-10">
         <div>
           <h3 className="text-xl font-bold mb-1">Flow Intelligence</h3>
           <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Real-time Global Throughput</p>
         </div>
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-left">
             <div className="w-2 h-2 rounded-full bg-insight-teal" />
             <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">Inbound</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-left">
             <div className="w-2 h-2 rounded-full bg-aura-violet" />
             <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">Outbound</span>
           </div>
@@ -28,7 +28,7 @@ export default function ActivityChart() {
         </div>
       </div>
 
-      <div className="flex-1 relative min-h-[240px]">
+      <div className="flex-1 relative min-h-[200px]">
         <svg className="w-full h-full" preserveAspectRatio="none">
           <defs>
             <linearGradient id="chart-grad-teal" x1="0" y1="0" x2="0" y2="1">

@@ -73,23 +73,23 @@ export default function DashboardPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-8 flex flex-col gap-6"
+          className="lg:col-span-8 flex flex-col gap-4"
         >
           <ActivityChart />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass rounded-[2rem] p-8 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-insight-teal/30 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-insight-teal/10 flex items-center justify-center text-insight-teal group-hover:scale-110 transition-transform">
-                <RefreshCcw className="w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="glass rounded-[2rem] p-6 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-insight-teal/30 transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-insight-teal/10 flex items-center justify-center text-insight-teal group-hover:scale-110 transition-transform">
+                <RefreshCcw className="w-5 h-5" />
               </div>
               <div>
                 <h4 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-1 text-left">Auto-Scaling</h4>
                 <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed text-left">Dynamic resource allocation active in 12 nodes.</p>
               </div>
             </div>
-            <div className="glass rounded-[2rem] p-8 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-aura-violet/30 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-aura-violet/10 flex items-center justify-center text-aura-violet group-hover:scale-110 transition-transform">
-                <AlertTriangle className="w-6 h-6" />
+            <div className="glass rounded-[2rem] p-6 border border-[var(--glass-border)] flex items-center gap-6 group hover:border-aura-violet/30 transition-all">
+              <div className="w-12 h-12 rounded-2xl bg-aura-violet/10 flex items-center justify-center text-aura-violet group-hover:scale-110 transition-transform">
+                <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
                 <h4 className="text-sm font-black text-[var(--text-primary)] uppercase tracking-widest mb-1 text-left">Neural Health</h4>
@@ -103,7 +103,7 @@ export default function DashboardPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
-          className="lg:col-span-4 flex flex-col gap-6"
+          className="lg:col-span-4 flex flex-col gap-4"
         >
           <SecurityStatus />
           <TerminalWidget />
