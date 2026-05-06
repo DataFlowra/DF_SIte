@@ -260,9 +260,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-[var(--text-muted)] flex items-center gap-1.5">
+        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-10 md:pr-32">
+          <div className="flex flex-col gap-2 text-center md:text-left">
+            <p className="text-xs font-medium text-[var(--text-muted)] flex items-center gap-1.5 justify-center md:justify-start">
               © {new Date().getFullYear()} Dataflowra. 
               <span className="hidden sm:inline opacity-30 mx-1">|</span>
               Made with <Heart className="w-3 h-3 text-red-500/60 fill-current" /> for the data universe.
