@@ -74,7 +74,7 @@ export default function HeroSection() {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const headline = "Watch Your Data Wake Up";
+  const headline = "Unified Analytics for Smarter Decisions";
   const words = headline.split(" ");
 
   return (
