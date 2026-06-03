@@ -132,7 +132,7 @@ export default function HeroSection() {
                   animate="visible"
                   variants={wordVariants}
                   className={`inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter pr-4
-                    ${(word === "Data" || word === "Wake") ? "gradient-text" : "text-[var(--text-primary)]"}
+                    ${(word === "Unified" || word === "Smarter") ? "gradient-text" : "text-[var(--text-primary)]"}
                   `}
                 >
                   {word}
